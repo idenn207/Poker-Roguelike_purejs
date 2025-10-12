@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Poker Roguelike</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="game-container">
+    <!-- 상단 정보 패널 -->
+    <div class="top-panel">
+      <div class="score-display">
+        <div class="score-label">점수</div>
+        <div class="score-value">0</div>
+      </div>
+      <div class="stage-info">
+        <div>Stage 1-1</div>
+        <div style="color: var(--text-secondary); font-size: 0.9em">목표: 300점</div>
+      </div>
+      <div class="menu-buttons">
+        <button class="btn-icon" onclick="toggleSettings()">⚙️</button>
+        <button class="btn-icon" onclick="toggleDebug()">🐛</button>
+      </div>
+    </div>
+
+    <!-- 게임 보드 -->
+    <div class="game-board">
+      <div class="dealer-area">
+        <div class="card card-back card-deal">🂠</div>
+        <div class="card-placeholder">+</div>
+        <div class="card-placeholder">+</div>
+      </div>
+
+      <div class="play-area">
+        <div class="card black card-deal">♠A</div>
+        <div class="card red card-deal">♥K</div>
+        <div class="card black card-deal">♣Q</div>
+        <div class="card red card-deal">♦J</div>
+        <div class="card black card-deal">♠10</div>
+      </div>
+    </div>
+
+    <!-- 하단 컨트롤 패널 -->
+    <div class="bottom-panel">
+      <div class="hand-area">
+        <div class="card black">♠2</div>
+        <div class="card red">♥3</div>
+        <div class="card black selected">♣4</div>
+        <div class="card red">♦5</div>
+        <div class="card black">♠6</div>
+      </div>
+      <div class="action-buttons">
+        <button class="btn-action" onclick="playHand()">플레이</button>
+        <button class="btn-action" onclick="discardCards()">버리기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 설정 모달 -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+      <h2>설정</h2>
+      <div style="margin-top: 20px;">
+        <label>
+          <input type="checkbox" checked> 사운드 효과
+        </label>
+      </div>
+      <div style="margin-top: 10px;">
+        <label>
+          <input type="checkbox" checked> 애니메이션
+        </label>
+      </div>
+      <div style="margin-top: 20px;">
+        <button class="btn-action" onclick="closeSettings()">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 디버그 패널 -->
+  <div class="debug-panel" id="debugPanel">
+    <div>== Debug Info ==</div>
+    <div>FPS: 60</div>
+    <div>Cards: 5</div>
+    <div>State: WAITING</div>
+    <div>Touch: false</div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+
+</html>
