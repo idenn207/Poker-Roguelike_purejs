@@ -1,4 +1,3 @@
-'use strict';
 // @ts-check
 
 /**
@@ -8,9 +7,6 @@
  * 기능: 카드 생성, 셔플, 드로우, 버리기
  * 책임: 카드 풀 관리 (drawPile, discardPile)
  */
-
-// 의존성 (브라우저 환경)
-const { shuffleArray } = window.RandomUtils || {};
 
 /**
  * 덱 클래스

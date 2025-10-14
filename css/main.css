@@ -1,0 +1,276 @@
+/* 
+ * 파일위치: /styles/main.css
+ * 파일명: main.css
+ * 용도: 기본 스타일 정의
+ * 기능: 레이아웃, 색상 변수, 기본 스타일
+ * 책임: 전체 앱 기본 스타일링
+ */
+
+:root {
+  /* 카지노 테마 색상 */
+  --bg-primary: #0d1117; /* 다크 네이비 */
+  --bg-secondary: #1a1f2e; /* 미드나이트 블루 */
+  --bg-tertiary: #2d3548; /* 다크 슬레이트 */
+  --bg-table: #1e4d2b; /* 카지노 그린 */
+
+  --color-gold: #ffd700; /* 골드 */
+  --color-red: #dc143c; /* 크림슨 레드 */
+  --color-black: #000000; /* 블랙 */
+  --color-chip: #ff6b6b; /* 칩 레드 */
+  --color-felt: #2e7d32; /* 펠트 그린 */
+
+  --accent-gold: #ffeb3b; /* 밝은 골드 */
+  --accent-silver: #c0c0c0; /* 실버 */
+  --accent-bronze: #cd7f32; /* 브론즈 */
+
+  --text-primary: #ffffff;
+  --text-secondary: #b4bdc7;
+  --text-gold: #ffd700;
+
+  --card-width: 60px;
+  --card-height: 85px;
+  --card-width-small: 40px;
+  --card-height-small: 55px;
+
+  --border-gold: 2px solid #ffd700;
+  --shadow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+  --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 버튼 스타일 - 카지노 칩 느낌 */
+button {
+  cursor: pointer;
+  border: 2px solid var(--color-gold);
+  background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+  color: var(--text-gold);
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-gold);
+  background: linear-gradient(135deg, var(--color-gold), var(--accent-gold));
+  color: var(--bg-primary);
+}
+
+button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: radial-gradient(ellipse at center, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.screen.show {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 카지노 테이블 느낌 */
+.play-area {
+  background: var(--bg-table);
+  border: 3px solid var(--color-gold);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.2);
+  position: relative;
+}
+
+.play-area::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 15px;
+  pointer-events: none;
+}
+
+/* 골드 액센트 */
+.hand-label {
+  color: var(--text-gold);
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* 액션 버튼 - 포커칩 스타일 */
+.action-btn {
+  background: radial-gradient(circle, var(--color-chip) 0%, #b71c1c 100%);
+  border: 3px solid var(--text-primary);
+  color: var(--text-primary);
+  font-size: 1.1em;
+  padding: 12px 30px;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn.play {
+  background: radial-gradient(circle, var(--color-felt) 0%, #1b5e20 100%);
+  border-color: var(--color-gold);
+}
+
+.action-btn.discard-btn {
+  background: radial-gradient(circle, #666 0%, #333 100%);
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  pointer-events: none;
+}
+
+/* HP바 - 럭셔리 스타일 */
+.hp-bar {
+  background: linear-gradient(180deg, #1a1a1a 0%, #2a2a2a 100%);
+  border: var(--border-gold);
+  box-shadow: var(--shadow-gold);
+}
+
+.hp-fill {
+  background: linear-gradient(90deg, #ff6b6b 0%, #dc143c 50%, #ff6b6b 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  :root {
+    --card-width: 50px;
+    --card-height: 70px;
+    --card-width-small: 35px;
+    --card-height-small: 50px;
+  }
+}
+
+/* 반응형 추가 스타일 */
+@media (max-width: 768px) {
+  .battle-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .hp-bar {
+    width: 100%;
+  }
+
+  .entities {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .entity-card {
+    width: 100%;
+  }
+
+  .stage-options {
+    flex-direction: column;
+  }
+
+  .stage-option {
+    height: 120px;
+  }
+
+  .card-row {
+    flex-wrap: wrap;
+  }
+
+  .play-controls {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 2em;
+  }
+
+  .menu-btn {
+    font-size: 1em;
+    padding: 12px 30px;
+  }
+
+  .card {
+    width: 45px;
+    height: 65px;
+    font-size: 1.2em;
+  }
+
+  .card.small {
+    width: 35px;
+    height: 50px;
+    font-size: 1em;
+  }
+}
+
+/* 가로 모드 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .battle-header {
+    padding: 5px 10px;
+  }
+
+  .battle-content {
+    padding: 10px;
+  }
+
+  .entities {
+    margin: 10px 0;
+  }
+
+  .entity-card {
+    padding: 10px;
+  }
+}

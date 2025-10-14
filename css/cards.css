@@ -1,0 +1,177 @@
+/* 
+ * 파일위치: /styles/cards.css
+ * 파일명: cards.css
+ * 용도: 카드 스타일링
+ * 기능: 카드 렌더링 스타일
+ * 책임: 카드 시각적 표현
+ */
+
+/* 카드 스타일 - 카지노 테마 */
+.card {
+  width: var(--card-width);
+  height: var(--card-height);
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+  border: 2px solid #333;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.card.small {
+  width: var(--card-width-small);
+  height: var(--card-height-small);
+  font-size: 1.2em;
+}
+
+.card:hover {
+  transform: translateY(-10px) rotateZ(-5deg);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.card.selected {
+  transform: translateY(-20px);
+  border: 3px solid var(--color-gold);
+  box-shadow: var(--shadow-gold);
+  animation: goldPulse 1s infinite;
+}
+
+.card.red {
+  color: var(--color-red);
+}
+
+.card.black {
+  color: var(--color-black);
+}
+
+.card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card.disabled:hover {
+  transform: none;
+}
+
+.card-placeholder {
+  width: var(--card-width);
+  height: var(--card-height);
+  border: 2px dashed #666;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #666;
+}
+
+/* 카드 뒷면 - 카지노 패턴 */
+.card-back {
+  background: repeating-linear-gradient(45deg, var(--color-red), var(--color-red) 10px, var(--bg-primary) 10px, var(--bg-primary) 20px);
+  border: 3px solid var(--color-gold);
+}
+
+/* 데미지 효과 */
+.damage-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  font-weight: bold;
+  color: #ff0000;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: damageFloat 1s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes damageFloat {
+  0% {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -150%);
+    opacity: 0;
+  }
+}
+
+/* 손패 컨트롤 */
+.hand-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sort-btn {
+  padding: 5px 15px;
+  font-size: 0.9em;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--color-gold);
+}
+
+.hand-preview {
+  margin: 10px 0;
+  padding: 10px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--color-gold);
+  border-radius: 5px;
+  color: var(--text-gold);
+  font-weight: bold;
+  text-align: center;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.selected-cards-display {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+  min-height: 60px;
+}
+
+.player-hand-cards {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.monsters-container {
+  display: flex;
+  gap: 20px;
+}
+
+/* 몬스터 핸드 영역 */
+.monster-hand-area {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 1px solid var(--color-gold);
+}
+
+.monster-hand-cards {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 10px;
+}

@@ -1,4 +1,3 @@
-'use strict';
 // @ts-check
 
 /**
@@ -8,8 +7,6 @@
  * 기능: 10장 카드 관리, 선택, 플레이, 정렬
  * 책임: 손패 카드 조작 및 상태 관리
  */
-
-const { shuffleArray } = window.RandomUtils || {};
 
 /**
  * 손패 관리 클래스
