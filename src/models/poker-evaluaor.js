@@ -14,7 +14,7 @@ const HAND_TYPES = {
   HIGH_CARD: { rank: 0, name: '하이카드', multiplier: 1 },
   ONE_PAIR: { rank: 1, name: '원페어', multiplier: 2 },
   TWO_PAIR: { rank: 2, name: '투페어', multiplier: 3 },
-  THREE_OF_KIND: { rank: 3, name: '쓰리카드', multiplier: 4 },
+  THREE_OF_KIND: { rank: 3, name: '트리플', multiplier: 4 },
   STRAIGHT: { rank: 4, name: '스트레이트', multiplier: 5 },
   FLUSH: { rank: 5, name: '플러쉬', multiplier: 6 },
   FULL_HOUSE: { rank: 6, name: '풀하우스', multiplier: 8 },
@@ -115,12 +115,12 @@ class PokerEvaluator {
       kickers = [straightInfo.highCard];
     }
     // 포카드 체크
-    else if (ranks.counts[4]) {
+    else if (ranks.counts[4][0]) {
       handType = HAND_TYPES.FOUR_OF_KIND;
       kickers = [ranks.counts[4][0], ranks.counts[1] ? ranks.counts[1][0] : 0];
     }
     // 풀하우스 체크
-    else if (ranks.counts[3] && ranks.counts[2]) {
+    else if (ranks.counts[3][0] && ranks.counts[2][0]) {
       handType = HAND_TYPES.FULL_HOUSE;
       kickers = [ranks.counts[3][0], ranks.counts[2][0]];
     }
@@ -135,17 +135,17 @@ class PokerEvaluator {
       kickers = [straightInfo.highCard];
     }
     // 쓰리카드 체크
-    else if (ranks.counts[3]) {
+    else if (ranks.counts[3][0]) {
       handType = HAND_TYPES.THREE_OF_KIND;
       kickers = [ranks.counts[3][0], ...ranks.counts[1].slice(0, 2)];
     }
     // 투페어 체크
-    else if (ranks.counts[2] && ranks.counts[2].length >= 2) {
+    else if (ranks.counts[2][0] && ranks.counts[2][1]) {
       handType = HAND_TYPES.TWO_PAIR;
       kickers = [ranks.counts[2][0], ranks.counts[2][1], ranks.counts[1] ? ranks.counts[1][0] : 0];
     }
     // 원페어 체크
-    else if (ranks.counts[2]) {
+    else if (ranks.counts[2][0]) {
       handType = HAND_TYPES.ONE_PAIR;
       kickers = [ranks.counts[2][0], ...ranks.counts[1].slice(0, 3)];
     }
@@ -280,7 +280,6 @@ class PokerEvaluator {
    * @returns {string}
    */
   getHandDescription(handType, kickers) {
-    console.log('kickers: ', kickers);
     const rankName = (order) => {
       const names = {
         14: 'A',

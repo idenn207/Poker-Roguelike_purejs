@@ -269,6 +269,9 @@ window.gameManager = {
     });
     gameState.hand.removeCards(indices);
 
+    // 카드 다시 뽑기
+    this.drawNewHand();
+
     // 손패 다시 렌더링
     this.renderPlayerHand();
 
@@ -455,7 +458,11 @@ window.gameManager = {
    * 데미지 효과 표시
    */
   showDamageEffect(targetId, damage) {
+    console.log('targetId: ', targetId);
+    console.log('damage: ', damage);
     const monsterEl = document.querySelector(`[data-monster-id="${targetId}"]`);
+    console.log('monsterEl: ', monsterEl);
+
     if (monsterEl) {
       monsterEl.classList.add('damage');
 
@@ -464,10 +471,10 @@ window.gameManager = {
       damageText.textContent = `-${damage}`;
       monsterEl.appendChild(damageText);
 
-      setTimeout(() => {
-        monsterEl.classList.remove('damage');
-        damageText.remove();
-      }, 1000);
+      // setTimeout(() => {
+      //   monsterEl.classList.remove('damage');
+      //   damageText.remove();
+      // }, 1000);
     }
   },
 

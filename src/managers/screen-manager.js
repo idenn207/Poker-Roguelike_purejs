@@ -35,15 +35,15 @@ class ScreenManager {
     // 현재 화면 페이드 아웃
     if (this.currentScreen) {
       this.currentScreen.classList.remove('show');
-      await this.wait(500);
+      // await this.wait(500);
     }
 
     // 로딩 화면 표시 (필요시)
     if (showLoading && screenName !== 'loading' && screenName !== 'logo') {
       this.screens.loading.classList.add('show');
-      await this.wait(1000);
+      // await this.wait(1000);
       this.screens.loading.classList.remove('show');
-      await this.wait(500);
+      // await this.wait(500);
     }
 
     // 새 화면 표시
