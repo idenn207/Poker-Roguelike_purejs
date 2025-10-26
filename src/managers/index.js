@@ -17,6 +17,7 @@ const managerScripts = [
   '/src/managers/RenderManager.js',
   '/src/managers/UIManager.js',
   '/src/managers/ScreenManager.js',
+  '/src/managers/DebugManager.js',
   '/src/managers/GameManager.js',
 ];
 

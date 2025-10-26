@@ -502,6 +502,9 @@ const EVENTS = {
 
     /** 발광 효과 */
     GLOW_EFFECT: 'render:glow_effect',
+
+    /** 디버그 */
+    DEBUG_PANEL: 'render:debug_panel',
   },
 
   /** SHOP - 상점 시스템 */
@@ -614,6 +617,12 @@ const EVENTS = {
       /** 캐릭터 상태 조회 */
       STATE: 'query:character:state',
     },
+
+    /** 디버그 */
+    DEBUG: {
+      /** 디버그 상태 조회 */
+      STATE: 'query:debug:state',
+    },
   },
 
   /** RESPONSE - 조회 응답 */
@@ -627,6 +636,12 @@ const EVENTS = {
     CHARACTER: {
       /** 캐릭터 상태 조회 */
       STATE: 'response:character:state',
+    },
+
+    /** 디버그 */
+    DEBUG: {
+      /** 디버그 상태 조회 */
+      STATE: 'response:debug:state',
     },
   },
 
@@ -645,9 +660,29 @@ const EVENTS = {
       /** 캐릭터 선택 완료 */
       SELECTED: 'state:character:selected',
     },
+
+    /** 게임 상태 */
     GAME: {
       /** 게임 시작 */
       STARTED: 'state:game:started',
+    },
+
+    /** 디버그 상태 */
+    DEBUG: {
+      /** 디버그 패널 토글 */
+      TOGGLED: 'state:debug:toggled',
+
+      /** 디버그 패널 탭 */
+      TAB: {
+        /** 디버그 패널 탭 변경 */
+        CHANGED: 'state:debug:tab:changed',
+      },
+
+      /** 루프 정보 업데이트 */
+      LOOP_UPDATED: 'state:debug:loop_updated',
+
+      /** 이벤트 추가 */
+      EVENT_ADDED: 'state:debug:event_added',
     },
   },
 
@@ -669,9 +704,29 @@ const EVENTS = {
       /** 캐릭터 선택 */
       SELECT: 'action:character:select',
     },
+    /** 게임 */
     GAME: {
+      /** 게임 시작 */
       START: 'action:game:start',
     },
+
+    /** 디버그 */
+    DEBUG: {
+      /** 디버그 패널 토글 */
+      TOGGLE: 'action:debug:toggle',
+
+      /** 디버그 탭 변경 */
+      CHANGE_TAB: 'action:debug:change_tab',
+    },
+
+    /** 루프 정보 업데이트 */
+    UPDATE_LOOP_INFO: 'action:debug:update_loop_info',
+  },
+
+  /** 디버그 */
+  DEBUG: {
+    /** 디버그 이벤트 기록 */
+    EVENT_LOGGED: 'action:debug:event_logged',
   },
 };
 

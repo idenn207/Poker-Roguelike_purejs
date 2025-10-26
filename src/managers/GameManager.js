@@ -24,6 +24,7 @@ class GameManager extends ManagerCore {
       reward: new RewardManager(this.eventBus),
       ui: new UIManager(this.eventBus),
       render: new RenderManager(this.eventBus),
+      debug: new DebugManager(this.eventBus),
       screen: new ScreenManager(this.eventBus),
     };
 
@@ -42,6 +43,9 @@ class GameManager extends ManagerCore {
 
     // DOM 요소 연결
     this.managers.screen.init(); // 화면 매니저 초기화
+
+    // DOM 요소 연결
+    this.managers.debug.init(); // 디버그 매니저 초기화
 
     // 나머지 매니저 초기화
     this.managers.input.init(); // 사용자 입력 매니저 초기화

@@ -4,7 +4,7 @@ class EventBus {
      * 이벤트 리스너 저장소
      * @type {Map<string, Array<{id: string, callback: Function, once: boolean}>>}
      */
-    this.events = new Map();
+    this.listeners = new Map();
 
     /**
      * 리스너 ID 생성용 카운터
@@ -14,9 +14,9 @@ class EventBus {
 
     /**
      * 이벤트 히스토리 (디버그용)
-     * @type {Array<{event: string, data: any, timestamp: number}>}
+     * @type {Array<{timestamp: number, time: Date, eventName: string, data: any, listenerCount: number}>}
      */
-    this.eventHistory = [];
+    this.eventLog = [];
 
     /**
      * 최대 히스토리 길이
@@ -30,29 +30,36 @@ class EventBus {
      */
     this.isDispatching = false;
 
+    /**
+     * @type {boolean} 로깅 활성화 여부
+     */
+    this.loggingEnabled = true;
+
+    this.ignoreLoggingEvents = [EVENTS.DEBUG.EVENT_LOGGED, EVENTS.STATE.DEBUG.LOOP_UPDATED, EVENTS.STATE.DEBUG.EVENT_ADDED, EVENTS.ACTION.UPDATE_LOOP_INFO];
+
     console.debug('EventBus Initialized');
   }
 
   /**
    * 이벤트 구독
    * @param {string} eventName 이벤트명
-   * @param {Function} callback 콜백 함수
+   * @param {Function} handler 콜백 함수
    * @returns {string} 리스너 ID (제거할 때 사용)
    */
-  on(eventName, callback, once = false) {
+  on(eventName, handler, once = false) {
     if (typeof eventName !== 'string') {
       console.error('Event name must be a string');
       return null;
     }
 
-    if (typeof callback !== 'function') {
+    if (typeof handler !== 'function') {
       console.error('Callback must be a function');
       return null;
     }
 
     // 이벤트 없으면 생성
-    if (!this.events.has(eventName)) {
-      this.events.set(eventName, []);
+    if (!this.listeners.has(eventName)) {
+      this.listeners.set(eventName, []);
     }
 
     // 리스너 ID 생성
@@ -61,11 +68,11 @@ class EventBus {
     // 리스너 등록
     const listener = {
       id: listenerId,
-      callback,
+      callback: handler,
       once,
     };
 
-    this.events.get(eventName).push(listener);
+    this.listeners.get(eventName).push(listener);
 
     console.debug(`Listener registered for "${eventName}" (ID: ${listenerId})`);
 
@@ -73,8 +80,14 @@ class EventBus {
     return listenerId;
   }
 
-  once(eventName, callback) {
-    return this.on(eventName, callback, true);
+  /**
+   * 일회용 이벤트 구독
+   * @param {string} eventName
+   * @param {Function} handler
+   * @returns {string} 리스너 ID (제거할 때 사용)
+   */
+  once(eventName, handler) {
+    return this.on(eventName, handler, true);
   }
 
   /**
@@ -84,12 +97,12 @@ class EventBus {
    * @returns {boolean} 제거 성공 여부
    */
   off(eventName, listenerId) {
-    if (!this.events.has(eventName)) {
+    if (!this.listeners.has(eventName)) {
       console.warn(`No listeners registered for "${eventName}"`);
       return false;
     }
 
-    const listeners = this.events.get(eventName);
+    const listeners = this.listeners.get(eventName);
     const index = listeners.findIndex((listener) => listener.id === listenerId);
 
     // 이벤트 리스너가 없으면
@@ -103,7 +116,7 @@ class EventBus {
 
     // 리스너가 없으면 이벤트 제거
     if (listeners.length === 0) {
-      this.events.delete(eventName);
+      this.listeners.delete(eventName);
     }
 
     return true;
@@ -115,30 +128,24 @@ class EventBus {
    * @param {Object} data 데이터
    */
   emit(eventName, data = null) {
-    console.debug(`Emitting event: ${eventName}`, data);
-    // 이벤트 리스너가 없으면 반환
-    if (!this.events.has(eventName)) {
-      console.warn(`No listeners registered for "${eventName}"`);
-      return;
-    }
-
-    // 히스토리에 추가
-    this.eventHistory.push({
-      event: eventName,
-      data,
-      timestamp: performance.now(),
-    });
-
-    // 최대 길이 유지
-    if (this.eventHistory.length > this.maxHistoryLength) {
-      this.eventHistory.shift();
+    // 로그 기록
+    if (this.loggingEnabled) {
+      if (!this.ignoreLoggingEvents.includes(eventName)) {
+        this.logEvent(eventName, data);
+      }
     }
 
     this.isDispatching = true;
 
+    // 이벤트 리스너가 없으면 반환
+    if (!this.listeners.has(eventName)) {
+      console.warn(`No listeners registered for "${eventName}"`);
+      return;
+    }
+
     // 이벤트 발행
-    for (const listener of this.events.get(eventName)) {
-      console.debug('listener: ', listener);
+    for (const listener of this.listeners.get(eventName)) {
+      // console.debug('listener: ', listener);
       listener.callback(data);
 
       if (listener.once) {
@@ -150,23 +157,94 @@ class EventBus {
   }
 
   /**
-   * 임시 디버깅용
-   * @static
+   * 이벤트 로그 기록
+   * @param {string} eventName 디버그 이벤트명
+   * @param {any} data
    */
-  static debug() {
-    console.debug('Debug Info:');
-    console.debug('Registered Events:');
+  logEvent(eventName, data) {
+    const logEntry = {
+      timestamp: Date.now(),
+      time: new Date().toLocaleTimeString('ko-KR', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        fractionalSecondDigits: 3,
+      }),
+      eventName,
+      data: this.cloneData(data),
+      listnerCount: this.listeners.get(eventName)?.size || 0,
+    };
 
-    this.events.forEach((listeners, eventName) => {
-      console.debug(`  - ${eventName}: ${listeners.length} listener(s)`);
-      listeners.forEach((listener, index) => {
-        console.debug(`    [${index + 1}] ID: ${listener.id}, Once: ${listener.once}`);
+    this.eventLog.unshift(logEntry);
+
+    // 최대 로그 크기 유지
+    if (this.eventLog.length > this.maxLogSize) {
+      this.eventLog.pop();
+    }
+
+    // 디버그 이벤트 발행 (DebugManager가 구독)
+    this.emit(EVENTS.DEBUG.EVENT_LOGGED, logEntry);
+  }
+
+  /**
+   * 데이터 복사 (순환 참조 방지)
+   * @param {any} data
+   * @returns {any}
+   */
+  cloneData(data) {
+    try {
+      return JSON.parse(JSON.stringify(data));
+    } catch (error) {
+      return { error: 'Cannot clone data (circular reference)' };
+    }
+  }
+
+  /**
+   * 이벤트 로그 조회
+   * @returns {typeof this.eventLog}
+   */
+  getEventLog() {
+    return [...this.eventLog];
+  }
+
+  /**
+   * 이벤트 로그 초기화
+   */
+  clearEventLog() {
+    this.eventLog = [];
+    console.debug('Event log cleared');
+  }
+
+  /**
+   * 등록된 이벤트 목록 조회
+   * @returns {Array<Object>}
+   */
+  getRegisteredEvents() {
+    const events = [];
+    this.listeners.forEach((listeners, eventName) => {
+      events.push({
+        eventName,
+        listenerCount: listeners.size,
       });
     });
+    return events.sort((a, b) => a.eventName.localeCompare(b.eventName));
+  }
 
-    console.debug(`\nEvent History (last ${this.eventHistory.length}):`);
-    this.eventHistory.slice(-5).forEach((record) => {
-      console.debug(`  - ${record.event}:`, record.data);
-    });
+  /**
+   * 로깅 활성화/비활성화
+   * @param {boolean} enabled
+   */
+  setLogging(enabled) {
+    this.loggingEnabled = enabled;
+    console.debug(`Event logging ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
+   * 모든 리스너 제거
+   */
+  clear() {
+    this.listeners.clear();
+    console.debug('All event listeners cleared');
   }
 }

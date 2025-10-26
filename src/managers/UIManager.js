@@ -24,6 +24,8 @@ class UIManager extends ManagerCore {
     this.createMenuScreen(); // 메뉴 화면
     this.createCharacterSelectScreen(); // 캐릭터 선택 화면
 
+    this.createDebugPanel(); // 디버그 화면
+
     console.debug('UIManager init complete');
   }
 
@@ -34,6 +36,10 @@ class UIManager extends ManagerCore {
 
     // 캐릭터 변경 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.STATE.CHARACTER.CHANGED, this.onCharacterChanged.bind(this));
+
+    // Debug 상태 변경 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.TOGGLED, this.onDebugToggled.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.TAB.CHANGED, this.onDebugTabChanged.bind(this));
 
     console.debug('UIManager events registered');
   }
@@ -451,6 +457,134 @@ class UIManager extends ManagerCore {
     const chipBottom = this.draw.createElement('div', 'chip-decoration');
     this.draw.addClass(chipBottom, 'bottom');
     this.draw.appendChild(screen, chipBottom);
+  }
+
+  /**
+   * Debug 패널 생성
+   */
+  createDebugPanel() {
+    const panel = this.draw.createElement('div', 'debug-panel');
+    this.draw.setId(panel, 'debugPanel');
+    this.draw.setDisplay(panel, 'none');
+
+    // 헤더
+    const header = this.createDebugHeader();
+
+    // 탭 메뉴
+    const tabs = this.createDebugTabs();
+
+    // 컨텐츠 영역
+    const content = this.draw.createElement('div', 'debug-content');
+    this.draw.setId(content, 'debugContent');
+
+    this.draw.appendChild(panel, header);
+    this.draw.appendChild(panel, tabs);
+    this.draw.appendChild(panel, content);
+
+    this.draw.appendChild(document.body, panel);
+  }
+
+  /**
+   * Debug 헤더 생성
+   * @returns {HTMLElement}
+   */
+  createDebugHeader() {
+    const header = this.draw.createElement('div', 'debug-header');
+
+    const title = this.draw.createElement('div', 'debug-title');
+    this.draw.setText(title, 'Debug Panel');
+
+    const controls = this.draw.createElement('div', 'debug-controls');
+
+    // 닫기 버튼
+    const closeBtn = this.draw.createElement('button', 'debug-btn');
+    this.draw.setText(closeBtn, 'x');
+    this.trackDomListener(closeBtn, EVENTS.DOM.CLICK, () => {
+      this.eventBus.emit(EVENTS.ACTION.DEBUG.TOGGLE, {});
+    });
+
+    this.draw.appendChild(controls, closeBtn);
+    this.draw.appendChild(header, title);
+    this.draw.appendChild(header, controls);
+
+    return header;
+  }
+
+  /**
+   * Debug 탭 생성
+   * @returns {HTMLElement}
+   */
+  createDebugTabs() {
+    const tabsContainer = this.draw.createElement('div', 'debug-tabs');
+
+    const tabs = [
+      { id: 'events', label: 'Events' },
+      { id: 'state', label: 'GameState' },
+      { id: 'loop', label: 'GameLoop' },
+    ];
+
+    tabs.forEach((tab) => {
+      const tabBtn = this.draw.createElement('button', 'debug-tab');
+      this.draw.setText(tabBtn, tab.label);
+      this.draw.addDataset(tabBtn, 'tab', tab.id);
+
+      if (tab.id === 'events') {
+        this.draw.addClass(tabBtn, 'active');
+      }
+
+      this.trackDomListener(tabBtn, EVENTS.DOM.CLICK, () => {
+        this.eventBus.emit(EVENTS.ACTION.DEBUG.CHANGE_TAB, { tabId: tab.id });
+      });
+
+      this.draw.appendChild(tabsContainer, tabBtn);
+    });
+
+    return tabsContainer;
+  }
+
+  /**
+   * Debug 토글 이벤트 핸들러
+   * @param {Object} data
+   * @param {boolean} data.isActive 디버깅 활성화 상태
+   * @param {string} data.currentTab 현재 탭
+   */
+  onDebugToggled(data) {
+    const { isActive, currentTab } = data;
+
+    const panel = this.draw.getElementById('debugPanel');
+    if (panel) {
+      this.draw.setDisplay(panel, isActive ? 'block' : 'none');
+
+      if (isActive) {
+        // 패널이 열리면 RenderManager에 렌더링 요청
+        this.eventBus.emit(EVENTS.RENDER.DEBUG_PANEL, {
+          tab: currentTab,
+        });
+      }
+    }
+  }
+
+  /**
+   * Debug 탭 변경 이벤트 핸들러
+   * @param {Object} data
+   * @param {string} data.currentTab 현재 탭
+   */
+  onDebugTabChanged(data) {
+    const { currentTab } = data;
+    // 탭 버튼 활성화 상태 변경
+    const tabButtons = document.querySelectorAll('.debug-tab');
+    tabButtons.forEach((btn) => {
+      if (btn.dataset.tab === currentTab) {
+        this.draw.addClass(btn, 'active');
+      } else {
+        this.draw.removeClass(btn, 'active');
+      }
+    });
+
+    // RenderManager에 렌더링 요청
+    this.eventBus.emit(EVENTS.RENDER.DEBUG_PANEL, {
+      tab: currentTab,
+    });
   }
 
   update(deltaTime) {}

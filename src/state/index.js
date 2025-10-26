@@ -6,6 +6,7 @@
 
 const stateScripts = [
   // 로드 경로 : /src/state/*.js
+  '/src/state/DebugState.js',
   '/src/state/GameState.js',
 ];
 

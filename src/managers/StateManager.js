@@ -16,6 +16,9 @@ class StateManager extends ManagerCore {
     /** @type {GameState} 전역 게임 상태 */
     this.gameState = new GameState();
 
+    /** @type {DebugState} 전역 디버그 상태 */
+    this.debugState = new DebugState();
+
     console.debug('StateManager initialized');
   }
 
@@ -41,9 +44,16 @@ class StateManager extends ManagerCore {
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.CHARACTER.SELECT, this.handleSelectCharacter.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.GAME.START, this.handlerStartNewGame.bind(this));
 
+    // Debug 액션 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.TOGGLE, this.handleToggleDebug.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.CHANGE_TAB, this.handleChangeDebugTab.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.UPDATE_LOOP_INFO, this.handleUpdateLoopInfo.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.DEBUG.EVENT_LOGGED, this.handleEventLogged.bind(this));
+
     // 상태 조회 요청 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.QUERY.GAME.STATE, this.handleQueryGameState.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.QUERY.CHARACTER.STATE, this.handleQueryCharacterState.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.QUERY.DEBUG.STATE, this.handleQueryDebugState.bind(this));
 
     console.log('StateManager events registered');
   }
@@ -193,6 +203,125 @@ class StateManager extends ManagerCore {
 
     // 응답 이벤트 발행
     this.#emitCharacterState(requestId);
+  }
+
+  /**
+   * Debug 상태 조회 요청 핸들러
+   * @param {Object} data
+   * @param {string} data.requestId 요청 ID
+   */
+  handleQueryDebugState(data) {
+    const { requestId } = data;
+
+    // 응답 이벤트 발행
+    this.eventBus.emit(EVENTS.RESPONSE.DEBUG.STATE, {
+      requestId,
+      isActive: this.debugState.isActive,
+      currentTab: this.debugState.currentTab,
+      loopInfo: this.debugState.loopInfo,
+      fpsHistory: this.debugState.fpsHistory,
+      recentEvents: this.debugState.recentEvents,
+    });
+  }
+
+  // ========================================
+  // Debug 상태 관리
+  // ========================================
+
+  /**
+   * Debug 패널 토글 액션 핸들러
+   * @param {Object} data
+   */
+  handleToggleDebug(data) {
+    this.debugState.isActive = !this.debugState.isActive;
+
+    console.debug('Debug panel toggled:', this.debugState.isActive);
+
+    // Debug 상태 변경 이벤트 발행
+    this.eventBus.emit(EVENTS.STATE.DEBUG.TOGGLED, {
+      isActive: this.debugState.isActive,
+      currentTab: this.debugState.currentTab,
+    });
+  }
+
+  /**
+   * Debug 탭 변경 액션 핸들러
+   * @param {Object} data
+   * @param {string} data.tabId
+   */
+  handleChangeDebugTab(data) {
+    const { tabId } = data;
+    this.debugState.currentTab = tabId;
+
+    console.debug('Debug tab changed:', this.debugState.currentTab);
+
+    // Debug 탭 변경 이벤트 발행
+    this.eventBus.emit(EVENTS.STATE.DEBUG.TAB.CHANGED, {
+      currentTab: this.debugState.currentTab,
+      isActive: this.debugState.isActive,
+    });
+  }
+
+  /**
+   * 게임 루프 정보 업데이트 액션 핸들러
+   * @param {Object} data
+   * @param {number} data.fps 초당 프레임 수
+   * @param {number} data.deltaTime 델타 타임
+   * @param {number} data.totalTime 총 플레이 시간
+   * @param {number} data.frameCount 프레임 수
+   * @param {number} data.avgFps 평균 프레임 수
+   * @param {boolean} data.running 게임 루프 실행 중 여부
+   * @param {boolean} data.paused 게임 루프 일시 정지 여부
+   */
+  handleUpdateLoopInfo(data) {
+    // 루프 정보 업데이트
+    this.debugState.loopInfo = {
+      fps: data.fps || 0,
+      deltaTime: data.deltaTime || 0,
+      totalTime: data.totalTime || 0,
+      frameCount: data.frameCount || 0,
+      avgFps: data.avgFps || 0,
+      running: data.running || false,
+      paused: data.paused || false,
+    };
+
+    // FPS 히스토리 업데이트
+    if (data.fps > 0) {
+      this.debugState.fpsHistory.unshift(data.fps);
+      if (this.debugState.fpsHistory.length > this.debugState.maxFpsHistory) {
+        this.debugState.fpsHistory.pop();
+      }
+    }
+
+    // Debug가 활성화되어 있으면 이벤트 발행
+    if (this.debugState.isActive) {
+      this.eventBus.emit(EVENTS.STATE.DEBUG.LOOP_UPDATED, {
+        loopInfo: this.debugState.loopInfo,
+        fpsHistory: this.debugState.fpsHistory,
+      });
+    }
+  }
+
+  /**
+   * 이벤트 로그 핸들러
+   * @param {Object} log
+   */
+  handleEventLogged(log) {
+    // 최근 이벤트에 추가
+    this.debugState.recentEvents.unshift(log);
+
+    // 최대 개수 유지
+    if (this.debugState.recentEvents.length > this.debugState.maxRecentEvents) {
+      this.debugState.recentEvents.pop();
+    }
+
+    // Debug가 활성화되어 있으면 이벤트 발행
+    if (this.debugState.isActive) {
+      this.eventBus.emit(EVENTS.STATE.DEBUG.EVENT_ADDED, {
+        event: log,
+        recentEvents: this.debugState.recentEvents,
+      });
+    }
   }
 
   // ========================================

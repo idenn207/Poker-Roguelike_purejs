@@ -52,6 +52,10 @@ class GameLoop {
     this.debug = true;
     this.gameManager = new GameManager();
 
+    // FPS 평균 계산용
+    this.fpsHistory = [];
+    this.maxFpsHistory = 60;
+
     console.debug('GameLoop Initialized');
   }
 
@@ -102,6 +106,14 @@ class GameLoop {
     // FPS 계산
     this.#getFPS(this.currentTime);
 
+    // 평균 FPS 계산
+    this.#getAvgFPS();
+
+    // Debug 정보 방행 (StateManager로)
+    if (this.gameManager && this.gameManager.eventBus) {
+      this.gameManager.eventBus.emit(EVENTS.ACTION.UPDATE_LOOP_INFO, this.getDebugInfo());
+    }
+
     // 업데이트
     this.update(this.deltaTime);
 
@@ -130,11 +142,19 @@ class GameLoop {
   }
 
   #getFPS(currentTime) {
-    this.fps = 0;
+    let fps = 0;
     this.fpsTime = currentTime - this.lastFpsUpdate;
 
     if (this.fpsTime >= 1000) {
-      this.fps = this.frameCount;
+      fps = this.frameCount;
+
+      // FPS 히스토리 업데이트
+      this.fpsHistory.unshift(fps);
+      if (this.fpsHistory.length > this.maxFpsHistory) {
+        this.fpsHistory.pop();
+      }
+
+      this.fps = fps;
       this.frameCount = 0;
       this.lastFpsUpdate = currentTime;
     }
@@ -143,11 +163,24 @@ class GameLoop {
     return this.fps;
   }
 
+  #getAvgFPS() {
+    if (this.fpsHistory.length === 0) return this.fps;
+    const sum = this.fpsHistory.reduce((a, b) => a + b, 0);
+    const avgFps = Math.round(sum / this.fpsHistory.length);
+    this.avgFps = avgFps;
+
+    return this.avgFps;
+  }
+
   getDebugInfo() {
     return {
       deltaTime: this.deltaTime,
       fps: this.fps,
+      avgFps: this.avgFps,
       totalTime: this.totalTime,
+      frameCount: this.frameCount,
+      running: this.running,
+      paused: this.isPaused,
     };
   }
 }

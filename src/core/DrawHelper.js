@@ -287,6 +287,43 @@ class DrawHelper {
   }
 
   // ----- 속성 조작 ----- //
+
+  /**
+   * 요소에 데이터 셋 추가
+   * @param {HTMLElement} element 요소
+   * @param {string} key 데이터 셋 키
+   * @param {any} value 데이터 셋 값
+   */
+  static addDataset(element, key, value) {
+    if (element instanceof HTMLElement && typeof key === 'string') {
+      element.dataset[key] = value;
+    }
+  }
+
+  /**
+   * 요소의 데이터 셋 조회
+   * @param {HTMLElement} element 요소
+   * @param {string} key 데이터 셋 키
+   * @returns {any} 데이터 셋 값
+   */
+  static getDataset(element, key) {
+    if (element instanceof HTMLElement && typeof key === 'string') {
+      return element.dataset[key];
+    }
+    return null;
+  }
+
+  /**
+   * 요소의 데이터 셋 제거
+   * @param {HTMLElement} element 요소
+   * @param {string} key 데이터 셋 키
+   */
+  static removeDataset(element, key) {
+    if (element instanceof HTMLElement && typeof key === 'string') {
+      delete element.dataset[key];
+    }
+  }
+
   /**
    * 요소의 disabled 속성 설정
    * @param {HTMLElement} element 요소
