@@ -1,18 +1,18 @@
-// @ts-check
-
 /**
- * 파일위치: /src/managers/game-manager.js
- * 파일명: game-manager.js
+ * 파일위치: /src/managers/GameManager.js
+ * 파일명: GameManager.js
  * 용도: 게임 진행 관리
- * 기능: Deck과 Hand 통합 관리
- * 책임: 게임 로직 및 카드 이동 조정
+ * 기능: 모든 Manager 통합 관리
+ * 책임: 게임 로직 및 Manager 조율
  */
 
 class GameManager extends ManagerCore {
   constructor() {
     super();
+
     /** @type {EventBus} */
     this.eventBus = new EventBus();
+
     this.managers = {
       state: new StateManager(this.eventBus),
       input: new InputManager(this.eventBus),
@@ -34,27 +34,45 @@ class GameManager extends ManagerCore {
    * 게임 초기화
    */
   init() {
-    // 각 매니저 초기화
-    this.managers.state.init(); // 게임 상태 매니저 초기화
-    this.managers.input.init(); // 사용자 입력 매니저 초기화
-    this.managers.combat.init(); // 전투 매니저 초기화
+    // UI 먼저 생성 (화면 요소들이 DOM에 추가)
+    this.managers.ui.init(); // UI 매니저 초기화
+
+    // DOM 요소 연결
     this.managers.screen.init(); // 화면 매니저 초기화
+
+    // 초기 화면 상태 설정
+    this.managers.state.init(); // 게임 상태 매니저 초기화
+
+    // 나머지 매니저 초기화
+    this.managers.input.init(); // 사용자 입력 매니저 초기화
+    this.managers.card.init(); // 전투 매니저 초기화
+    this.managers.deck.init(); // 덱 매니저 초기화
+    this.managers.stage.init(); // 스테이지 매니저 초기화
+    this.managers.combat.init(); // 전투 매니저 초기화
+    this.managers.shop.init(); // 상점 매니저 초기화
+    this.managers.reward.init(); // 보상 매니저 초기화
+    this.managers.render.init(); // 렌더링 매니저 초기화
 
     // 이벤트 등록
     this.registerAllEventListeners();
+
+    console.debug('GameManager init complete');
   }
 
+  /**
+   * 모든 Manager의 이벤트 리스너 등록
+   */
   registerAllEventListeners() {
-    console.log('이벤트 리스너 등록 중...');
+    console.debug('registered events for all managers');
 
     Object.entries(this.managers).forEach(([name, manager]) => {
       if (manager.registerEvents && typeof manager.registerEvents === 'function') {
-        console.log(`${name} 이벤트 등록...`);
+        console.debug(`registering events for ${name}...`);
         manager.registerEvents();
       }
     });
 
-    console.log('모든 이벤트 리스너 등록 완료');
+    console.debug('all events registered');
   }
 
   /**
@@ -64,28 +82,49 @@ class GameManager extends ManagerCore {
     const currentScreen = GameState.currentScreen;
 
     switch (currentScreen) {
-      case SCREEN_STATE_TYPE.BATTLE:
+      case SCREEN_STATE_TYPE.BATTLE: {
         // 게임 업데이트 로직
-        CombatManager.update(deltaTime);
+        this.managers.combat.update(deltaTime);
         break;
-      case SCREEN_STATE_TYPE.MENU:
+      }
+      case SCREEN_STATE_TYPE.MENU: {
         // 메뉴 업데이트 로직
         break;
+      }
+      default: {
+        // 기타 화면
+        break;
+      }
     }
 
-    // 상태 업데이트 로직
-    // UI 업데이트 로직
-    // UIManager.update();
+    // UI 업데이트
+    this.managers.ui.update(deltaTime);
 
-    // Debug 화면 업데이트 로직
+    // 렌더링 업데이트
+    this.managers.render.update(deltaTime);
   }
 
-  newGame() {}
+  /**
+   * 새 게임 시작
+   */
+  newGame() {
+    console.log('New game starting...');
+    // TODO: 구현 예정
+  }
 
+  /**
+   * 스테이지 선택
+   */
   selectStage(stage) {
-    // this.stage = stage;
-    return this;
+    console.log(`Stage selected: ${stage}`);
+    // TODO: 구현 예정
   }
 
-  endCombat() {}
+  /**
+   * 전투 종료
+   */
+  endCombat() {
+    console.log('Combat ended');
+    // 구현 예정
+  }
 }

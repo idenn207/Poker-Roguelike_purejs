@@ -112,9 +112,11 @@ class EventBus {
   /**
    * 이벤트 발행
    * @param {string} eventName 이벤트명
-   * @param {any} args 데이터
+   * @param {Object} data 데이터
    */
-  emit(eventName, ...args) {
+  emit(eventName, data = null) {
+    console.debug(`Emitting event: ${eventName}`, data);
+    console.debug(`this.events: `, this.events);
     // 이벤트 리스너가 없으면 반환
     if (!this.events.has(eventName)) {
       console.warn(`No listeners registered for "${eventName}"`);
@@ -137,7 +139,8 @@ class EventBus {
 
     // 이벤트 발행
     for (const listener of this.events.get(eventName)) {
-      listener.callback(...args);
+      console.debug('listener: ', listener);
+      listener.callback(data);
 
       if (listener.once) {
         this.off(eventName, listener.id);
@@ -145,5 +148,26 @@ class EventBus {
     }
 
     this.isDispatching = false;
+  }
+
+  /**
+   * 임시 디버깅용
+   * @static
+   */
+  static debug() {
+    console.debug('Debug Info:');
+    console.debug('Registered Events:');
+
+    this.events.forEach((listeners, eventName) => {
+      console.debug(`  - ${eventName}: ${listeners.length} listener(s)`);
+      listeners.forEach((listener, index) => {
+        console.debug(`    [${index + 1}] ID: ${listener.id}, Once: ${listener.once}`);
+      });
+    });
+
+    console.debug(`\nEvent History (last ${this.eventHistory.length}):`);
+    this.eventHistory.slice(-5).forEach((record) => {
+      console.debug(`  - ${record.event}:`, record.data);
+    });
   }
 }

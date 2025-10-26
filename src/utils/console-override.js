@@ -115,7 +115,7 @@
   }
 
   // 모든 console 메서드 override
-  console.log = overrideConsole('log', originalConsole.log);
+  // console.log = overrideConsole('log', originalConsole.log);
   console.info = overrideConsole('info', originalConsole.info);
   console.warn = overrideConsole('warn', originalConsole.warn);
   console.error = overrideConsole('error', originalConsole.error);

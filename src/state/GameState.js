@@ -12,7 +12,7 @@
 class GameState {
   constructor() {
     /**
-     * @type {keyof SCREEN_STATE_TYPE} 화면 상태
+     * @type {typeof SCREEN_STATE_TYPE[keyof typeof SCREEN_STATE_TYPE]} 화면 상태
      */
     this.currentScreen = 'logo';
 
@@ -42,6 +42,47 @@ class GameState {
     this.isGameActive = false;
     this.isPaused = false;
 
-    console.log('GameState Initialized');
+    console.debug('GameState Initialized');
+  }
+
+  setCurrentScreen(screen) {
+    this.currentScreen = screen;
+  }
+
+  setCurrentStage(stage) {
+    this.stage.current = stage;
+  }
+
+  setCurrentPlayer(player) {
+    this.player = player;
+  }
+
+  setCurrentSettings(settings) {
+    this.settings = settings;
+  }
+
+  getCurrentScreen() {
+    return this.currentScreen;
+  }
+
+  getCurrentStage() {
+    return this.stage.current;
+  }
+
+  getCurrentPlayer() {
+    return this.player;
+  }
+
+  getCurrentSettings() {
+    return this.settings;
+  }
+
+  getCurrentGameState() {
+    return {
+      screen: this.getCurrentScreen(),
+      stage: this.getCurrentStage(),
+      player: this.getCurrentPlayer(),
+      settings: this.getCurrentSettings(),
+    };
   }
 }

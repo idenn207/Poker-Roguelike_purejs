@@ -2,7 +2,49 @@
 
 // ---------- 이벤트 목록 정의 ---------- //
 const EVENTS = {
-  /** 1. GAME - 게임 전체 생명주기 관리 */
+  /** TYPE - 변경 상태 대상 목록 (관련 매니저) */
+  TYPE: {
+    STATE: 'state',
+    INPUT: 'input',
+    CARD: 'card',
+    DECK: 'deck',
+    STAGE: 'stage',
+    COMBAT: 'combat',
+    SHOP: 'shop',
+    REWARD: 'reward',
+    RENDER: 'render',
+    UI: 'ui',
+    SCREEN: 'screen',
+  },
+
+  /** DOM - 문서 객체 모델 관련 */
+  DOM: {
+    /** 클릭 */
+    CLICK: 'click',
+
+    /** 키 누름 */
+    KEY_DOWN: 'keydown',
+
+    /** 키 뗌 */
+    KEY_UP: 'keyup',
+
+    /** 키 입력 */
+    KEY_PRESS: 'keypress',
+
+    /** 강조 */
+    FOCUS: 'focus',
+
+    /** 입력 */
+    INPUT: 'input',
+
+    /** 변경 */
+    CHANGE: 'change',
+
+    /** 전환 종료 */
+    TRANSITION_END: 'transitionend',
+  },
+
+  /** GAME - 게임 전체 생명주기 관리 */
   GAME: {
     /** 게임 초기화 완료 */
     INITIALIZED: 'game:initialized',
@@ -34,7 +76,8 @@ const EVENTS = {
     /** 게임 로드 완료 */
     LOAD_COMPLETED: 'game:load_completed',
   },
-  /** 2. COMBAT - 전투 시스템 */
+
+  /** COMBAT - 전투 시스템 */
   COMBAT: {
     /** 전투 시작 */
     STARTED: 'combat:started',
@@ -57,7 +100,8 @@ const EVENTS = {
     /** 피해량 계산 완료 */
     DAMAGE_CALCULATED: 'combat:damage_calculated',
   },
-  /** 3. PLAYER - 플레이어 상태 */
+
+  /** PLAYER - 플레이어 상태 */
   PLAYER: {
     /** 플레이어 생성 */
     SPAWNED: 'player:spawned',
@@ -86,7 +130,8 @@ const EVENTS = {
     /** 플레이어 사망 */
     DIED: 'player:died',
   },
-  /** 4. ENEMY - 적 상태 */
+
+  /** ENEMY - 적 상태 */
   ENEMY: {
     /** 적 생성 */
     SPAWNED: 'enemy:spawned',
@@ -112,7 +157,8 @@ const EVENTS = {
     /** 적 사망 */
     DIED: 'enemy:died',
   },
-  /** 5. CARD - 카드 개별 동작 */
+
+  /** CARD - 카드 개별 동작 */
   CARD: {
     /** 카드 생성 */
     CREATED: 'card:created',
@@ -153,7 +199,8 @@ const EVENTS = {
     /** 카드 조건 발동 */
     CONDITION_TRIGGERED: 'card:condition_triggered',
   },
-  /** 6. DECK - 덱 관리 */
+
+  /** DECK - 덱 관리 */
   DECK: {
     /** 덱 초기화 */
     INITIALIZED: 'deck:initialized',
@@ -176,7 +223,8 @@ const EVENTS = {
     /** 카드 제거 */
     CARD_REMOVED: 'deck:card_removed',
   },
-  /** 7. HAND - 핸드 관리 */
+
+  /** HAND - 핸드 관리 */
   HAND: {
     /** 핸드 초기화 */
     INITIALIZED: 'hand:initialized',
@@ -193,7 +241,8 @@ const EVENTS = {
     /** 핸드 크기 변경 */
     SIZE_CHANGED: 'hand:size_changed',
   },
-  /** 8. INPUT - 사용자 입력 */
+
+  /** INPUT - 사용자 입력 */
   INPUT: {
     /** 카드 클릭 */
     CARD_CLICKED: 'input:card_clicked',
@@ -234,7 +283,8 @@ const EVENTS = {
     /** 키 입력 */
     KEY_PRESSED: 'input:key_pressed',
   },
-  /** 9. SCREEN - 화면 전황 */
+
+  /** SCREEN - 화면 전황 */
   SCREEN: {
     /** 화면 변환 */
     CHANGED: 'screen:changed',
@@ -282,7 +332,7 @@ const EVENTS = {
     },
   },
 
-  /** 10. BUFF - 버프/디버프 시스템 */
+  /** BUFF - 버프/디버프 시스템 */
   BUFF: {
     /** 버프 적용 */
     APPLIED: 'buff:applied',
@@ -348,7 +398,8 @@ const EVENTS = {
     /** 약화 */
     WEAKEN: 'buff:weaken',
   },
-  /** 11. STATE - 게임 상태 관리 */
+
+  /** STATE - 게임 상태 관리 */
   STATE: {
     /** 상태 변경 */
     CHANGED: 'state:changed',
@@ -362,7 +413,8 @@ const EVENTS = {
     /** 상태 리셋 */
     RESET: 'state:reset',
   },
-  /** 12. UI - UI 업데이트 */
+
+  /** UI - UI 업데이트 */
   UI: {
     /** 체력 바 업데이트 */
     HEALTH_BAR_UPDATE: 'ui:health_bar_update',
@@ -400,7 +452,8 @@ const EVENTS = {
       COMPLETED: 'ui:animation:completed',
     },
   },
-  /** 13. RENDER - 렌더링 관련 */
+
+  /** RENDER - 렌더링 관련 */
   RENDER: {
     /** 프레임 */
     FRAME: {
@@ -444,7 +497,8 @@ const EVENTS = {
     /** 발광 효과 */
     GLOW_EFFECT: 'render:glow_effect',
   },
-  /** 14. SHOP - 상점 시스템 */
+
+  /** SHOP - 상점 시스템 */
   SHOP: {
     /** 상점 열림 */
     OPENED: 'shop:opened',
@@ -476,7 +530,8 @@ const EVENTS = {
     /** 덱에서 카드 제거 */
     CARD_REMOVED_FROM_DECK: 'shop:card:removed_from_deck',
   },
-  /** 15. REWARD - 보상 시스템 */
+
+  /** REWARD - 보상 시스템 */
   REWARD: {
     /** 보상 화면 */
     SCREEN: {
@@ -501,6 +556,8 @@ const EVENTS = {
     /** 보상 스킵 */
     SKIP_CONFIRMED: 'reward:skip_confirmed',
   },
+
+  /** STAGE - 스테이지 관련 */
   STAGE: {
     /** 스테이지 시작 */
     STARTED: 'stage:started',

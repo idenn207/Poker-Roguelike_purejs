@@ -1,19 +1,19 @@
-// @ts-check
-
 /**
- * 파일위치: /src/managers/screen-manager.js
- * 파일명: screen-manager.js
+ * 파일위치: /src/managers/ScreenManager.js
+ * 파일명: ScreenManager.js
  * 용도: 화면 전환 관리
- * 기능: 화면 표시/숨김, 전환 애니메이션
- * 책임: UI 화면 관리
+ * 기능: 화면 표시/숨김, 전환 애니메이션 제어
+ * 책임: UI 화면 전환 관리, 이벤트 발행
  */
 
-class ScreenManager {
+class ScreenManager extends ManagerCore {
   /**
    * @constructor
    * @param {EventBus} eventBus 이벤트 버스 객체
    */
   constructor(eventBus) {
+    super();
+
     /**
      * 이벤트 버스 객체
      * @type {EventBus}
@@ -22,24 +22,27 @@ class ScreenManager {
 
     /**
      * 화면 요소 맵
+     * @type {Object.<string, HTMLElement>}
      */
-    this.screens = {
-      logo: document.getElementById('logoScreen'),
-      loading: document.getElementById('loadingScreen'),
-      menu: document.getElementById('menuScreen'),
-      pause: document.getElementById('pauseScreen'),
-      setting: document.getElementById('settingScreen'),
-      stage: document.getElementById('stageSelectScreen'),
-      battle: document.getElementById('battleScreen'),
-      reward: document.getElementById('rewardScreen'),
-      gameover: document.getElementById('gameoverScreen'),
-    };
+    this.screens = {};
 
-    /** 현재 화면 */
+    /**
+     * 현재 화면
+     * @type {HTMLElement|null}
+     */
     this.currentScreen = null;
 
-    /** 전환중 여부 */
+    /**
+     * 전환중 여부
+     * @type {boolean}
+     */
     this.isTransitioning = false;
+
+    /**
+     * 화면 전환 완료 대기 시간 (ms)
+     * @type {number}
+     */
+    this.transitionDuration = 500;
 
     console.debug('ScreenManager Initialized');
   }
@@ -48,50 +51,183 @@ class ScreenManager {
    * 화면 초기화 + 이벤트 버스 등록
    */
   init() {
-    // 화면 이벤트 등록
+    // 화면 요소 초기화 (UIManager 가 생성한 요소 연결)
+    this.screens = {
+      logo: this.draw.getElement('#logoScreen'),
+      loading: this.draw.getElement('#loadingScreen'),
+      menu: this.draw.getElement('#menuScreen'),
+      pause: this.draw.getElement('#pauseScreen'),
+      setting: this.draw.getElement('#settingScreen'),
+      stage: this.draw.getElement('#stageScreen'),
+      battle: this.draw.getElement('#battleScreen'),
+      reward: this.draw.getElement('#rewardScreen'),
+      gameover: this.draw.getElement('#gameoverScreen'),
+    };
 
-    // 초기 화면 설정
-    this.eventBus.emit('screen:state:change', 'loading');
+    // 초기 화면 표시 (logo)
+    this.showLogoScreen();
+
+    console.debug('ScreenManager init complete');
+  }
+
+  /** 이벤트 등록 */
+  registerEvents() {
+    // 상태 변경 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.CHANGED, this.onStateChanged.bind(this));
+
+    console.debug('ScreenManager events registered');
+  }
+
+  /**
+   * 상태 변경 이벤트 핸들러
+   * @param {Object} data
+   */
+  onStateChanged(data) {
+    if (data.type === EVENTS.TYPE.SCREEN) {
+      this.show(data.current);
+    }
   }
 
   /**
    * 화면 전환
-   * @param {string} screenName 화면 이름
-   * @param {boolean} showLoading 로딩 화면 표시 여부
+   * @param {string} screenName 전환할 화면 이름
+   * @returns {Promise<void>}
    */
-  async show(screenName, showLoading = true) {
-    if (this.isTransitioning) return;
+  async show(screenName) {
+    if (this.isTransitioning) {
+      console.warn('Screen transition already in progress');
+      return;
+    }
+
+    console.debug('this.screens: ', this.screens);
+    const newScreen = this.screens[screenName];
+    if (!newScreen) {
+      console.error(`Screen not found: ${screenName}`);
+      return;
+    }
+
     this.isTransitioning = true;
+
+    console.debug(`Screen transition start: ${screenName}`);
 
     // 현재 화면 페이드 아웃
     if (this.currentScreen) {
-      this.currentScreen.classList.remove('show');
-      // await this.wait(500);
+      await this.hideScreen(this.currentScreen);
     }
 
-    // 로딩 화면 표시 (필요시)
-    if (showLoading && screenName !== 'loading') {
-      this.screens.loading.classList.add('show');
-      // await this.#wait(1000);
-      this.screens.loading.classList.remove('show');
-      // await this.#wait(500);
-    }
+    // 새 화면 페이드 인
+    await this.showScreen(newScreen);
 
-    // 새 화면 표시
-    const newScreen = this.screens[screenName];
-    if (newScreen) {
-      newScreen.classList.add('show');
-      this.currentScreen = newScreen;
-    }
-
+    this.currentScreen = newScreen;
     this.isTransitioning = false;
+
+    // 화면 전환 완료 이벤트 발행
+    this.eventBus.emit(EVENTS.SCREEN.CHANGED, {
+      screenName: screenName,
+      element: newScreen,
+    });
+
+    console.debug(`Screen transition complete: ${screenName}`);
+
+    // 특정 화면 전환 시 다음 단계 자동 진행
+    this.handleAutoTransition(screenName);
   }
 
   /**
-   * 대기
-   * @param {number} ms
+   * 화면 표시
+   * @param {HTMLElement} screen
+   * @returns {Promise<void>}
    */
-  #wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  showScreen(screen) {
+    return new Promise((resolve, reject) => {
+      // show 클래스 추가
+      this.draw.addClass(screen, 'show');
+
+      // transitionend 이벤트 대기
+      const onTransitionEnd = () => {
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        resolve();
+      };
+
+      this.trackDomListener(screen, EVENTS.DOM.TRANSITION_END, onTransitionEnd);
+
+      // 안전장치: transition이 없을 경우 타임아웃
+      setTimeout(() => {
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        resolve();
+      }, this.transitionDuration + 100);
+    });
   }
+
+  /**
+   * 로고 화면 표시 (초기 진입시)
+   */
+  showLogoScreen() {
+    const logoScreen = this.screens.logo;
+    if (logoScreen) {
+      this.draw.addClass(logoScreen, 'show');
+      this.currentScreen = logoScreen;
+
+      // 자동 전환 시작
+      this.handleAutoTransition(SCREEN_STATE_TYPE.LOGO);
+    }
+  }
+
+  hideScreen(screen) {
+    return new Promise((resolve, reject) => {
+      // hide 클래스 추가
+      this.draw.removeClass(screen, 'show');
+
+      // transitionend 이벤트 대기
+      const onTransitionEnd = () => {
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        resolve();
+      };
+
+      this.trackDomListener(screen, EVENTS.DOM.TRANSITION_END, onTransitionEnd);
+
+      // 안전장치: transition이 없을 경우 타임아웃
+      setTimeout(() => {
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        resolve();
+      }, this.transitionDuration + 100);
+    });
+  }
+
+  /**
+   * 자동 화면 전환 처리
+   * @param {typeof SCREEN_STATE_TYPE[keyof typeof SCREEN_STATE_TYPE]} screenName
+   */
+  handleAutoTransition(screenName) {
+    switch (screenName) {
+      case SCREEN_STATE_TYPE.LOGO: {
+        // 로고 화면 2초 후 로딩 화면으로
+        setTimeout(() => {
+          this.eventBus.emit(EVENTS.STATE.CHANGED, {
+            type: EVENTS.TYPE.SCREEN,
+            previous: SCREEN_STATE_TYPE.LOGO,
+            current: SCREEN_STATE_TYPE.LOADING,
+          });
+        }, 2000);
+        break;
+      }
+      case SCREEN_STATE_TYPE.LOADING: {
+        // 로딩 화면 1.5초 후 메뉴 화면으로
+        setTimeout(() => {
+          this.eventBus.emit(EVENTS.STATE.CHANGED, {
+            type: EVENTS.TYPE.SCREEN,
+            previous: SCREEN_STATE_TYPE.LOADING,
+            current: SCREEN_STATE_TYPE.MENU,
+          });
+        }, 1500);
+        break;
+      }
+      default: {
+        // 다른 화면은 자동 전환 없음
+        break;
+      }
+    }
+  }
+
+  update(deltaTime) {}
 }

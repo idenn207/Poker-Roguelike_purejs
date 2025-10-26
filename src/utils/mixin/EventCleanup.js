@@ -1,8 +1,5 @@
-// @ts-check
-'use strict';
-
 /**
- * 파일 위치: js/utils/EventCleanupMixin.js
+ * 파일 위치: /src/utils/EventCleanupMixin.js
  * 파일명: EventCleanupMixin.js
  * 용도: 이벤트 리스너 자동 정리 기능 제공
  * 기능:
@@ -32,15 +29,15 @@ class EventCleanup {
      * 등록된 이벤트 리스너 목록
      * @type {EventListenerRecord[]}
      */
-    this.#_eventListeners = [];
+    this._eventListeners = [];
 
     /**
      * Cleanup 실행 여부
      * @type {boolean}
      */
-    this.#_iscleanedUp = false;
+    this._iscleanedUp = false;
 
-    console.debug('EventCleanupMixin Initialized');
+    // console.debug('EventCleanupMixin Initialized');
   }
 
   /**
@@ -52,7 +49,7 @@ class EventCleanup {
    */
   trackEventBusListener(eventBus, eventName, handler) {
     const listenerId = eventBus.on(eventName, handler);
-    this.#_eventListeners.push({
+    this._eventListeners.push({
       type: eventName,
       target: eventBus,
       handler: handler,
@@ -71,7 +68,7 @@ class EventCleanup {
    */
   trackDomListener(target, eventType, handler, options) {
     target.addEventListener(eventType, handler, options);
-    this.#_eventListeners.push({
+    this._eventListeners.push({
       type: eventType,
       target: target,
       handler: handler,
@@ -84,17 +81,17 @@ class EventCleanup {
    * 모든 이벤트 리스너 제거
    */
   cleanupEventListeners() {
-    if (this.#_iscleanedUp) {
+    if (this._iscleanedUp) {
       console.debug('cleanupEventListeners already called');
       return;
     }
 
-    if (!this.#_eventListeners.length) {
+    if (!this._eventListeners.length) {
       console.debug('No event listeners to clean up');
       return;
     }
 
-    this.#_eventListeners.forEach(({ type, target, handler, listenerId }) => {
+    this._eventListeners.forEach(({ type, target, handler, listenerId }) => {
       if (target instanceof EventBus) {
         target.off(type, listenerId);
       } else {
@@ -102,8 +99,8 @@ class EventCleanup {
       }
     });
 
-    this.#_eventListeners = [];
-    this.#_iscleanedUp = true;
+    this._eventListeners = [];
+    this._iscleanedUp = true;
 
     console.debug('All event listeners cleaned up');
   }
@@ -113,7 +110,7 @@ class EventCleanup {
    * @param {string} eventType 이벤트명
    */
   cleanupListenersByType(eventType) {
-    this.#_eventListeners = this.#_eventListeners.filter(({ type, target, handler, listenerId }) => {
+    this._eventListeners = this._eventListeners.filter(({ type, target, handler, listenerId }) => {
       if (type === eventType) {
         if (target instanceof EventBus) {
           target.off(type, listenerId);

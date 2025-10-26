@@ -151,7 +151,3 @@ class GameLoop {
     };
   }
 }
-
-// 테스트
-const gameLoop = new GameLoop();
-gameLoop.start();
