@@ -1,13 +1,3 @@
-// @ts-check
-
-/**
- * 파일위치: /src/models/deck.js
- * 파일명: deck.js
- * 용도: 덱 관리 시스템
- * 기능: 카드 생성, 셔플, 드로우, 버리기
- * 책임: 카드 풀 관리 (drawPile, discardPile)
- */
-
 /**
  * 덱 클래스
  */
@@ -169,11 +159,4 @@ class Deck {
     this.discardPile = [];
     return this;
   }
-}
-
-// 내보내기
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    Deck,
-  };
 }

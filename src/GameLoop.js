@@ -50,25 +50,35 @@ class GameLoop {
     this.lastFpsUpdate = 0;
     this.isPaused = false;
     this.debug = true;
+    this.gameManager = new GameManager();
+
+    console.debug('GameLoop Initialized');
   }
 
+  /** 게임 시작 */
   start() {
     this.running = true;
     this.isPaused = false;
     this.lastTime = performance.now();
     this.requestAnimationFrame(this.loop.bind(this));
+
+    // 게임 초기화
+    this.gameManager.init();
   }
 
+  /** 게임 중지(종료) */
   stop() {
     this.running = false;
     this.isPaused = false;
   }
 
+  /** 일시 정지 */
   pause() {
     this.running = false;
     this.isPaused = true;
   }
 
+  /** 계속 */
   resume() {
     this.running = true;
     this.isPaused = false;
@@ -76,6 +86,7 @@ class GameLoop {
     this.requestAnimationFrame(this.loop.bind(this));
   }
 
+  /** 게임 루프 */
   loop() {
     if (!this.running) return;
     if (this.isPaused) {
@@ -86,10 +97,10 @@ class GameLoop {
     this.currentTime = performance.now();
 
     // Delta time 계산
-    this.getDeltaTime(this.currentTime);
+    this.#getDeltaTime(this.currentTime);
 
     // FPS 계산
-    this.getFPS(this.currentTime);
+    this.#getFPS(this.currentTime);
 
     // 업데이트
     this.update(this.deltaTime);
@@ -101,12 +112,9 @@ class GameLoop {
     this.requestAnimationFrame(this.loop.bind(this));
   }
 
+  /** 상태 업데이트 */
   update(deltaTime) {
-    // 애니메이션 업데이트 로직
-    // 게임 업데이트 로직
-    // 상태 업데이트 로직
-    // UI 업데이트 로직
-    // Debug 화면 업데이트 로직
+    this.gameManager.update(deltaTime);
   }
 
   render() {}
@@ -115,13 +123,13 @@ class GameLoop {
     window.requestAnimationFrame(loop);
   }
 
-  getDeltaTime(currentTime) {
+  #getDeltaTime(currentTime) {
     this.deltaTime = currentTime - (this.lastTime || currentTime);
     this.lastTime = currentTime;
     return this.deltaTime;
   }
 
-  getFPS(currentTime) {
+  #getFPS(currentTime) {
     this.fps = 0;
     this.fpsTime = currentTime - this.lastFpsUpdate;
 
@@ -141,19 +149,6 @@ class GameLoop {
       fps: this.fps,
       totalTime: this.totalTime,
     };
-  }
-
-  /**
-   * 디버그 모드 체크
-   */
-  function checkDebugMode() {
-    //  URL에 ?debug가 있으면 디버그 모드 활성화
-    const urlParams = new URLSearchParams(window.location.search);
-
-    if (urlParams.has('debug')) {
-      Game.debug = true;
-      Game.debugInfo.classList.add('show');
-    }
   }
 }
 

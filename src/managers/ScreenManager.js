@@ -9,26 +9,57 @@
  */
 
 class ScreenManager {
-  constructor() {
+  /**
+   * @constructor
+   * @param {EventBus} eventBus 이벤트 버스 객체
+   */
+  constructor(eventBus) {
+    /**
+     * 이벤트 버스 객체
+     * @type {EventBus}
+     */
+    this.eventBus = eventBus;
+
+    /**
+     * 화면 요소 맵
+     */
     this.screens = {
       logo: document.getElementById('logoScreen'),
       loading: document.getElementById('loadingScreen'),
       menu: document.getElementById('menuScreen'),
-      stageSelect: document.getElementById('stageSelectScreen'),
+      pause: document.getElementById('pauseScreen'),
+      setting: document.getElementById('settingScreen'),
+      stage: document.getElementById('stageSelectScreen'),
       battle: document.getElementById('battleScreen'),
       reward: document.getElementById('rewardScreen'),
+      gameover: document.getElementById('gameoverScreen'),
     };
 
+    /** 현재 화면 */
     this.currentScreen = null;
+
+    /** 전환중 여부 */
     this.isTransitioning = false;
+
+    console.debug('ScreenManager Initialized');
+  }
+
+  /**
+   * 화면 초기화 + 이벤트 버스 등록
+   */
+  init() {
+    // 화면 이벤트 등록
+
+    // 초기 화면 설정
+    this.eventBus.emit('screen:state:change', 'loading');
   }
 
   /**
    * 화면 전환
-   * @param {string} screenName
-   * @param {boolean} showLoading
+   * @param {string} screenName 화면 이름
+   * @param {boolean} showLoading 로딩 화면 표시 여부
    */
-  async switchTo(screenName, showLoading = true) {
+  async show(screenName, showLoading = true) {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
 
@@ -39,11 +70,11 @@ class ScreenManager {
     }
 
     // 로딩 화면 표시 (필요시)
-    if (showLoading && screenName !== 'loading' && screenName !== 'logo') {
+    if (showLoading && screenName !== 'loading') {
       this.screens.loading.classList.add('show');
-      // await this.wait(1000);
+      // await this.#wait(1000);
       this.screens.loading.classList.remove('show');
-      // await this.wait(500);
+      // await this.#wait(500);
     }
 
     // 새 화면 표시
@@ -60,19 +91,7 @@ class ScreenManager {
    * 대기
    * @param {number} ms
    */
-  wait(ms) {
+  #wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
-   * 초기화
-   */
-  async initialize() {
-    // 로고 화면 표시
-    await this.switchTo('logo', false);
-    await this.wait(1000);
-
-    // 메뉴 화면으로 전환
-    await this.switchTo('menu', false);
   }
 }
