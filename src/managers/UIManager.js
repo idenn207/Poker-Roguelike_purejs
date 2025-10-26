@@ -2,16 +2,14 @@
  * 파일위치: /src/managers/UIManager.js
  * 파일명: UIManager.js
  * 용도: UI 요소 생성 및 관리
- * 기능: 화면별 UI 요소 동적 생성
- * 책임: UI 렌더링 및 인터랙션 처리
+ * 기능: 화면별 UI 요소 동적 생성, 상태 기반 UI 업데이트
+ * 책임: UI 렌더링 (상태는 StateManager에서 조회)
  */
-
-'use strict';
-// @ts-check
 
 class UIManager extends ManagerCore {
   constructor(eventBus) {
     super();
+
     /** @type {EventBus} */
     this.eventBus = eventBus;
 
@@ -21,9 +19,10 @@ class UIManager extends ManagerCore {
   /** UI 초기화 */
   init() {
     // 각 화면 UI 생성
-    this.createLogoScreen();
-    this.createLoadingScreen();
-    this.createMenuScreen();
+    this.createLogoScreen(); // 로고 화면
+    this.createLoadingScreen(); // 로딩 화면
+    this.createMenuScreen(); // 메뉴 화면
+    this.createCharacterSelectScreen(); // 캐릭터 선택 화면
 
     console.debug('UIManager init complete');
   }
@@ -32,6 +31,9 @@ class UIManager extends ManagerCore {
   registerEvents() {
     // 화면 전환 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.SCREEN.CHANGED, this.onScreenChanged.bind(this));
+
+    // 캐릭터 변경 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.CHARACTER.CHANGED, this.onCharacterChanged.bind(this));
 
     console.debug('UIManager events registered');
   }
@@ -42,8 +44,31 @@ class UIManager extends ManagerCore {
    * @param {string} data.screenName 전환된 화면 이름
    * @param {HTMLElement} data.element 전환된 화면 요소
    */
-  onScreenChanged({ screenName, element }) {
-    console.debug(`UI screen changed: ${screenName}`);
+  onScreenChanged(data) {
+    console.debug(`UI screen changed: ${data.screenName}`);
+  }
+
+  /**
+   * 캐릭터 변경 이벤트 핸들러
+   * @param {Object} data - StateManager 가 정달한 모든 캐릭터 정보
+   * @param {string} data.requestId
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} data.currentCharacter
+   * @param {number} data.currentIndex
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} data.prevCharacter
+   * @param {number} data.prevIndex
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} data.nextCharacter
+   * @param {number} data.nextIndex
+   * @param {Array<typeof CHARACTERS[keyof typeof CHARACTERS]>} data.allCharacters
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} data.selectedCharacter
+   */
+  onCharacterChanged(data) {
+    const { currentCharacter, currentIndex, prevCharacter, nextCharacter, allCharacters } = data;
+
+    // 캐릭터 정보 업데이트
+    this.updateCharacterInfo(currentCharacter);
+
+    // 캐릭터 카드 업데이트
+    this.updateCharacterCards(prevCharacter, currentCharacter, nextCharacter);
   }
 
   /**
@@ -101,6 +126,9 @@ class UIManager extends ManagerCore {
     console.debug('Loading screen created');
   }
 
+  /**
+   * 메뉴 화면 UI 생성
+   */
   createMenuScreen() {
     const screen = this.draw.createElement('div', 'screen');
     this.draw.setId(screen, 'menuScreen');
@@ -121,18 +149,16 @@ class UIManager extends ManagerCore {
     // 새 게임 버튼
     const newGameBtn = this.createMenuButton('새 게임', 'new-game-btn', false);
     this.trackDomListener(newGameBtn, EVENTS.DOM.CLICK, () => {
-      console.log('New Game clicked');
-      this.eventBus.emit(EVENTS.INPUT.BUTTON_CLICKED, { button: 'new-game' });
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'new-game' });
     });
 
-    // 계속하기 버튼
+    // 계속하기 버튼 (비활성화)
     const continueBtn = this.createMenuButton('계속하기', 'continue-btn', true);
 
     // 설정 버튼
     const settingsBtn = this.createMenuButton('설정', 'settings-btn', false, true);
     this.trackDomListener(settingsBtn, EVENTS.DOM.CLICK, () => {
-      console.log('Settings clicked');
-      this.eventBus.emit(EVENTS.INPUT.BUTTON_CLICKED, { button: 'settings' });
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'settings' });
     });
 
     this.draw.appendChild(buttonContainer, newGameBtn);
@@ -153,6 +179,237 @@ class UIManager extends ManagerCore {
   }
 
   /**
+   * 캐릭터 선택 화면 UI 생성
+   */
+  createCharacterSelectScreen() {
+    const screen = this.draw.createElement('div', 'screen');
+    this.draw.setId(screen, 'characterSelectScreen');
+
+    // 캐릭터 선택 타이틀
+    const container = this.draw.createElement('div', 'character-select-container');
+
+    // TODO: 배경 이미지
+    const background = this.draw.createElement('div', 'character-background');
+    this.draw.setId(background, 'characterBackground');
+
+    // 상단 정보 섹션
+    const infoSection = this.createCharacterInfoSection();
+
+    // 하단 선택 섹션
+    const selectionSection = this.createCharacterSelectionSection();
+
+    this.draw.appendChild(container, background);
+    this.draw.appendChild(container, infoSection);
+    this.draw.appendChild(container, selectionSection);
+    this.draw.appendChild(screen, container);
+    this.draw.appendChild(document.body, screen);
+
+    console.debug('Character select screen created');
+  }
+
+  /**
+   * 캐릭터 정보 섹션 생성
+   * @returns {HTMLElement} 생성된 캐릭터 정보 섹션 요소
+   */
+  createCharacterInfoSection() {
+    const section = this.draw.createElement('div', 'character-info-section');
+
+    const panel = this.draw.createElement('div', 'character-info-panel');
+
+    // 좌측 - 캐릭터 상세 정보
+    const details = this.draw.createElement('div', 'character-details');
+
+    const name = this.draw.createElement('div', 'character-name');
+    this.draw.setId(name, 'characterName');
+    this.draw.setText(name, '캐릭터를 선택하세요');
+
+    const stats = this.draw.createElement('div', 'character-stats');
+    this.draw.setId(stats, 'characterStats');
+
+    const description = this.draw.createElement('div', 'character-description');
+    this.draw.setId(description, 'characterDescription');
+    this.draw.setText(description, '캐릭터 설명이 여기에 표시됩니다.');
+
+    this.draw.appendChild(details, name);
+    this.draw.appendChild(details, stats);
+    this.draw.appendChild(details, description);
+
+    // 우측 - 캐릭터 이미지 미리보기
+    const imagePreview = this.draw.createElement('div', 'character-image-preview');
+    const previewImage = this.draw.createElement('img', 'character-preview-image');
+    this.draw.setId(previewImage, 'characterPreviewImage');
+    this.draw.setAttribute(previewImage, 'alt', 'Character Preview');
+    this.draw.appendChild(imagePreview, previewImage);
+
+    this.draw.appendChild(panel, details);
+    this.draw.appendChild(panel, imagePreview);
+    this.draw.appendChild(section, panel);
+
+    return section;
+  }
+
+  /**
+   * 캐릭터 선택 섹션 생성
+   * @returns {HTMLElement} 생성된 캐릭터 선택 섹션 요소
+   */
+  createCharacterSelectionSection() {
+    const section = this.draw.createElement('div', 'character-selection-section');
+
+    // 캐러셀
+    const carousel = this.draw.createElement('div', 'character-carousel');
+
+    // 이전 버튼
+    const prevBtn = this.draw.createElement('button', 'carousel-nav-btn');
+    this.draw.setId(prevBtn, 'prevCharacterBtn');
+    this.draw.setText(prevBtn, '◀');
+    this.trackDomListener(prevBtn, EVENTS.DOM.CLICK, () => {
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'prev-character' });
+    });
+
+    // 캐릭터 카드 컨테이너
+    const cardsContainer = this.draw.createElement('div', 'character-cards');
+    this.draw.setId(cardsContainer, 'characterCards');
+
+    // 다음 버튼
+    const nextBtn = this.draw.createElement('button', 'carousel-nav-btn');
+    this.draw.setId(nextBtn, 'nextCharacterBtn');
+    this.draw.setText(nextBtn, '▶');
+    this.trackDomListener(nextBtn, EVENTS.DOM.CLICK, () => {
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'next-character' });
+    });
+
+    this.draw.appendChild(carousel, prevBtn);
+    this.draw.appendChild(carousel, cardsContainer);
+    this.draw.appendChild(carousel, nextBtn);
+
+    // 액션 버튼
+    const actions = this.draw.createElement('div', 'character-actions');
+
+    const backBtn = this.draw.createElement('button', 'character-action-btn');
+    backBtn.textContent = '돌아가기';
+    this.trackDomListener(backBtn, EVENTS.DOM.CLICK, () => {
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'back-to-menu' });
+    });
+
+    const startBtn = this.draw.createElement('button', 'character-action-btn primary');
+    this.draw.setId(startBtn, 'startGameBtn');
+    this.draw.setText(startBtn, '게임 시작');
+
+    this.draw.appendChild(actions, backBtn);
+    this.draw.appendChild(actions, startBtn);
+
+    this.draw.appendChild(section, carousel);
+    this.draw.appendChild(section, actions);
+
+    return section;
+  }
+
+  /**
+   * 캐릭터 표시 업데이트
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} character
+   */
+  updateCharacterInfo(character) {
+    if (!character) return;
+
+    // 캐릭터 이름 업데이트
+    const nameEl = this.draw.getElementById('characterName');
+    if (nameEl) this.draw.setText(nameEl, character.name);
+
+    // 캐릭터 스탯 업데이트
+    const statsEl = this.draw.getElementById('characterStats');
+    if (statsEl) {
+      this.draw.removeAllChild(statsEl);
+      this.createCharacterStates(statsEl, '체력', character.hp);
+      this.createCharacterStates(statsEl, '골드', character.gold);
+    }
+
+    // TODO: 캐릭터 설명
+    const descEl = this.draw.getElementById('characterDescription');
+    if (descEl) this.draw.setText(descEl, character.description);
+
+    // TODO: 미리보기 이미지
+    const previewImg = this.draw.getElementById('characterPreviewImage');
+    if (previewImg) {
+      this.draw.setAttribute(previewImg, 'alt', `player_${character.id}`);
+      // TODO: 이미지 경로는 나중에 설정
+      // this.draw.setAttribute(previewImg, 'src', `path/to/character_${character.id}_preview.png`);
+    }
+  }
+
+  /**
+   * 캐릭터 카드 업데이트
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} prevCharacter
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} currentCharacter
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} nextCharacter
+   */
+  updateCharacterCards(prevCharacter, currentCharacter, nextCharacter) {
+    const container = this.draw.getElementById('characterCards');
+    if (!container) return;
+
+    this.draw.removeAllChild(container);
+
+    // 이전 캐릭터 카드
+    const prevCard = this.createCharacterCard(prevCharacter, 'side');
+    this.trackDomListener(prevCard, EVENTS.DOM.CLICK, () => {
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'prev-character' });
+    });
+
+    // 현재 캐릭터 카드
+    const currentCard = this.createCharacterCard(currentCharacter, 'current');
+
+    // 다음 캐릭터 카드
+    const nextCard = this.createCharacterCard(nextCharacter, 'side');
+    this.trackDomListener(nextCard, 'click', () => {
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'next-character' });
+    });
+
+    this.draw.appendChild(container, prevCard);
+    this.draw.appendChild(container, currentCard);
+    this.draw.appendChild(container, nextCard);
+  }
+
+  /**
+   * 캐릭터 카드 생성
+   * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} character 캐릭터 정보
+   * @param {'side'|'current'} type 카드 유형
+   * @returns {HTMLElement} 생성된 캐릭터 카드 요소
+   */
+  createCharacterCard(character, type) {
+    const card = this.draw.createElement('div', `character-card ${type}`);
+
+    const imageContainer = this.draw.createElement('div', 'character-card-image');
+    this.draw.setText(imageContainer, `player_${character.id}`);
+
+    const nameLabel = this.draw.createElement('div', 'character-card-name');
+    this.draw.setText(nameLabel, character.name);
+
+    this.draw.appendChild(card, imageContainer);
+    this.draw.appendChild(card, nameLabel);
+
+    return card;
+  }
+
+  /**
+   * 캐릭터 상태 생성
+   * @param {HTMLElement} element 부모 요소
+   * @param {string} name 상태명칭
+   * @param {any} value 상태값
+   */
+  createCharacterStates(element, name, value) {
+    const statItem = this.draw.createElement('div', 'stat-item');
+    const statLabel = this.draw.createElement('div', 'stat-label');
+    this.draw.setText(statLabel, name);
+
+    const statValue = this.draw.createElement('div', 'stat-value');
+    this.draw.setText(statValue, String(value));
+
+    this.draw.appendChild(statItem, statLabel);
+    this.draw.appendChild(statItem, statValue);
+
+    this.draw.appendChild(element, statItem);
+  }
+
+  /**
    * 메뉴 버튼 생성
    * @param {string} text 버튼 텍스트
    * @param {string} id 버튼 ID
@@ -164,7 +421,7 @@ class UIManager extends ManagerCore {
     const button = this.draw.createElement('button', 'menu-btn');
     this.draw.setId(button, id);
     this.draw.setText(button, text);
-    this.draw.setAttribute(button, 'disabled', disabled);
+    this.draw.setDisabled(button, disabled);
 
     if (secondary) {
       this.draw.addClass(button, 'secondary');

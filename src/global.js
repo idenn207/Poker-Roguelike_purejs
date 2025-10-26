@@ -77,6 +77,15 @@ const EVENTS = {
     LOAD_COMPLETED: 'game:load_completed',
   },
 
+  /** CHARACTER - 캐릭터 관련 */
+  CHARACTER: {
+    /** 캐릭터 선택 */
+    SELECTED: 'character:selected',
+
+    /** 캐릭터 해제 */
+    CHANGED: 'character:changed',
+  },
+
   /** COMBAT - 전투 시스템 */
   COMBAT: {
     /** 전투 시작 */
@@ -244,29 +253,41 @@ const EVENTS = {
 
   /** INPUT - 사용자 입력 */
   INPUT: {
-    /** 카드 클릭 */
-    CARD_CLICKED: 'input:card_clicked',
+    /** 카드 */
+    CARD: {
+      /** 카드 클릭 */
+      CLICKED: 'input:card:clicked',
 
-    /** 카드 드래그 시작 */
-    CARD_DRAG_STARTED: 'input:card_drag_started',
+      /** 카드 드래그 시작 */
+      DRAG_STARTED: 'input:card:drag_started',
 
-    /** 카드 드래그 종료 */
-    CARD_DRAG_ENDED: 'input:card_drag_ended',
+      /** 카드 드래그 종료 */
+      DRAG_ENDED: 'input:card:drag_ended',
 
-    /** 카드 놓기 */
-    CARD_DROPPED: 'input:card_dropped',
+      /** 카드 놓기 */
+      DROPPED: 'input:card:dropped',
+    },
 
-    /** 버튼 클릭 */
-    BUTTON_CLICKED: 'input:button_clicked',
+    /** 버튼 */
+    BUTTON: {
+      /** 버튼 클릭 */
+      CLICKED: 'input:button:clicked',
+    },
 
-    /** 턴 종료 클릭 */
-    END_TURN_CLICKED: 'input:end_turn_clicked',
+    /** 턴 종료 */
+    END_TURN: {
+      /** 턴 종료 클릭 */
+      CLICKED: 'input:end_turn_clicked',
+    },
 
-    /** 메뉴 열기 */
-    MENU_OPENED: 'input:menu_opened',
+    /** 메뉴 */
+    MENU: {
+      /** 메뉴 열기 */
+      OPENED: 'input:menu:opened',
 
-    /** 메뉴 닫기 */
-    MENU_CLOSED: 'input:menu_closed',
+      /** 메뉴 닫기 */
+      CLOSED: 'input:menu:closed',
+    },
 
     /** 확인 */
     CONFIRM: 'input:confirm',
@@ -397,21 +418,6 @@ const EVENTS = {
 
     /** 약화 */
     WEAKEN: 'buff:weaken',
-  },
-
-  /** STATE - 게임 상태 관리 */
-  STATE: {
-    /** 상태 변경 */
-    CHANGED: 'state:changed',
-
-    /** 상태 저장 */
-    SAVED: 'state:saved',
-
-    /** 상태 로드 */
-    LOADED: 'state:loaded',
-
-    /** 상태 리셋 */
-    RESET: 'state:reset',
   },
 
   /** UI - UI 업데이트 */
@@ -595,6 +601,78 @@ const EVENTS = {
     /** 층 변경 */
     FLOOR_CHANGED: 'stage:floor_changed',
   },
+
+  /** QUERY - 조회 요청 */
+  QUERY: {
+    /** 게임 */
+    GAME: {
+      /** 게임 상태 조회 */
+      STATE: 'query:game:state',
+    },
+    /** 캐릭터 */
+    CHARACTER: {
+      /** 캐릭터 상태 조회 */
+      STATE: 'query:character:state',
+    },
+  },
+
+  /** RESPONSE - 조회 응답 */
+  RESPONSE: {
+    /** 게임 */
+    GAME: {
+      /** 게임 상태 조회 */
+      STATE: 'response:game:state',
+    },
+    /** 캐릭터 */
+    CHARACTER: {
+      /** 캐릭터 상태 조회 */
+      STATE: 'response:character:state',
+    },
+  },
+
+  /** STATE - 게임 상태 관리 */
+  STATE: {
+    /** 화면 상태 */
+    SCREEN: {
+      /** 화면 전환 완료 */
+      CHANGED: 'state:screen:changed',
+    },
+    /** 캐릭터 상태 */
+    CHARACTER: {
+      /** 캐릭터 변경 완료 */
+      CHANGED: 'state:character:changed',
+
+      /** 캐릭터 선택 완료 */
+      SELECTED: 'state:character:selected',
+    },
+    GAME: {
+      /** 게임 시작 */
+      STARTED: 'state:game:started',
+    },
+  },
+
+  /** ACTION - 사용자 행동 관련 (StateManager 에서 자원 관리) */
+  ACTION: {
+    /** 화면 */
+    SCREEN: {
+      /** 화면 전환 */
+      CHANGE: 'action:screen:change',
+
+      /** 화면 선택 */
+      SELECT: 'action:screen:select',
+    },
+    /** 캐릭터 */
+    CHARACTER: {
+      /** 캐릭터 전환 */
+      CHANGE: 'action:character:change',
+
+      /** 캐릭터 선택 */
+      SELECT: 'action:character:select',
+    },
+    GAME: {
+      START: 'action:game:start',
+    },
+  },
 };
 
 // ---------- 카드 상수 정의 ---------- //
@@ -770,6 +848,9 @@ const SCREEN_STATE_TYPE = {
 
   /** 메뉴 화면 */
   MENU: 'menu',
+
+  /** 캐릭터 선택 화면 */
+  CHARACTER_SELECT: 'characterSelect',
 
   /** 일시 정지 화면 */
   PAUSE: 'pause',

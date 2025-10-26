@@ -22,8 +22,8 @@ class GameManager extends ManagerCore {
       combat: new CombatManager(this.eventBus),
       shop: new ShopManager(this.eventBus),
       reward: new RewardManager(this.eventBus),
-      render: new RenderManager(this.eventBus),
       ui: new UIManager(this.eventBus),
+      render: new RenderManager(this.eventBus),
       screen: new ScreenManager(this.eventBus),
     };
 
@@ -34,14 +34,14 @@ class GameManager extends ManagerCore {
    * 게임 초기화
    */
   init() {
+    // 초기 화면 상태 설정
+    this.managers.state.init(); // 게임 상태 매니저 초기화
+
     // UI 먼저 생성 (화면 요소들이 DOM에 추가)
     this.managers.ui.init(); // UI 매니저 초기화
 
     // DOM 요소 연결
     this.managers.screen.init(); // 화면 매니저 초기화
-
-    // 초기 화면 상태 설정
-    this.managers.state.init(); // 게임 상태 매니저 초기화
 
     // 나머지 매니저 초기화
     this.managers.input.init(); // 사용자 입력 매니저 초기화
@@ -79,29 +79,15 @@ class GameManager extends ManagerCore {
    * 게임 상태 업데이트
    */
   update(deltaTime) {
-    const currentScreen = GameState.currentScreen;
+    // StateManager에 현재 화면 조회 요청
+    // (필요시 query:game-state 이벤트 사용)
 
-    switch (currentScreen) {
-      case SCREEN_STATE_TYPE.BATTLE: {
-        // 게임 업데이트 로직
-        this.managers.combat.update(deltaTime);
-        break;
+    // 각 Manager 업데이트
+    Object.values(this.managers).forEach((manager) => {
+      if (manager.update && typeof manager.update === 'function') {
+        manager.update(deltaTime);
       }
-      case SCREEN_STATE_TYPE.MENU: {
-        // 메뉴 업데이트 로직
-        break;
-      }
-      default: {
-        // 기타 화면
-        break;
-      }
-    }
-
-    // UI 업데이트
-    this.managers.ui.update(deltaTime);
-
-    // 렌더링 업데이트
-    this.managers.render.update(deltaTime);
+    });
   }
 
   /**
@@ -116,7 +102,7 @@ class GameManager extends ManagerCore {
    * 스테이지 선택
    */
   selectStage(stage) {
-    console.log(`Stage selected: ${stage}`);
+    console.log('Stage selected:', stage);
     // TODO: 구현 예정
   }
 

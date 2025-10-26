@@ -116,7 +116,6 @@ class EventBus {
    */
   emit(eventName, data = null) {
     console.debug(`Emitting event: ${eventName}`, data);
-    console.debug(`this.events: `, this.events);
     // 이벤트 리스너가 없으면 반환
     if (!this.events.has(eventName)) {
       console.warn(`No listeners registered for "${eventName}"`);

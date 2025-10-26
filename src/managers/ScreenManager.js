@@ -56,6 +56,7 @@ class ScreenManager extends ManagerCore {
       logo: this.draw.getElement('#logoScreen'),
       loading: this.draw.getElement('#loadingScreen'),
       menu: this.draw.getElement('#menuScreen'),
+      characterSelect: this.draw.getElement('#characterSelectScreen'),
       pause: this.draw.getElement('#pauseScreen'),
       setting: this.draw.getElement('#settingScreen'),
       stage: this.draw.getElement('#stageScreen'),
@@ -73,7 +74,7 @@ class ScreenManager extends ManagerCore {
   /** 이벤트 등록 */
   registerEvents() {
     // 상태 변경 이벤트 구독
-    this.trackEventBusListener(this.eventBus, EVENTS.STATE.CHANGED, this.onStateChanged.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.SCREEN.CHANGED, this.onStateChanged.bind(this));
 
     console.debug('ScreenManager events registered');
   }
@@ -81,11 +82,12 @@ class ScreenManager extends ManagerCore {
   /**
    * 상태 변경 이벤트 핸들러
    * @param {Object} data
+   * @param {typeof SCREEN_STATE_TYPE[keyof typeof SCREEN_STATE_TYPE]} data.previous 이전 화면 이름
+   * @param {typeof SCREEN_STATE_TYPE[keyof typeof SCREEN_STATE_TYPE]} data.current 현재 화면 이름
    */
   onStateChanged(data) {
-    if (data.type === EVENTS.TYPE.SCREEN) {
-      this.show(data.current);
-    }
+    const { previous, current } = data;
+    this.show(current);
   }
 
   /**
@@ -203,10 +205,8 @@ class ScreenManager extends ManagerCore {
       case SCREEN_STATE_TYPE.LOGO: {
         // 로고 화면 2초 후 로딩 화면으로
         setTimeout(() => {
-          this.eventBus.emit(EVENTS.STATE.CHANGED, {
-            type: EVENTS.TYPE.SCREEN,
-            previous: SCREEN_STATE_TYPE.LOGO,
-            current: SCREEN_STATE_TYPE.LOADING,
+          this.eventBus.emit(EVENTS.ACTION.SCREEN.CHANGE, {
+            screenName: SCREEN_STATE_TYPE.LOADING,
           });
         }, 2000);
         break;
@@ -214,10 +214,8 @@ class ScreenManager extends ManagerCore {
       case SCREEN_STATE_TYPE.LOADING: {
         // 로딩 화면 1.5초 후 메뉴 화면으로
         setTimeout(() => {
-          this.eventBus.emit(EVENTS.STATE.CHANGED, {
-            type: EVENTS.TYPE.SCREEN,
-            previous: SCREEN_STATE_TYPE.LOADING,
-            current: SCREEN_STATE_TYPE.MENU,
+          this.eventBus.emit(EVENTS.ACTION.SCREEN.CHANGE, {
+            screenName: SCREEN_STATE_TYPE.MENU,
           });
         }, 1500);
         break;

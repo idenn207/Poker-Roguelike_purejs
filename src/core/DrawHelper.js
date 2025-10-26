@@ -168,6 +168,18 @@ class DrawHelper {
     }
   }
 
+  /**
+   * 모든 자식 요소를 제거합니다.
+   * @param {HTMLElement} parent 부모요소
+   */
+  static removeAllChild(parent) {
+    if (parent instanceof HTMLElement) {
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+    }
+  }
+
   // ----- style 설정 ----- //
   /**
    * 요소의 스타일을 설정합니다.
@@ -275,6 +287,17 @@ class DrawHelper {
   }
 
   // ----- 속성 조작 ----- //
+  /**
+   * 요소의 disabled 속성 설정
+   * @param {HTMLElement} element 요소
+   * @param {boolean} disabled disabled 상태
+   */
+  static setDisabled(element, disabled) {
+    if (element instanceof HTMLElement && typeof disabled === 'boolean') {
+      element.disabled = disabled;
+    }
+  }
+
   /**
    * 속성 설정
    * @param {HTMLElement} element 요소
