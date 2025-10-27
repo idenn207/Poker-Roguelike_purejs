@@ -529,6 +529,7 @@ class UIManager extends ManagerCore {
    */
   createDebugTabs() {
     const tabsContainer = this.draw.createElement('div', 'debug-tabs');
+    this.draw.setId(tabsContainer, 'debugTabs');
 
     const tabs = [
       { id: 'events', label: 'Events' },
@@ -608,11 +609,11 @@ class UIManager extends ManagerCore {
   onDebugCollapsed(data) {
     const { isCollapsed } = data;
     const panel = this.draw.getElement('#debugPanel');
-    const tabs = this.draw.getElementsByClassName('debug-tab');
+    const tabs = this.draw.getElementById('debugTabs');
     const content = this.draw.getElementById('debugContent');
     const collapseBtn = this.draw.getElementById('debugCollapseBtn');
 
-    if (tabs && tabs.length && content && collapseBtn) {
+    if (tabs && content && collapseBtn) {
       if (isCollapsed) {
         this.draw.setDisplay(tabs, 'none');
         this.draw.setDisplay(content, 'none');
@@ -677,7 +678,7 @@ class UIManager extends ManagerCore {
           currentY = e.clientY - initialY;
         }
 
-        this.draw.setStyle(panel, {
+        this.draw.addStyle(panel, {
           left: currentX + 'px',
           top: currentY + 'px',
           right: 'auto',
