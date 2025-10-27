@@ -47,6 +47,9 @@ class DebugState {
     /** @type {number} 최대 최근 이벤트 개수 */
     this.maxRecentEvents = 50;
 
+    /** @type {boolean} Debug 패널 축소 여부 */
+    this.isCollapsed = false;
+
     console.debug('DebugState Initialized');
   }
 

@@ -22,14 +22,40 @@ const EVENTS = {
     /** 클릭 */
     CLICK: 'click',
 
-    /** 키 누름 */
-    KEY_DOWN: 'keydown',
+    KEY: {
+      /** 키 누름 */
+      DOWN: 'keydown',
 
-    /** 키 뗌 */
-    KEY_UP: 'keyup',
+      /** 키 뗌 */
+      UP: 'keyup',
 
-    /** 키 입력 */
-    KEY_PRESS: 'keypress',
+      /** 키 입력 */
+      PRESS: 'keypress',
+    },
+
+    /** 모바일 터치 */
+    TOUCH: {
+      /** 터치 시작 */
+      START: 'touchstart',
+
+      /** 터치 종료 */
+      END: 'touchend',
+
+      /** 터치 이동 */
+      MOVE: 'touchmove',
+    },
+
+    /** 마우스 */
+    MOUSE: {
+      /** 마우스 버튼 누름 */
+      DOWN: 'mousedown',
+
+      /** 마우스 버튼 뗌 */
+      UP: 'mouseup',
+
+      /** 마우스 이동 */
+      MOVE: 'mousemove',
+    },
 
     /** 강조 */
     FOCUS: 'focus',
@@ -683,6 +709,9 @@ const EVENTS = {
 
       /** 이벤트 추가 */
       EVENT_ADDED: 'state:debug:event_added',
+
+      /** 디버그 패널 축소/확장 */
+      COLLAPSED: 'state:debug:collapsed',
     },
   },
 
@@ -717,6 +746,9 @@ const EVENTS = {
 
       /** 디버그 탭 변경 */
       CHANGE_TAB: 'action:debug:change_tab',
+
+      /** 디버그 패널 축소/확장 */
+      COLLAPSE_TOGGLE: 'action:debug:collapse_toggle',
     },
 
     /** 루프 정보 업데이트 */

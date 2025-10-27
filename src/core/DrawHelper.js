@@ -46,6 +46,15 @@ class DrawHelper {
     return document.getElementById(id);
   }
 
+  /**
+   * 요소 조회 (getElementById)
+   * @param {string} className 요소 클래스 이름
+   * @returns {HTMLCollectionOf<HTMLElement>|null} 조회된 요소 또는 null
+   */
+  static getElementsByClassName(className) {
+    return document.getElementsByClassName(className);
+  }
+
   // ----- 요소 생성 ----- //
   /**
    * 요소 생성
@@ -181,27 +190,52 @@ class DrawHelper {
   }
 
   // ----- style 설정 ----- //
+
   /**
-   * 요소의 스타일을 설정합니다.
+   * 요소 스타일 추가
    * @param {HTMLElement} element 요소
-   * @param {Object} styles 스타일 객체
+   * @param {CSSStyleDeclaration} style 스타일 객체
    */
-  static setStyles(element, styles = {}) {
+  static addStyle(element, style = {}) {
     if (element instanceof HTMLElement) {
-      Object.assign(element.style, styles);
+      Object.assign(element.style, style);
     }
   }
 
   /**
-   * 태그의 스타일을 가져옵니다.
+   * 요소 스타일 설정
+   * @param {HTMLElement} element 요소
+   * @param {CSSStyleDeclaration} style 스타일 객체
+   */
+  static setStyle(element, style = {}) {
+    if (element instanceof HTMLElement) {
+      element.style = style;
+    }
+  }
+
+  /**
+   * 요소 스타일 조회.
    * @param {HTMLElement} element 요소
    * @returns {CSSStyleDeclaration} 스타일 객체
    */
-  static getStyles(element) {
+  static getStyle(element) {
     if (element instanceof HTMLElement) {
       return getComputedStyle(element);
     }
     return {};
+  }
+
+  /**
+   * 요소 스타일 제거
+   * @param {HTMLElement} element 요소
+   * @param {CSSStyleDeclaration} style 스타일 객체
+   */
+  static removeStyle(element, style = {}) {
+    if (element instanceof HTMLElement) {
+      Object.entries(style).forEach(([key]) => {
+        element.style[key] = '';
+      });
+    }
   }
 
   // ----- class 조작 ----- //

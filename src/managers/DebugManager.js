@@ -18,7 +18,7 @@ class DebugManager extends ManagerCore {
 
   init() {
     // F1 키 리스너 등록
-    this.trackDomListener(window, EVENTS.DOM.KEY_DOWN, (e) => {
+    this.trackDomListener(window, EVENTS.DOM.KEY.DOWN, (e) => {
       if (e.key === 'F1') {
         e.preventDefault();
         this.toggleDebugPanel();

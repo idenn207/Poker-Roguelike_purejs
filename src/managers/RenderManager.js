@@ -136,7 +136,7 @@ class RenderManager extends ManagerCore {
         <td class="time">${log.time}</td>
         <td class="event-name">${log.eventName}</td>
         <td class="listener-count">${log.listenerCount}</td>
-        <td class="data"><pre>${JSON.stringify(log.data, null, 2)}</pre></td>
+        <td class="data"><pre>${json2stringCompact(log.data)}</pre></td>
       `
       );
       this.draw.appendChild(tbody, row);
@@ -195,7 +195,7 @@ class RenderManager extends ManagerCore {
       this.draw.setText(title, section.title);
 
       const content = this.draw.createElement('pre', 'debug-state-content');
-      this.draw.setText(content, JSON.stringify(section.data, null, 2));
+      this.draw.setText(content, json2stringCompact(section.data));
 
       this.draw.appendChild(sectionEl, title);
       this.draw.appendChild(sectionEl, content);
@@ -302,7 +302,7 @@ class RenderManager extends ManagerCore {
     fpsHistory.forEach((fps, index) => {
       const bar = this.draw.createElement('div', 'fps-bar');
       const height = (fps / maxFps) * 100;
-      this.draw.setStyles(bar, {
+      this.draw.addStyle(bar, {
         width: `${barWidth}%`,
         height: `${Math.min(height, 100)}%`,
       });
@@ -312,7 +312,7 @@ class RenderManager extends ManagerCore {
       if (fps >= 55) background = '#4ade80';
       else if (fps >= 30) background = '#fbbf24';
       else background = '#ef4444';
-      this.draw.setStyles(bar, { background });
+      this.draw.addStyle(bar, { background });
 
       this.draw.appendChild(chart, bar);
     });
@@ -359,7 +359,7 @@ class RenderManager extends ManagerCore {
       <td class="time">${log.time}</td>
       <td class="event-name">${log.eventName}</td>
       <td class="listener-count">${log.listenerCount}</td>
-      <td class="data"><pre>${JSON.stringify(log.data, null, 2)}</pre></td>
+      <td class="data"><pre>${json2stringCompact(log.data)}</pre></td>
     `
     );
     tbody.insertBefore(row, tbody.firstChild);

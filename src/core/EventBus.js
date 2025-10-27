@@ -35,7 +35,30 @@ class EventBus {
      */
     this.loggingEnabled = true;
 
-    this.ignoreLoggingEvents = [EVENTS.DEBUG.EVENT_LOGGED, EVENTS.STATE.DEBUG.LOOP_UPDATED, EVENTS.STATE.DEBUG.EVENT_ADDED, EVENTS.ACTION.UPDATE_LOOP_INFO];
+    /** 이벤트 무시 목록 */
+    this.ignoreLoggingEvents = [
+      // 루프 방지
+      EVENTS.DEBUG.EVENT_LOGGED,
+      EVENTS.STATE.DEBUG.LOOP_UPDATED,
+      EVENTS.STATE.DEBUG.EVENT_ADDED,
+
+      // 리소스 너무 많음
+      EVENTS.ACTION.UPDATE_LOOP_INFO,
+      EVENTS.QUERY.GAME.STATE,
+      EVENTS.RESPONSE.GAME.STATE,
+      EVENTS.QUERY.DEBUG.STATE,
+      EVENTS.RESPONSE.DEBUG.STATE,
+
+      // 디버그 패널 관련
+      EVENTS.RENDER.DEBUG_PANEL,
+      EVENTS.STATE.DEBUG.TAB.CHANGED,
+      EVENTS.STATE.DEBUG.TOGGLED,
+      EVENTS.ACTION.DEBUG.TOGGLE,
+      EVENTS.ACTION.DEBUG.CHANGE_TAB,
+
+      // 기타
+      /** 이벤트 추가... */
+    ];
 
     console.debug('EventBus Initialized');
   }
@@ -173,7 +196,7 @@ class EventBus {
       }),
       eventName,
       data: this.cloneData(data),
-      listnerCount: this.listeners.get(eventName)?.size || 0,
+      listenerCount: this.listeners.get(eventName)?.size || 0,
     };
 
     this.eventLog.unshift(logEntry);

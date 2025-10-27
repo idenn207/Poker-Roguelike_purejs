@@ -11,10 +11,15 @@
 .debug-panel {
   position: fixed;
   top: 10px;
-  right: 10px;
+  /* right: 10px; */
+  left: 10px;
   width: 600px;
   max-height: 80vh;
-  background: rgba(0, 0, 0, 0.95);
+  min-width: 400px;
+  min-height: 300px;
+  resize: both;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.7);
   border: 2px solid #fbbf24;
   border-radius: 8px;
   display: flex;
@@ -25,6 +30,21 @@
   z-index: 10000;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
+  cursor: move;
+  user-select: none;
+}
+
+/* Resize Handle */
+.debug-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, transparent 50%, rgba(251, 191, 36, 0.5) 50%);
+  cursor: nwse-resize;
+  border-radius: 0 0 6px 0;
 }
 
 /* Header */
@@ -32,14 +52,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.9) 0%, rgba(245, 158, 11, 0.9) 100%);
   border-radius: 6px 6px 0 0;
   border-bottom: 2px solid #d97706;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.debug-header:active {
+  cursor: grabbing;
 }
 
 .debug-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   color: #000;
   letter-spacing: 0.5px;
@@ -47,7 +73,7 @@
 
 .debug-controls {
   display: flex;
-  gap: 5px;
+  gap: 8px;
 }
 
 .debug-btn {
@@ -77,9 +103,10 @@
 .debug-tabs {
   display: flex;
   gap: 5px;
-  padding: 10px 15px;
+  padding: 8px 12px;
   background: rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 .debug-tab {
@@ -110,8 +137,10 @@
 .debug-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 15px;
   max-height: calc(80vh - 120px);
+  height: 0;
 }
 
 .debug-content::-webkit-scrollbar {
@@ -173,6 +202,7 @@
   padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   vertical-align: top;
+  font-size: 13px;
 }
 
 .debug-table tr:hover {
@@ -206,7 +236,7 @@
   color: #e5e7eb;
   white-space: pre-wrap;
   word-break: break-all;
-  font-size: 10px;
+  font-size: 11px;
   max-height: 100px;
   overflow-y: auto;
 }

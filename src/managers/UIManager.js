@@ -40,6 +40,7 @@ class UIManager extends ManagerCore {
     // Debug 상태 변경 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.TOGGLED, this.onDebugToggled.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.TAB.CHANGED, this.onDebugTabChanged.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.COLLAPSED, this.onDebugCollapsed.bind(this));
 
     console.debug('UIManager events registered');
   }
@@ -482,6 +483,9 @@ class UIManager extends ManagerCore {
     this.draw.appendChild(panel, content);
 
     this.draw.appendChild(document.body, panel);
+
+    // 드래그 기능 추가
+    this.enableDragPanel(panel, header); // 이 줄 추가
   }
 
   /**
@@ -492,9 +496,17 @@ class UIManager extends ManagerCore {
     const header = this.draw.createElement('div', 'debug-header');
 
     const title = this.draw.createElement('div', 'debug-title');
-    this.draw.setText(title, 'Debug Panel');
+    this.draw.setText(title, '🔧 Debug Panel');
 
     const controls = this.draw.createElement('div', 'debug-controls');
+
+    // 접기/펼치기 버튼
+    const collapseBtn = this.draw.createElement('button', 'debug-btn');
+    this.draw.setId(collapseBtn, 'debugCollapseBtn');
+    this.draw.setText(collapseBtn, '−');
+    this.trackDomListener(collapseBtn, EVENTS.DOM.CLICK, () => {
+      this.eventBus.emit(EVENTS.ACTION.DEBUG.COLLAPSE_TOGGLE, {});
+    });
 
     // 닫기 버튼
     const closeBtn = this.draw.createElement('button', 'debug-btn');
@@ -503,6 +515,7 @@ class UIManager extends ManagerCore {
       this.eventBus.emit(EVENTS.ACTION.DEBUG.TOGGLE, {});
     });
 
+    this.draw.appendChild(controls, collapseBtn);
     this.draw.appendChild(controls, closeBtn);
     this.draw.appendChild(header, title);
     this.draw.appendChild(header, controls);
@@ -553,7 +566,7 @@ class UIManager extends ManagerCore {
 
     const panel = this.draw.getElementById('debugPanel');
     if (panel) {
-      this.draw.setDisplay(panel, isActive ? 'block' : 'none');
+      this.draw.setDisplay(panel, isActive ? 'flex' : 'none');
 
       if (isActive) {
         // 패널이 열리면 RenderManager에 렌더링 요청
@@ -585,6 +598,101 @@ class UIManager extends ManagerCore {
     this.eventBus.emit(EVENTS.RENDER.DEBUG_PANEL, {
       tab: currentTab,
     });
+  }
+
+  /**
+   * Debug 접기/펼치기 이벤트 핸들러
+   * @param {Object} data
+   * @param {boolean} data.isCollapsed Debug 패널 축소 여부
+   */
+  onDebugCollapsed(data) {
+    const { isCollapsed } = data;
+    const panel = this.draw.getElement('#debugPanel');
+    const tabs = this.draw.getElementsByClassName('debug-tab');
+    const content = this.draw.getElementById('debugContent');
+    const collapseBtn = this.draw.getElementById('debugCollapseBtn');
+
+    if (tabs && tabs.length && content && collapseBtn) {
+      if (isCollapsed) {
+        this.draw.setDisplay(tabs, 'none');
+        this.draw.setDisplay(content, 'none');
+        this.draw.setText(collapseBtn, '+');
+        this.draw.addStyle(panel, {
+          height: 'auto',
+          minHeight: 'auto',
+          resize: 'none',
+        });
+      } else {
+        this.draw.setDisplay(tabs, 'flex');
+        this.draw.setDisplay(content, 'block');
+        this.draw.setText(collapseBtn, '−');
+        this.draw.addStyle(panel, {
+          height: '',
+          minHeight: '300px',
+          resize: 'both',
+        });
+      }
+    }
+  }
+
+  /**
+   * Debug 패널 드래그 기능 활성화
+   * @param {HTMLElement} panel
+   * @param {HTMLElement} dragHandle
+   */
+  enableDragPanel(panel, dragHandle) {
+    let isDragging = false;
+    let currentX = 10; // 10px 시작
+    let currentY = 10; // 10px 시작
+    let initialX = 0;
+    let initialY = 0;
+
+    const dragStart = (e) => {
+      if (e.type === EVENTS.DOM.TOUCH.START) {
+        initialX = e.touches[0].clientX - currentX;
+        initialY = e.touches[0].clientY - currentY;
+      } else {
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+      }
+
+      if (e.target === dragHandle || dragHandle.contains(e.target)) {
+        isDragging = true;
+      }
+    };
+
+    const dragEnd = (e) => {
+      isDragging = false;
+    };
+
+    const drag = (e) => {
+      if (isDragging) {
+        e.preventDefault();
+
+        if (e.type === EVENTS.DOM.TOUCH.MOVE) {
+          currentX = e.touches[0].clientX - initialX;
+          currentY = e.touches[0].clientY - initialY;
+        } else {
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+        }
+
+        this.draw.setStyle(panel, {
+          left: currentX + 'px',
+          top: currentY + 'px',
+          right: 'auto',
+        });
+      }
+    };
+
+    this.trackDomListener(dragHandle, EVENTS.DOM.MOUSE.DOWN, dragStart);
+    this.trackDomListener(document, EVENTS.DOM.MOUSE.MOVE, drag);
+    this.trackDomListener(document, EVENTS.DOM.MOUSE.UP, dragEnd);
+
+    // 터치 이벤트
+    this.trackDomListener(dragHandle, EVENTS.DOM.TOUCH.START, dragStart);
+    this.trackDomListener(document, EVENTS.DOM.TOUCH.MOVE, drag);
+    this.trackDomListener(document, EVENTS.DOM.TOUCH.END, dragEnd);
   }
 
   update(deltaTime) {}

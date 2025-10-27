@@ -7,6 +7,7 @@
 const utilsScripts = [
   // 로드 경로 : /src/utils/*.js
   '/src/utils/console-override.js',
+  '/src/utils/string.js',
   '/src/utils/random.js',
   '/src/utils/mixin.js',
   '/src/utils/mixin/index.js',

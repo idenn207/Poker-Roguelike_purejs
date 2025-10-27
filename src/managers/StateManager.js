@@ -48,6 +48,7 @@ class StateManager extends ManagerCore {
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.TOGGLE, this.handleToggleDebug.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.CHANGE_TAB, this.handleChangeDebugTab.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.UPDATE_LOOP_INFO, this.handleUpdateLoopInfo.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.COLLAPSE_TOGGLE, this.handleToggleDebugCollapse.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.DEBUG.EVENT_LOGGED, this.handleEventLogged.bind(this));
 
     // 상태 조회 요청 이벤트 구독
@@ -300,6 +301,21 @@ class StateManager extends ManagerCore {
         fpsHistory: this.debugState.fpsHistory,
       });
     }
+  }
+
+  /**
+   * Debug 패널 접기/펼치기 액션 핸들러
+   * @param {Object} data
+   */
+  handleToggleDebugCollapse(data) {
+    this.debugState.isCollapsed = !this.debugState.isCollapsed;
+
+    console.debug('Debug panel collapsed:', this.debugState.isCollapsed);
+
+    // Debug 접기 상태 변경 이벤트 발행
+    this.eventBus.emit(EVENTS.STATE.DEBUG.COLLAPSED, {
+      isCollapsed: this.debugState.isCollapsed,
+    });
   }
 
   /**
