@@ -1,0 +1,715 @@
+/**
+ * 파일위치: /css/battle.css
+ * 파일명: battle.css
+ * 용도: 전투 화면 스타일
+ * 기능: 전투 화면의 레이아웃, 카드 배치, HUD 디자인
+ * 책임: 전투 화면 UI 디자인 관리 (반응형)
+ */
+
+/* ========================================
+   Battle Screen Base
+======================================== */
+#battleScreen {
+  background: radial-gradient(ellipse at center top, rgba(139, 0, 0, 0.2) 0%, transparent 50%), var(--color-bg-dark);
+  overflow: hidden;
+}
+
+/* 최소한의 배경 장식 */
+#battleScreen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 30%, rgba(139, 0, 0, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 80% 70%, rgba(184, 134, 11, 0.05) 0%, transparent 25%);
+  pointer-events: none;
+}
+
+.battle-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: clamp(var(--spacing-xs), 1vh, var(--spacing-sm));
+  gap: clamp(var(--spacing-xs), 1vh, var(--spacing-sm));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ========================================
+   Battle HUD - Top Status Bar
+======================================== */
+.battle-hud {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(var(--spacing-xs), 1vh, var(--spacing-sm)) clamp(var(--spacing-sm), 2vw, var(--spacing-md));
+  background: rgba(26, 26, 26, 0.95);
+  border: 2px solid var(--color-secondary-dark);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-medium);
+  backdrop-filter: blur(10px);
+  gap: clamp(var(--spacing-xs), 1vw, var(--spacing-sm));
+}
+
+/* Player Info */
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--spacing-xs), 1vw, var(--spacing-sm));
+  flex: 1;
+  min-width: 0;
+}
+
+.player-avatar {
+  width: clamp(30px, 8vw, 50px);
+  height: clamp(30px, 8vw, 50px);
+  flex-shrink: 0;
+  background: var(--gradient-gold);
+  border-radius: 50%;
+  border: 2px solid var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-large));
+  font-weight: bold;
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.player-stats {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, 0.5vh, var(--spacing-xs));
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-bar {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--spacing-xs), 1vw, var(--spacing-sm));
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-small));
+  color: var(--color-text-secondary);
+  min-width: clamp(30px, 10vw, 50px);
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-value {
+  font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-base));
+  font-weight: bold;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+/* Health Bar */
+.health-bar-container {
+  flex: 1;
+  height: clamp(12px, 3vh, 20px);
+  min-width: clamp(80px, 20vw, 150px);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-primary-dark);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.health-bar-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  transition: width 0.3s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 100, 100, 0.3);
+}
+
+.health-bar-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(8px, 2vw, var(--font-size-xs));
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+}
+
+/* Gold Display */
+.gold-display {
+  display: flex;
+  align-items: center;
+  gap: clamp(2px, 0.5vw, var(--spacing-xs));
+  padding: clamp(var(--spacing-xs), 1vh, var(--spacing-sm)) clamp(var(--spacing-sm), 1.5vw, var(--spacing-md));
+  background: var(--gradient-gold);
+  border-radius: var(--border-radius-md);
+  border: 2px solid var(--color-secondary-dark);
+  box-shadow: var(--shadow-medium), var(--shadow-glow-gold);
+  flex-shrink: 0;
+}
+
+.gold-icon {
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-large));
+}
+
+.gold-amount {
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-large));
+  font-weight: bold;
+  color: var(--color-bg-dark);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   Enemy Area - Top Section
+======================================== */
+.enemy-area {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(var(--spacing-sm), 1.5vh, var(--spacing-md));
+  padding: clamp(var(--spacing-sm), 1.5vh, var(--spacing-md));
+}
+
+.enemy-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(var(--spacing-xs), 1vh, var(--spacing-sm));
+  padding: clamp(var(--spacing-sm), 1.5vh, var(--spacing-md)) clamp(var(--spacing-md), 3vw, var(--spacing-xl));
+  background: rgba(139, 0, 0, 0.2);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-medium), var(--shadow-glow-red);
+  width: 100%;
+  max-width: 600px;
+}
+
+.enemy-name {
+  font-size: clamp(var(--font-size-base), 4vw, var(--font-size-xl));
+  font-weight: bold;
+  color: var(--color-primary-light);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: var(--shadow-glow-red);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.enemy-health-bar-container {
+  width: 100%;
+  max-width: 400px;
+  height: clamp(15px, 4vh, 25px);
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--color-primary-dark);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.enemy-health-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  transition: width 0.3s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 100, 100, 0.3);
+}
+
+.enemy-health-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(var(--font-size-xs), 2.5vw, var(--font-size-base));
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+}
+
+/* Enemy Cards (Face Down) */
+.enemy-cards {
+  display: flex;
+  gap: clamp(2px, 1vw, var(--spacing-xs));
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.enemy-card {
+  width: clamp(50px, 12vw, 80px);
+  height: clamp(70px, 16.8vw, 112px);
+  background: var(--gradient-blue);
+  border: 2px solid var(--color-accent-light);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(var(--font-size-xl), 5vw, var(--font-size-xxl));
+  color: rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.enemy-card::before {
+  content: '?';
+  font-weight: bold;
+}
+
+/* ========================================
+   Battle Field - Center Area
+======================================== */
+.battle-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(var(--spacing-sm), 2vh, var(--spacing-lg));
+  padding: clamp(var(--spacing-xs), 1.5vh, var(--spacing-md));
+  position: relative;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Hand Rank Display */
+.hand-rank-display {
+  padding: clamp(var(--spacing-sm), 2vh, var(--spacing-lg)) clamp(var(--spacing-md), 4vw, var(--spacing-xxl));
+  background: rgba(26, 26, 26, 0.95);
+  border: 2px solid var(--color-secondary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-large), var(--shadow-glow-gold);
+  text-align: center;
+  max-width: 90vw;
+}
+
+.hand-rank-label {
+  font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-small));
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.hand-rank-value {
+  font-size: clamp(var(--font-size-large), 5vw, var(--font-size-xxl));
+  font-weight: bold;
+  color: var(--color-text-gold);
+  text-shadow: var(--shadow-glow-gold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hand-rank-damage {
+  font-size: clamp(var(--font-size-base), 4vw, var(--font-size-xl));
+  color: var(--color-primary-light);
+  margin-top: var(--spacing-xs);
+}
+
+/* Battle Message */
+.battle-message {
+  padding: clamp(var(--spacing-xs), 1.5vh, var(--spacing-md)) clamp(var(--spacing-sm), 3vw, var(--spacing-xl));
+  background: rgba(184, 134, 11, 0.15);
+  border: 2px solid var(--color-secondary);
+  border-radius: var(--border-radius-md);
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-large));
+  color: var(--color-text-gold);
+  text-align: center;
+  animation: pulse 2s ease-in-out infinite;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   Player Area - Bottom Section
+======================================== */
+.player-area {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(var(--spacing-xs), 1.5vh, var(--spacing-md));
+  padding: clamp(var(--spacing-xs), 1.5vh, var(--spacing-md));
+  background: rgba(26, 26, 26, 0.8);
+  border-top: 2px solid var(--color-secondary-dark);
+  backdrop-filter: blur(5px);
+}
+
+/* Player Cards */
+.player-cards {
+  display: flex;
+  gap: clamp(2px, 0.5vw, var(--spacing-xs));
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: clamp(var(--spacing-xs), 1vh, var(--spacing-sm));
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.player-card {
+  width: clamp(60px, 14vw, 100px);
+  height: clamp(84px, 19.6vw, 140px);
+  background: white;
+  border: 2px solid #333;
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(2px, 0.5vw, var(--spacing-xs));
+  flex-shrink: 0;
+}
+
+.player-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: var(--shadow-large), var(--shadow-glow-gold);
+  border-color: var(--color-secondary);
+  z-index: 10;
+}
+
+.player-card.selected {
+  border-color: var(--color-secondary);
+  border-width: 3px;
+  box-shadow: var(--shadow-large), var(--shadow-glow-gold);
+  transform: translateY(-15px);
+}
+
+.player-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: clamp(20px, 5vw, 30px);
+  height: clamp(20px, 5vw, 30px);
+  background: var(--gradient-gold);
+  border: 2px solid var(--color-secondary-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--color-bg-dark);
+  box-shadow: var(--shadow-glow-gold);
+  font-size: clamp(10px, 3vw, 14px);
+}
+
+/* Card Rank and Suit */
+.card-rank {
+  font-size: clamp(var(--font-size-base), 4vw, var(--font-size-xl));
+  font-weight: bold;
+}
+
+.card-suit {
+  font-size: clamp(var(--font-size-large), 5vw, var(--font-size-xxl));
+}
+
+/* Card Colors */
+.player-card.red .card-rank,
+.player-card.red .card-suit {
+  color: var(--color-primary);
+}
+
+.player-card.black .card-rank,
+.player-card.black .card-suit {
+  color: #000;
+}
+
+/* ========================================
+   Battle Controls - Action Buttons
+======================================== */
+.battle-controls {
+  display: flex;
+  gap: clamp(var(--spacing-xs), 2vw, var(--spacing-md));
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 800px;
+}
+
+.battle-btn {
+  flex: 1;
+  min-width: clamp(100px, 25vw, 150px);
+  min-height: var(--touch-target-min);
+  padding: clamp(var(--spacing-xs), 1.5vh, var(--spacing-md)) clamp(var(--spacing-sm), 2vw, var(--spacing-lg));
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-base));
+  font-weight: bold;
+  color: var(--color-text-primary);
+  background: var(--gradient-primary);
+  border: 2px solid var(--color-primary-light);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.battle-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-large), var(--shadow-glow-red);
+  border-color: var(--color-secondary);
+}
+
+.battle-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-small);
+}
+
+.battle-btn:disabled {
+  background: var(--color-bg-light);
+  border-color: var(--color-text-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Play Button (Primary) */
+.battle-btn.play {
+  background: var(--gradient-gold);
+  border-color: var(--color-secondary-dark);
+  color: var(--color-bg-dark);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.battle-btn.play:hover:not(:disabled) {
+  box-shadow: var(--shadow-large), var(--shadow-glow-gold);
+}
+
+/* Discard Button (Secondary) */
+.battle-btn.discard {
+  background: var(--gradient-blue);
+  border-color: var(--color-accent-light);
+}
+
+.battle-btn.discard:hover:not(:disabled) {
+  box-shadow: var(--shadow-large), var(--shadow-glow-blue);
+}
+
+/* Discard Counter */
+.discard-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: clamp(20px, 5vw, 30px);
+  height: clamp(20px, 5vw, 30px);
+  background: var(--color-primary);
+  border: 2px solid var(--color-primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(10px, 2.5vw, var(--font-size-xs));
+  font-weight: bold;
+  color: white;
+  box-shadow: var(--shadow-medium);
+}
+
+/* ========================================
+   Card Animations
+======================================== */
+@keyframes dealCard {
+  0% {
+    transform: translateY(-100vh) rotate(-10deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes cardDamage {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.card-dealt {
+  animation: dealCard 0.5s ease-out;
+}
+
+.card-damage {
+  animation: cardDamage 0.3s ease-in-out;
+}
+
+/* ========================================
+   Special Effects
+======================================== */
+.damage-number {
+  position: absolute;
+  font-size: clamp(var(--font-size-xl), 6vw, var(--font-size-xxl));
+  font-weight: bold;
+  color: var(--color-primary-light);
+  text-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-primary);
+  animation: damageFloat 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes damageFloat {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.heal-number {
+  position: absolute;
+  font-size: clamp(var(--font-size-xl), 6vw, var(--font-size-xxl));
+  font-weight: bold;
+  color: #4caf50;
+  text-shadow: 0 0 10px #4caf50, 0 0 20px #4caf50;
+  animation: damageFloat 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ========================================
+   Responsive - Tablet (< 768px)
+======================================== */
+@media (max-width: 767px) {
+  .battle-hud {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .player-info {
+    justify-content: space-between;
+  }
+
+  .gold-display {
+    align-self: flex-end;
+  }
+
+  .enemy-cards {
+    gap: var(--spacing-xs);
+  }
+
+  .player-cards {
+    gap: var(--spacing-xs);
+  }
+
+  .battle-controls {
+    gap: var(--spacing-sm);
+  }
+
+  .battle-btn {
+    min-width: calc(50% - var(--spacing-xs));
+  }
+}
+
+/* ========================================
+   Responsive - Mobile (< 480px)
+======================================== */
+@media (max-width: 479px) {
+  .battle-container {
+    padding: var(--spacing-xs);
+    gap: var(--spacing-xs);
+  }
+
+  .enemy-info {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .player-cards {
+    gap: 2px;
+  }
+
+  .player-card {
+    width: clamp(50px, 18vw, 70px);
+    height: clamp(70px, 25.2vw, 98px);
+  }
+
+  .battle-controls {
+    gap: var(--spacing-xs);
+  }
+
+  .battle-btn {
+    min-width: 100%;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ========================================
+   Landscape Mode Adjustments
+======================================== */
+@media (max-height: 600px) and (orientation: landscape) {
+  .battle-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .battle-hud {
+    width: 100%;
+  }
+
+  .enemy-area {
+    width: 30%;
+    justify-content: flex-start;
+  }
+
+  .battle-field {
+    width: 40%;
+  }
+
+  .player-area {
+    width: 30%;
+    border-top: none;
+    border-left: 2px solid var(--color-secondary-dark);
+  }
+
+  .player-cards {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+
+  .player-card {
+    width: 100%;
+    max-width: 80px;
+  }
+}
+
+/* ========================================
+   Prevent Overflow
+======================================== */
+.battle-container * {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

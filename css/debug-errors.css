@@ -1,0 +1,241 @@
+/**
+ * 파일위치: /css/debug-errors.css
+ * 파일명: debug-errors.css
+ * 용도: 디버그 패널 Errors 탭 스타일
+ * 기능: 에러 목록, 에러 아이템, 에러 타입별 색상
+ * 책임: Errors 탭 UI 스타일링
+ */
+
+/* ========================================
+   에러 리스트
+   ======================================== */
+
+.debug-error-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px;
+  max-height: calc(100% - 50px);
+  overflow-y: auto;
+}
+
+/* ========================================
+   에러 아이템
+   ======================================== */
+
+.debug-error-item {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-left: 4px solid #e74c3c;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.debug-error-item:hover {
+  background: #333;
+  border-left-width: 6px;
+  transform: translateX(2px);
+}
+
+/* ========================================
+   에러 헤더
+   ======================================== */
+
+.debug-error-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #444;
+}
+
+.debug-error-index {
+  color: #888;
+  font-weight: bold;
+  font-size: 11px;
+  min-width: 30px;
+}
+
+.debug-error-time {
+  color: #3498db;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.debug-error-type {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* 에러 타입별 색상 */
+.error-type-error {
+  background: #e74c3c;
+  color: white;
+}
+
+.error-type-rejection {
+  background: #e67e22;
+  color: white;
+}
+
+.error-type-manual {
+  background: #f39c12;
+  color: white;
+}
+
+.error-type-default {
+  background: #95a5a6;
+  color: white;
+}
+
+/* ========================================
+   에러 메시지
+   ======================================== */
+
+.debug-error-message {
+  color: #ecf0f1;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+
+/* ========================================
+   에러 상세 정보
+   ======================================== */
+
+.debug-error-details {
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.debug-error-details summary {
+  color: #3498db;
+  font-size: 11px;
+  user-select: none;
+  outline: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.debug-error-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.debug-error-details summary:hover {
+  color: #5dade2;
+}
+
+.debug-error-details[open] summary {
+  margin-bottom: 8px;
+  color: #5dade2;
+}
+
+.debug-error-stack {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 3px;
+  padding: 10px;
+  margin: 0;
+  color: #bdc3c7;
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* ========================================
+   에러 배지 (탭 버튼)
+   ======================================== */
+
+.error-badge {
+  background: #e74c3c;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ========================================
+   빈 상태
+   ======================================== */
+
+.debug-info {
+  text-align: center;
+  padding: 40px 20px;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+/* ========================================
+   스크롤바 스타일
+   ======================================== */
+
+.debug-error-list::-webkit-scrollbar,
+.debug-error-stack::-webkit-scrollbar {
+  width: 8px;
+}
+
+.debug-error-list::-webkit-scrollbar-track,
+.debug-error-stack::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.debug-error-list::-webkit-scrollbar-thumb,
+.debug-error-stack::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.debug-error-list::-webkit-scrollbar-thumb:hover,
+.debug-error-stack::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ========================================
+   반응형
+   ======================================== */
+
+@media (max-width: 768px) {
+  .debug-error-item {
+    padding: 10px;
+  }
+
+  .debug-error-header {
+    flex-wrap: wrap;
+  }
+
+  .debug-error-message {
+    font-size: 12px;
+  }
+
+  .debug-error-stack {
+    font-size: 10px;
+  }
+}

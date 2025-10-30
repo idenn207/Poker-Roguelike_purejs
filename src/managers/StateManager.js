@@ -16,6 +16,9 @@ class StateManager extends ManagerCore {
     /** @type {GameState} 전역 게임 상태 */
     this.gameState = new GameState();
 
+    /** @type {DebugState} 전역 맵 상태 */
+    this.mapState = new DebugState();
+
     /** @type {DebugState} 전역 디버그 상태 */
     this.debugState = new DebugState();
 
@@ -38,11 +41,13 @@ class StateManager extends ManagerCore {
   /** 게임 상태 이벤트 등록 */
   registerEvents() {
     // 액션 요청 이벤트 구독
-
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.SCREEN.CHANGE, this.handleChangeScreen.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.CHARACTER.CHANGE, this.handleChangeCharacter.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.CHARACTER.SELECT, this.handleSelectCharacter.bind(this));
-    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.GAME.START, this.handlerStartNewGame.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.CHARACTER.CONFIRM, this.handleConfirmCharacter.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.GAME.NEW_GAME_FROM_MENU, this.handlerStartNewGameFromMenu.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.GAME.BEGIN_GAMEPLAY, this.handleBeginGameplay.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.SHOP.PURCHASE, this.handleShopPurchase.bind(this));
 
     // Debug 액션 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.TOGGLE, this.handleToggleDebug.bind(this));
@@ -51,10 +56,15 @@ class StateManager extends ManagerCore {
     this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.COLLAPSE_TOGGLE, this.handleToggleDebugCollapse.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.DEBUG.EVENT_LOGGED, this.handleEventLogged.bind(this));
 
+    // 에러 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.ERROR.OCCURRED, this.handleErrorOccurred.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.DEBUG.CLEAR_ERRORS, this.handleClearErrors.bind(this));
+
     // 상태 조회 요청 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.QUERY.GAME.STATE, this.handleQueryGameState.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.QUERY.CHARACTER.STATE, this.handleQueryCharacterState.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.QUERY.DEBUG.STATE, this.handleQueryDebugState.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.QUERY.PLAYER.INFO, this.handleQueryPlayerInfo.bind(this));
 
     console.log('StateManager events registered');
   }
@@ -126,12 +136,10 @@ class StateManager extends ManagerCore {
     this.gameState.selectedCharacter = currentCharacter;
 
     // 플레이어 데이터에 캐릭터 정보 설정
+    this.gameState.player = { ...currentCharacter }; // 기본 스텟 override
     this.gameState.player.character = currentCharacter;
-    this.gameState.player.hp = currentCharacter.hp;
-    this.gameState.player.maxHp = currentCharacter.maxHp;
-    this.gameState.player.golds = currentCharacter.gold;
-    this.gameState.player.items = []; // TODO: ItemFactory 개발 필요
     this.gameState.player.deck = new DeckFactory(currentCharacter.deck);
+    this.gameState.player.items = []; // TODO: ItemFactory 개발 필요
     this.gameState.player.relics = []; // TODO: RelicFactory 개발 필요
 
     console.debug('Character selected:', currentCharacter.name);
@@ -144,10 +152,110 @@ class StateManager extends ManagerCore {
   }
 
   /**
+   * 캐릭터 최종 확정 핸들러 (게임 시작 버튼 클릭 시)
+   * @param {Object} data
+   */
+  handleConfirmCharacter(data) {
+    const currentCharacter = this.gameState.getCurrentCharacter();
+
+    if (!currentCharacter) {
+      console.error('No character selected');
+      return;
+    }
+
+    this.gameState.selectedCharacter = currentCharacter;
+
+    // 플레이어 데이터 초기화
+    this.gameState.player = { ...currentCharacter }; // 기본 스텟 override
+    this.gameState.player.character = currentCharacter;
+    this.gameState.player.deck = new DeckFactory(currentCharacter.deck);
+    this.gameState.player.items = []; // TODO: ItemFactory 개발 필요
+    this.gameState.player.relics = []; // TODO: RelicFactory 개발 필요
+
+    console.debug('Character confirmed:', currentCharacter.name);
+
+    // 캐릭터 선택 완료 이벤트 발행
+    this.eventBus.emit(EVENTS.STATE.CHARACTER.CONFIRMED, {
+      character: currentCharacter,
+      player: { ...this.gameState.player },
+    });
+  }
+
+  /**
+   * 게임 플레이 시작 핸들러
+   * @param {Object} data
+   */
+  handleBeginGameplay(data) {
+    // 게임 활성화
+    this.gameState.isGameActive = true;
+    this.gameState.isNewGame = false;
+
+    console.log('Gameplay started');
+
+    // 게임 플레이 시작 완료 이벤트 발행
+    this.eventBus.emit(EVENTS.STATE.GAME.GAMEPLAY_BEGAN, {
+      isGameActive: this.gameState.isGameActive,
+      player: { ...this.gameState.player },
+    });
+
+    // 첫 번째 노드(상점)로 화면 전환
+    this.eventBus.emit(EVENTS.ACTION.SCREEN.CHANGE, {
+      screenName: SCREEN_STATE_TYPE.SHOP,
+    });
+  }
+
+  /**
+   * 상점 구매 처리
+   * @param {Object} data
+   * @param {string} data.type
+   * @param {number} data.price
+   * @param {Object} data.itemData
+   */
+  handleShopPurchase(data) {
+    const { type, price, itemData } = data;
+
+    // 골드 체크
+    if (this.gameState.player.gold < price) {
+      console.warn('Not enough gold');
+      this.eventBus.emit(EVENTS.SHOP.PURCHASE_FAILED, { reason: 'insufficient_gold' });
+      return;
+    }
+
+    // 골드 차감
+    this.gameState.player.gold -= price;
+
+    // 상품 지급
+    switch (type) {
+      case 'card':
+        // TODO: 카드 추가 로직
+        console.log(`Card purchased: ${itemData.title}`);
+        break;
+      case 'item':
+        // TODO: 아이템 추가 로직
+        console.log(`Item purchased: ${itemData.title}`);
+        break;
+      case 'upgrade':
+        // TODO: 업그레이드 적용 로직
+        console.log(`Upgrade purchased: ${itemData.title}`);
+        break;
+    }
+
+    // 구매 완료 이벤트
+    this.eventBus.emit(EVENTS.SHOP.ITEM_PURCHASED, { type, itemData });
+
+    // 플레이어 정보 업데이트 (UI에 반영)
+    this.eventBus.emit(EVENTS.STATE.SHOP.PLAYER_INFO_UPDATED, {
+      hp: this.gameState.player.hp,
+      maxHp: this.gameState.player.maxHp,
+      gold: this.gameState.player.gold,
+    });
+  }
+
+  /**
    * 새 게임 시작 액션 핸들러
    * @param {Object} data
    */
-  handlerStartNewGame(data) {
+  handlerStartNewGameFromMenu(data) {
     // 게임 상태 초기화
     this.gameState.isNewGame = true;
     this.gameState.isGameActive = false;
@@ -159,12 +267,6 @@ class StateManager extends ManagerCore {
     this.gameState.selectedCharacter = null;
 
     console.log('New game started');
-
-    // 새 게임 시작 이벤트 발행
-    this.eventBus.emit(EVENTS.STATE.GAME.STARTED, {
-      isNewGame: this.gameState.isNewGame,
-      stage: { ...this.gameState.stage },
-    });
 
     // 캐릭터 선택 화면으로 전환
     this.eventBus.emit(EVENTS.ACTION.SCREEN.CHANGE, {
@@ -222,6 +324,24 @@ class StateManager extends ManagerCore {
       loopInfo: this.debugState.loopInfo,
       fpsHistory: this.debugState.fpsHistory,
       recentEvents: this.debugState.recentEvents,
+      errors: [...this.debugState.errors],
+    });
+  }
+
+  /**
+   * 플레이어 정보 조회 처리
+   * @param {Object} data
+   * @param {string} data.requestId
+   */
+  handleQueryPlayerInfo(data) {
+    const { requestId } = data;
+
+    // 플레이어 정보 전송
+    this.eventBus.emit(EVENTS.STATE.SHOP.PLAYER_INFO_UPDATED, {
+      requestId: requestId,
+      hp: this.gameState.player.hp,
+      maxHp: this.gameState.player.maxHp,
+      gold: this.gameState.player.gold,
     });
   }
 
@@ -338,6 +458,45 @@ class StateManager extends ManagerCore {
         recentEvents: this.debugState.recentEvents,
       });
     }
+  }
+
+  // ========================================
+  // 에러 처리
+  // ========================================
+
+  /**
+   * 에러 발생 핸들러
+   * @param {*} errorData 에러 정보
+   */
+  handleErrorOccurred(errorData) {
+    this.debugState.errors.unshift(errorData);
+
+    // 최대 개수 초과 시 오래된 것 제거
+    if (this.debugState.errors.length > this.debugState.maxErrors) {
+      this.debugState.errors.pop();
+    }
+
+    console.debug('Error logged to DebugState:', errorData.message);
+
+    // 에러 추가 이벤트 발행 (UI 업데이트용)
+    this.eventBus.emit(EVENTS.STATE.DEBUG.ERROR_ADDED, {
+      errorCount: this.debugState.errors.length,
+      latestError: errorData,
+    });
+  }
+
+  /**
+   * 에러 클리어 핸들러
+   * @param {Object} data
+   */
+  handleClearErrors(data) {
+    this.debugState.errors = [];
+    console.debug('All errors cleared');
+
+    // 에러 클리어 완료 이벤트 발행
+    this.eventBus.emit(EVENTS.STATE.DEBUG.ERRORS_CLEARED, {
+      timestamp: Date.now(),
+    });
   }
 
   // ========================================

@@ -59,6 +59,7 @@ class EventBus {
       EVENTS.RENDER.DEBUG_PANEL,
 
       // 기타
+      EVENTS.ERROR.OCCURRED, // 에러는 별도 로깅
       /** 이벤트 추가... */
     ];
 
@@ -231,6 +232,10 @@ class EventBus {
    */
   getEventLog() {
     return [...this.eventLog];
+  }
+
+  getRecentEvents(count = 10) {
+    return this.eventLog.slice(0, count);
   }
 
   /**

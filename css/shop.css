@@ -1,0 +1,547 @@
+/**
+ * 파일위치: /css/shop.css
+ * 파일명: shop.css
+ * 용도: 상점 화면 스타일링
+ * 기능: 모달 레이아웃, 트럼프 카드 디자인, 탭 인터랙션, tooltip
+ * 책임: 상점 UI 시각적 표현 및 인터랙션 스타일
+ */
+
+/* ========================================
+   배경 및 모달 오버레이
+   ======================================== */
+
+#shopScreen {
+  background: rgba(10, 10, 10, 0.95);
+  overflow: hidden;
+}
+
+/* 배경 딤 처리 */
+#shopScreen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 30%, rgba(220, 20, 60, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ========================================
+   메인 컨테이너 (모달 스타일)
+   ======================================== */
+
+.shop-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 1400px;
+  height: 85%;
+  max-height: 900px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  border: 2px solid #dc143c;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(220, 20, 60, 0.3), 0 0 80px rgba(0, 0, 0, 0.8), inset 0 0 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ========================================
+   헤더 (간소화 + 플레이어 정보 통합)
+   ======================================== */
+
+.shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  background: linear-gradient(180deg, #000 0%, #1a1a1a 100%);
+  border-bottom: 2px solid #dc143c;
+  position: relative;
+}
+
+/* 좌측: 플레이어 정보 */
+.shop-player-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.shop-player-avatar {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #dc143c, #8b0000);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
+}
+
+.shop-player-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.shop-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.shop-stat-label {
+  font-weight: 600;
+  color: #888;
+}
+
+.shop-stat-value {
+  font-weight: 700;
+  color: #fff;
+}
+
+.shop-stat-item.gold .shop-stat-value {
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* 중앙: 타이틀 */
+.shop-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(220, 20, 60, 0.6), 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* 우측: X 버튼 */
+.shop-close-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.shop-close-btn:hover {
+  background: #dc143c;
+  border-color: #dc143c;
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 0 20px rgba(220, 20, 60, 0.6);
+}
+
+/* ========================================
+   메인 컨텐츠 영역 (좌측 탭 + 우측 그리드)
+   ======================================== */
+
+.shop-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ========================================
+   좌측 탭 메뉴 (20-25%)
+   ======================================== */
+
+.shop-category-tabs {
+  width: 22%;
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+  border-right: 2px solid rgba(220, 20, 60, 0.3);
+  padding: 25px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.shop-tab {
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #aaa;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.shop-tab::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: #dc143c;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.shop-tab:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(220, 20, 60, 0.3);
+  color: #fff;
+  transform: translateX(5px);
+}
+
+.shop-tab.active {
+  background: linear-gradient(90deg, rgba(220, 20, 60, 0.2) 0%, rgba(220, 20, 60, 0.05) 100%);
+  border-color: #dc143c;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(220, 20, 60, 0.2);
+}
+
+.shop-tab.active::before {
+  transform: scaleY(1);
+}
+
+/* ========================================
+   우측 상품 그리드
+   ======================================== */
+
+.shop-product-grid {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 25px;
+  align-content: start;
+}
+
+/* ========================================
+   상품 카드 (트럼프 카드 스타일)
+   ======================================== */
+
+.shop-product-card {
+  position: relative;
+  background: #fff;
+  border: 3px solid #000;
+  border-radius: 12px;
+  aspect-ratio: 2.5 / 3.5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 10px 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.shop-product-card[data-rarity='uncommon'] {
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  border-color: #4a90e2;
+}
+
+.shop-product-card[data-rarity='rare'] {
+  background: #dc143c;
+  border-color: #8b0000;
+  color: #fff;
+}
+
+.shop-product-card[data-rarity='rare'] .product-rank,
+.shop-product-card[data-rarity='rare'] .product-suit {
+  color: #fff;
+}
+
+.shop-product-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(220, 20, 60, 0.3);
+  z-index: 10;
+}
+
+/* 트럼프 카드: 좌상단 랭크 */
+.product-rank {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 32px;
+  font-weight: 900;
+  color: #000;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 트럼프 카드: 좌상단 suit (작게) */
+.product-suit-top {
+  position: absolute;
+  top: 46px;
+  left: 12px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* 트럼프 카드: 중앙 suit (크게) */
+.product-suit-center {
+  font-size: 64px;
+  margin: auto 0;
+}
+
+/* 트럼프 카드: 우하단 랭크 (거꾸로) */
+.product-rank-bottom {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  font-size: 32px;
+  font-weight: 900;
+  color: #000;
+  line-height: 1;
+  transform: rotate(180deg);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 트럼프 카드: 우하단 suit (작게, 거꾸로) */
+.product-suit-bottom {
+  position: absolute;
+  bottom: 46px;
+  right: 12px;
+  font-size: 24px;
+  line-height: 1;
+  transform: rotate(180deg);
+}
+
+/* suit 색상 */
+.suit-heart,
+.suit-diamond {
+  color: #dc143c;
+  filter: drop-shadow(0 0 4px rgba(220, 20, 60, 0.3));
+}
+
+.suit-spade,
+.suit-club {
+  color: #000;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.2));
+}
+
+/* rare 카드의 suit 색상 */
+.shop-product-card[data-rarity='rare'] .suit-heart,
+.shop-product-card[data-rarity='rare'] .suit-diamond {
+  color: #ffd700;
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
+}
+
+.shop-product-card[data-rarity='rare'] .suit-spade,
+.shop-product-card[data-rarity='rare'] .suit-club {
+  color: #fff;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+}
+
+/* ========================================
+   가격 표시 (카드 하단 고정)
+   ======================================== */
+
+.product-price {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+  border: 2px solid #ffd700;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.2);
+  white-space: nowrap;
+  z-index: 5;
+}
+
+/* ========================================
+   Tooltip (hover 시 제목 + 설명)
+   ======================================== */
+
+.product-tooltip {
+  position: absolute;
+  bottom: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #dc143c;
+  border-radius: 8px;
+  min-width: 200px;
+  max-width: 300px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+}
+
+.product-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: #dc143c;
+}
+
+.shop-product-card:hover .product-tooltip {
+  opacity: 1;
+  visibility: visible;
+  bottom: calc(100% + 20px);
+}
+
+.tooltip-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tooltip-description {
+  font-size: 12px;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+/* ========================================
+   아이템/업그레이드 카드 스타일
+   ======================================== */
+
+.shop-product-card.item-card,
+.shop-product-card.upgrade-card {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-color: #fff;
+  padding: 20px 15px;
+  justify-content: center;
+}
+
+.item-icon,
+.upgrade-icon {
+  font-size: 56px;
+  margin: auto 0;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.3));
+}
+
+.shop-product-card.item-card:hover,
+.shop-product-card.upgrade-card:hover {
+  background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+  border-color: #ffd700;
+}
+
+/* ========================================
+   스크롤바
+   ======================================== */
+
+.shop-product-grid::-webkit-scrollbar,
+.shop-category-tabs::-webkit-scrollbar {
+  width: 8px;
+}
+
+.shop-product-grid::-webkit-scrollbar-track,
+.shop-category-tabs::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.shop-product-grid::-webkit-scrollbar-thumb,
+.shop-category-tabs::-webkit-scrollbar-thumb {
+  background: rgba(220, 20, 60, 0.5);
+  border-radius: 4px;
+}
+
+.shop-product-grid::-webkit-scrollbar-thumb:hover,
+.shop-category-tabs::-webkit-scrollbar-thumb:hover {
+  background: rgba(220, 20, 60, 0.8);
+}
+
+/* ========================================
+   반응형
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .shop-category-tabs {
+    width: 25%;
+  }
+
+  .shop-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .shop-container {
+    width: 95%;
+    height: 90%;
+  }
+
+  .shop-content {
+    flex-direction: column;
+  }
+
+  .shop-category-tabs {
+    width: 100%;
+    flex-direction: row;
+    padding: 15px;
+    border-right: none;
+    border-bottom: 2px solid rgba(220, 20, 60, 0.3);
+    overflow-x: auto;
+  }
+
+  .shop-tab {
+    min-width: 120px;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .shop-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .shop-title {
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+}

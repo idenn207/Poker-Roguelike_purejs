@@ -111,7 +111,7 @@ class GameLoop {
 
     // Debug 정보 방행 (StateManager로)
     if (this.gameManager && this.gameManager.eventBus) {
-      this.gameManager.eventBus.emit(EVENTS.ACTION.UPDATE_LOOP_INFO, this.getDebugInfo());
+      this.gameManager.eventBus.emit(EVENTS.ACTION.UPDATE_LOOP_INFO, this.#getDebugInfo());
     }
 
     // 업데이트
@@ -172,7 +172,7 @@ class GameLoop {
     return this.avgFps;
   }
 
-  getDebugInfo() {
+  #getDebugInfo() {
     return {
       deltaTime: this.deltaTime,
       fps: this.fps,

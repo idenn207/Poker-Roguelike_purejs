@@ -37,23 +37,23 @@ const mainScripts = [
   // 7. 컴포넌트 (factory가 사용)
   'src/components/index.js',
 
-  // 8. 엔티티 (factory가 생성, data에 의존)
-  'src/entities/index.js',
-
-  // 9. 팩토리 (components + entities + data 사용)
-  'src/factories/index.js',
-
-  // 10. 로직 (순수 계산 함수들)
+  // 8. 로직 (순수 계산 함수들)
   'src/logic/index.js',
 
-  // 11. 매니저 (state + logic + factories 사용) (GameManager.js :  managers 조율)
-  'src/managers/index.js',
+  // 9. 엔티티 (factory가 생성, data에 의존)
+  'src/entities/index.js',
+
+  // 10. 팩토리 (components + entities + data 사용)
+  'src/factories/index.js',
+
+  // 11. UI (manager 이전 구현 필요)
+  'src/ui/index.js',
 
   // 12. 렌더링
   'src/render/index.js',
 
-  // 13. UI
-  'src/ui/index.js',
+  // 13. 매니저 (state + logic + factories 사용) (GameManager.js :  managers 조율)
+  'src/managers/index.js',
 
   // 14. 에셋 (비동기 로드 가능)
   'src/assets/index.js',

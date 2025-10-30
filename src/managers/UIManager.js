@@ -13,6 +13,19 @@ class UIManager extends ManagerCore {
     /** @type {EventBus} */
     this.eventBus = eventBus;
 
+    /**
+     * @typedef ScreenType
+     * @property {ShopScreen} shop
+     * @property {BattleScreen} battle
+     * @property {RewardScreen} reward
+     */
+    /** @type {ScreenType} */
+    this.screen = {
+      shop: new ShopScreen(this.eventBus),
+      battle: new BattleScreen(this.eventBus),
+      reward: new RewardScreen(this.eventBus),
+    };
+
     console.debug('UIManager Initialized');
   }
 
@@ -23,6 +36,9 @@ class UIManager extends ManagerCore {
     this.createLoadingScreen(); // 로딩 화면
     this.createMenuScreen(); // 메뉴 화면
     this.createCharacterSelectScreen(); // 캐릭터 선택 화면
+    this.screen.shop.createShopScreen(); // 상점 화면
+    this.screen.battle.createBattleScreen(); // 전투 화면
+    this.screen.reward.createRewardScreen(); // 보상 화면
 
     this.createDebugPanel(); // 디버그 화면
 
@@ -36,6 +52,9 @@ class UIManager extends ManagerCore {
 
     // 캐릭터 변경 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.STATE.CHARACTER.CHANGED, this.onCharacterChanged.bind(this));
+
+    // 상점 상태 변경 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.SHOP.PLAYER_INFO_UPDATED, this.onShopPlayerInfoUpdated.bind(this));
 
     // Debug 상태 변경 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.TOGGLED, this.onDebugToggled.bind(this));
@@ -79,26 +98,43 @@ class UIManager extends ManagerCore {
   }
 
   /**
+   * 상점 플레이어 정보 업데이트
+   * @param {Object} data
+   * @param {number} data.hp
+   * @param {number} data.maxHp
+   * @param {number} data.gold
+   */
+  onShopPlayerInfoUpdated(data) {
+    const { hp, maxHp, gold } = data;
+
+    const hpEl = this._draw.getElementById('shopPlayerHp');
+    const goldEl = this._draw.getElementById('shopPlayerGold');
+
+    if (hpEl) this._draw.setText(hpEl, `${hp}/${maxHp}`);
+    if (goldEl) this._draw.setText(goldEl, gold);
+  }
+
+  /**
    * 로고 화면 UI 생성
    */
   createLogoScreen() {
-    const screen = this.draw.createElement('div', 'screen');
-    this.draw.setId(screen, 'logoScreen');
+    const screen = this._draw.createElement('div', 'screen');
+    this._draw.setId(screen, 'logoScreen');
 
-    const container = this.draw.createElement('div', 'logo-container');
+    const container = this._draw.createElement('div', 'logo-container');
 
     // 로고 이미지 (임시 텍스트)
-    const logoImage = this.draw.createElement('div', 'logo-image');
-    this.draw.setText(logoImage, '🃏');
+    const logoImage = this._draw.createElement('div', 'logo-image');
+    this._draw.setText(logoImage, '🃏');
 
     // 로고 텍스트
-    const logoText = this.draw.createElement('div', 'logo-text');
-    this.draw.setText(logoText, 'Poker Roguelike');
+    const logoText = this._draw.createElement('div', 'logo-text');
+    this._draw.setText(logoText, 'Poker Roguelike');
 
-    this.draw.appendChild(container, logoImage);
-    this.draw.appendChild(container, logoText);
-    this.draw.appendChild(screen, container);
-    this.draw.appendChild(document.body, screen);
+    this._draw.appendChild(container, logoImage);
+    this._draw.appendChild(container, logoText);
+    this._draw.appendChild(screen, container);
+    this._draw.appendChild(document.body, screen);
 
     console.debug('Logo screen created');
   }
@@ -107,28 +143,28 @@ class UIManager extends ManagerCore {
    * 로딩 화면 UI 생성
    */
   createLoadingScreen() {
-    const screen = this.draw.createElement('div', 'screen');
-    this.draw.setId(screen, 'loadingScreen');
+    const screen = this._draw.createElement('div', 'screen');
+    this._draw.setId(screen, 'loadingScreen');
 
-    const container = this.draw.createElement('div', 'loading-container');
+    const container = this._draw.createElement('div', 'loading-container');
 
     // 스피너
-    const spinner = this.draw.createElement('div', 'spinner');
+    const spinner = this._draw.createElement('div', 'spinner');
 
     // 로딩 텍스트
-    const loadingText = this.draw.createElement('div', 'loading-text');
-    this.draw.setText(loadingText, 'LOADING...');
+    const loadingText = this._draw.createElement('div', 'loading-text');
+    this._draw.setText(loadingText, 'LOADING...');
 
     // TODO: 프로그래스 바 컨테이너 (나중에 사용)
-    const progressContainer = this.draw.createElement('div', 'progress-bar-container');
-    const progressFill = this.draw.createElement('div', 'progress-bar-fill');
-    this.draw.appendChild(progressContainer, progressFill);
+    const progressContainer = this._draw.createElement('div', 'progress-bar-container');
+    const progressFill = this._draw.createElement('div', 'progress-bar-fill');
+    this._draw.appendChild(progressContainer, progressFill);
 
-    this.draw.appendChild(container, spinner);
-    this.draw.appendChild(container, loadingText);
-    this.draw.appendChild(container, progressContainer);
-    this.draw.appendChild(screen, container);
-    this.draw.appendChild(document.body, screen);
+    this._draw.appendChild(container, spinner);
+    this._draw.appendChild(container, loadingText);
+    this._draw.appendChild(container, progressContainer);
+    this._draw.appendChild(screen, container);
+    this._draw.appendChild(document.body, screen);
 
     console.debug('Loading screen created');
   }
@@ -137,21 +173,21 @@ class UIManager extends ManagerCore {
    * 메뉴 화면 UI 생성
    */
   createMenuScreen() {
-    const screen = this.draw.createElement('div', 'screen');
-    this.draw.setId(screen, 'menuScreen');
+    const screen = this._draw.createElement('div', 'screen');
+    this._draw.setId(screen, 'menuScreen');
 
     // 정적 요소들
     this.addMenuDecorations(screen);
 
     // 메인 컨테이너
-    const container = this.draw.createElement('div', 'menu-container');
+    const container = this._draw.createElement('div', 'menu-container');
 
     // 타이틀
-    const title = this.draw.createElement('div', 'menu-title');
-    this.draw.setText(title, 'Poker Roguelike');
+    const title = this._draw.createElement('div', 'menu-title');
+    this._draw.setText(title, 'Poker Roguelike');
 
     // 버튼 컨테이너
-    const buttonContainer = this.draw.createElement('div', 'menu-buttons');
+    const buttonContainer = this._draw.createElement('div', 'menu-buttons');
 
     // 새 게임 버튼
     const newGameBtn = this.createMenuButton('새 게임', 'new-game-btn', false);
@@ -168,19 +204,19 @@ class UIManager extends ManagerCore {
       this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'settings' });
     });
 
-    this.draw.appendChild(buttonContainer, newGameBtn);
-    this.draw.appendChild(buttonContainer, continueBtn);
-    this.draw.appendChild(buttonContainer, settingsBtn);
+    this._draw.appendChild(buttonContainer, newGameBtn);
+    this._draw.appendChild(buttonContainer, continueBtn);
+    this._draw.appendChild(buttonContainer, settingsBtn);
 
     // 푸터
-    const footer = this.draw.createElement('div', 'menu-footer');
-    this.draw.setText(footer, '© 2025 Poker Roguelike');
+    const footer = this._draw.createElement('div', 'menu-footer');
+    this._draw.setText(footer, '© 2025 Poker Roguelike');
 
-    this.draw.appendChild(container, title);
-    this.draw.appendChild(container, buttonContainer);
-    this.draw.appendChild(container, footer);
-    this.draw.appendChild(screen, container);
-    this.draw.appendChild(document.body, screen);
+    this._draw.appendChild(container, title);
+    this._draw.appendChild(container, buttonContainer);
+    this._draw.appendChild(container, footer);
+    this._draw.appendChild(screen, container);
+    this._draw.appendChild(document.body, screen);
 
     console.debug('Menu screen created');
   }
@@ -189,15 +225,15 @@ class UIManager extends ManagerCore {
    * 캐릭터 선택 화면 UI 생성
    */
   createCharacterSelectScreen() {
-    const screen = this.draw.createElement('div', 'screen');
-    this.draw.setId(screen, 'characterSelectScreen');
+    const screen = this._draw.createElement('div', 'screen');
+    this._draw.setId(screen, 'characterSelectScreen');
 
     // 캐릭터 선택 타이틀
-    const container = this.draw.createElement('div', 'character-select-container');
+    const container = this._draw.createElement('div', 'character-select-container');
 
     // TODO: 배경 이미지
-    const background = this.draw.createElement('div', 'character-background');
-    this.draw.setId(background, 'characterBackground');
+    const background = this._draw.createElement('div', 'character-background');
+    this._draw.setId(background, 'characterBackground');
 
     // 상단 정보 섹션
     const infoSection = this.createCharacterInfoSection();
@@ -205,11 +241,11 @@ class UIManager extends ManagerCore {
     // 하단 선택 섹션
     const selectionSection = this.createCharacterSelectionSection();
 
-    this.draw.appendChild(container, background);
-    this.draw.appendChild(container, infoSection);
-    this.draw.appendChild(container, selectionSection);
-    this.draw.appendChild(screen, container);
-    this.draw.appendChild(document.body, screen);
+    this._draw.appendChild(container, background);
+    this._draw.appendChild(container, infoSection);
+    this._draw.appendChild(container, selectionSection);
+    this._draw.appendChild(screen, container);
+    this._draw.appendChild(document.body, screen);
 
     console.debug('Character select screen created');
   }
@@ -219,38 +255,38 @@ class UIManager extends ManagerCore {
    * @returns {HTMLElement} 생성된 캐릭터 정보 섹션 요소
    */
   createCharacterInfoSection() {
-    const section = this.draw.createElement('div', 'character-info-section');
+    const section = this._draw.createElement('div', 'character-info-section');
 
-    const panel = this.draw.createElement('div', 'character-info-panel');
+    const panel = this._draw.createElement('div', 'character-info-panel');
 
     // 좌측 - 캐릭터 상세 정보
-    const details = this.draw.createElement('div', 'character-details');
+    const details = this._draw.createElement('div', 'character-details');
 
-    const name = this.draw.createElement('div', 'character-name');
-    this.draw.setId(name, 'characterName');
-    this.draw.setText(name, '캐릭터를 선택하세요');
+    const name = this._draw.createElement('div', 'character-name');
+    this._draw.setId(name, 'characterName');
+    this._draw.setText(name, '캐릭터를 선택하세요');
 
-    const stats = this.draw.createElement('div', 'character-stats');
-    this.draw.setId(stats, 'characterStats');
+    const stats = this._draw.createElement('div', 'character-stats');
+    this._draw.setId(stats, 'characterStats');
 
-    const description = this.draw.createElement('div', 'character-description');
-    this.draw.setId(description, 'characterDescription');
-    this.draw.setText(description, '캐릭터 설명이 여기에 표시됩니다.');
+    const description = this._draw.createElement('div', 'character-description');
+    this._draw.setId(description, 'characterDescription');
+    this._draw.setText(description, '캐릭터 설명이 여기에 표시됩니다.');
 
-    this.draw.appendChild(details, name);
-    this.draw.appendChild(details, stats);
-    this.draw.appendChild(details, description);
+    this._draw.appendChild(details, name);
+    this._draw.appendChild(details, stats);
+    this._draw.appendChild(details, description);
 
     // 우측 - 캐릭터 이미지 미리보기
-    const imagePreview = this.draw.createElement('div', 'character-image-preview');
-    const previewImage = this.draw.createElement('img', 'character-preview-image');
-    this.draw.setId(previewImage, 'characterPreviewImage');
-    this.draw.setAttribute(previewImage, 'alt', 'Character Preview');
-    this.draw.appendChild(imagePreview, previewImage);
+    const imagePreview = this._draw.createElement('div', 'character-image-preview');
+    const previewImage = this._draw.createElement('img', 'character-preview-image');
+    this._draw.setId(previewImage, 'characterPreviewImage');
+    this._draw.setAttribute(previewImage, 'alt', 'Character Preview');
+    this._draw.appendChild(imagePreview, previewImage);
 
-    this.draw.appendChild(panel, details);
-    this.draw.appendChild(panel, imagePreview);
-    this.draw.appendChild(section, panel);
+    this._draw.appendChild(panel, details);
+    this._draw.appendChild(panel, imagePreview);
+    this._draw.appendChild(section, panel);
 
     return section;
   }
@@ -260,53 +296,56 @@ class UIManager extends ManagerCore {
    * @returns {HTMLElement} 생성된 캐릭터 선택 섹션 요소
    */
   createCharacterSelectionSection() {
-    const section = this.draw.createElement('div', 'character-selection-section');
+    const section = this._draw.createElement('div', 'character-selection-section');
 
     // 캐러셀
-    const carousel = this.draw.createElement('div', 'character-carousel');
+    const carousel = this._draw.createElement('div', 'character-carousel');
 
     // 이전 버튼
-    const prevBtn = this.draw.createElement('button', 'carousel-nav-btn');
-    this.draw.setId(prevBtn, 'prevCharacterBtn');
-    this.draw.setText(prevBtn, '◀');
+    const prevBtn = this._draw.createElement('button', 'carousel-nav-btn');
+    this._draw.setId(prevBtn, 'prevCharacterBtn');
+    this._draw.setText(prevBtn, '◀');
     this.trackDomListener(prevBtn, EVENTS.DOM.CLICK, () => {
       this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'prev-character' });
     });
 
     // 캐릭터 카드 컨테이너
-    const cardsContainer = this.draw.createElement('div', 'character-cards');
-    this.draw.setId(cardsContainer, 'characterCards');
+    const cardsContainer = this._draw.createElement('div', 'character-cards');
+    this._draw.setId(cardsContainer, 'characterCards');
 
     // 다음 버튼
-    const nextBtn = this.draw.createElement('button', 'carousel-nav-btn');
-    this.draw.setId(nextBtn, 'nextCharacterBtn');
-    this.draw.setText(nextBtn, '▶');
+    const nextBtn = this._draw.createElement('button', 'carousel-nav-btn');
+    this._draw.setId(nextBtn, 'nextCharacterBtn');
+    this._draw.setText(nextBtn, '▶');
     this.trackDomListener(nextBtn, EVENTS.DOM.CLICK, () => {
       this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'next-character' });
     });
 
-    this.draw.appendChild(carousel, prevBtn);
-    this.draw.appendChild(carousel, cardsContainer);
-    this.draw.appendChild(carousel, nextBtn);
+    this._draw.appendChild(carousel, prevBtn);
+    this._draw.appendChild(carousel, cardsContainer);
+    this._draw.appendChild(carousel, nextBtn);
 
     // 액션 버튼
-    const actions = this.draw.createElement('div', 'character-actions');
+    const actions = this._draw.createElement('div', 'character-actions');
 
-    const backBtn = this.draw.createElement('button', 'character-action-btn');
+    const backBtn = this._draw.createElement('button', 'character-action-btn');
     backBtn.textContent = '돌아가기';
     this.trackDomListener(backBtn, EVENTS.DOM.CLICK, () => {
       this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'back-to-menu' });
     });
 
-    const startBtn = this.draw.createElement('button', 'character-action-btn primary');
-    this.draw.setId(startBtn, 'startGameBtn');
-    this.draw.setText(startBtn, '게임 시작');
+    const startBtn = this._draw.createElement('button', 'character-action-btn primary');
+    this._draw.setId(startBtn, 'startGameBtn');
+    this._draw.setText(startBtn, '게임 시작');
+    this.trackDomListener(startBtn, EVENTS.DOM.CLICK, () => {
+      this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'start-game' });
+    });
 
-    this.draw.appendChild(actions, backBtn);
-    this.draw.appendChild(actions, startBtn);
+    this._draw.appendChild(actions, backBtn);
+    this._draw.appendChild(actions, startBtn);
 
-    this.draw.appendChild(section, carousel);
-    this.draw.appendChild(section, actions);
+    this._draw.appendChild(section, carousel);
+    this._draw.appendChild(section, actions);
 
     return section;
   }
@@ -319,27 +358,27 @@ class UIManager extends ManagerCore {
     if (!character) return;
 
     // 캐릭터 이름 업데이트
-    const nameEl = this.draw.getElementById('characterName');
-    if (nameEl) this.draw.setText(nameEl, character.name);
+    const nameEl = this._draw.getElementById('characterName');
+    if (nameEl) this._draw.setText(nameEl, character.name);
 
     // 캐릭터 스탯 업데이트
-    const statsEl = this.draw.getElementById('characterStats');
+    const statsEl = this._draw.getElementById('characterStats');
     if (statsEl) {
-      this.draw.removeAllChild(statsEl);
+      this._draw.removeAllChild(statsEl);
       this.createCharacterStates(statsEl, '체력', character.hp);
       this.createCharacterStates(statsEl, '골드', character.gold);
     }
 
     // TODO: 캐릭터 설명
-    const descEl = this.draw.getElementById('characterDescription');
-    if (descEl) this.draw.setText(descEl, character.description);
+    const descEl = this._draw.getElementById('characterDescription');
+    if (descEl) this._draw.setText(descEl, character.description);
 
     // TODO: 미리보기 이미지
-    const previewImg = this.draw.getElementById('characterPreviewImage');
+    const previewImg = this._draw.getElementById('characterPreviewImage');
     if (previewImg) {
-      this.draw.setAttribute(previewImg, 'alt', `player_${character.id}`);
+      this._draw.setAttribute(previewImg, 'alt', `player_${character.id}`);
       // TODO: 이미지 경로는 나중에 설정
-      // this.draw.setAttribute(previewImg, 'src', `path/to/character_${character.id}_preview.png`);
+      // this._draw.setAttribute(previewImg, 'src', `path/to/character_${character.id}_preview.png`);
     }
   }
 
@@ -350,10 +389,10 @@ class UIManager extends ManagerCore {
    * @param {typeof CHARACTERS[keyof typeof CHARACTERS]} nextCharacter
    */
   updateCharacterCards(prevCharacter, currentCharacter, nextCharacter) {
-    const container = this.draw.getElementById('characterCards');
+    const container = this._draw.getElementById('characterCards');
     if (!container) return;
 
-    this.draw.removeAllChild(container);
+    this._draw.removeAllChild(container);
 
     // 이전 캐릭터 카드
     const prevCard = this.createCharacterCard(prevCharacter, 'side');
@@ -370,9 +409,9 @@ class UIManager extends ManagerCore {
       this.eventBus.emit(EVENTS.INPUT.BUTTON.CLICKED, { button: 'next-character' });
     });
 
-    this.draw.appendChild(container, prevCard);
-    this.draw.appendChild(container, currentCard);
-    this.draw.appendChild(container, nextCard);
+    this._draw.appendChild(container, prevCard);
+    this._draw.appendChild(container, currentCard);
+    this._draw.appendChild(container, nextCard);
   }
 
   /**
@@ -382,16 +421,16 @@ class UIManager extends ManagerCore {
    * @returns {HTMLElement} 생성된 캐릭터 카드 요소
    */
   createCharacterCard(character, type) {
-    const card = this.draw.createElement('div', `character-card ${type}`);
+    const card = this._draw.createElement('div', `character-card ${type}`);
 
-    const imageContainer = this.draw.createElement('div', 'character-card-image');
-    this.draw.setText(imageContainer, `player_${character.id}`);
+    const imageContainer = this._draw.createElement('div', 'character-card-image');
+    this._draw.setText(imageContainer, `player_${character.id}`);
 
-    const nameLabel = this.draw.createElement('div', 'character-card-name');
-    this.draw.setText(nameLabel, character.name);
+    const nameLabel = this._draw.createElement('div', 'character-card-name');
+    this._draw.setText(nameLabel, character.name);
 
-    this.draw.appendChild(card, imageContainer);
-    this.draw.appendChild(card, nameLabel);
+    this._draw.appendChild(card, imageContainer);
+    this._draw.appendChild(card, nameLabel);
 
     return card;
   }
@@ -403,17 +442,17 @@ class UIManager extends ManagerCore {
    * @param {any} value 상태값
    */
   createCharacterStates(element, name, value) {
-    const statItem = this.draw.createElement('div', 'stat-item');
-    const statLabel = this.draw.createElement('div', 'stat-label');
-    this.draw.setText(statLabel, name);
+    const statItem = this._draw.createElement('div', 'stat-item');
+    const statLabel = this._draw.createElement('div', 'stat-label');
+    this._draw.setText(statLabel, name);
 
-    const statValue = this.draw.createElement('div', 'stat-value');
-    this.draw.setText(statValue, String(value));
+    const statValue = this._draw.createElement('div', 'stat-value');
+    this._draw.setText(statValue, String(value));
 
-    this.draw.appendChild(statItem, statLabel);
-    this.draw.appendChild(statItem, statValue);
+    this._draw.appendChild(statItem, statLabel);
+    this._draw.appendChild(statItem, statValue);
 
-    this.draw.appendChild(element, statItem);
+    this._draw.appendChild(element, statItem);
   }
 
   /**
@@ -425,13 +464,13 @@ class UIManager extends ManagerCore {
    * @returns {HTMLElement} 생성된 버튼 요소
    */
   createMenuButton(text, id, disabled = false, secondary = false) {
-    const button = this.draw.createElement('button', 'menu-btn');
-    this.draw.setId(button, id);
-    this.draw.setText(button, text);
-    this.draw.setDisabled(button, disabled);
+    const button = this._draw.createElement('button', 'menu-btn');
+    this._draw.setId(button, id);
+    this._draw.setText(button, text);
+    this._draw.setDisabled(button, disabled);
 
     if (secondary) {
-      this.draw.addClass(button, 'secondary');
+      this._draw.addClass(button, 'secondary');
     }
 
     return button;
@@ -445,28 +484,28 @@ class UIManager extends ManagerCore {
     // 카드 장식
     const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
     positions.forEach((pos) => {
-      const card = this.draw.createElement('div', 'card-decoration');
-      this.draw.addClass(card, pos);
-      this.draw.appendChild(screen, card);
+      const card = this._draw.createElement('div', 'card-decoration');
+      this._draw.addClass(card, pos);
+      this._draw.appendChild(screen, card);
     });
 
     // 칩 장식
-    const chipTop = this.draw.createElement('div', 'chip-decoration');
-    this.draw.addClass(chipTop, 'top');
-    this.draw.appendChild(screen, chipTop);
+    const chipTop = this._draw.createElement('div', 'chip-decoration');
+    this._draw.addClass(chipTop, 'top');
+    this._draw.appendChild(screen, chipTop);
 
-    const chipBottom = this.draw.createElement('div', 'chip-decoration');
-    this.draw.addClass(chipBottom, 'bottom');
-    this.draw.appendChild(screen, chipBottom);
+    const chipBottom = this._draw.createElement('div', 'chip-decoration');
+    this._draw.addClass(chipBottom, 'bottom');
+    this._draw.appendChild(screen, chipBottom);
   }
 
   /**
    * Debug 패널 생성
    */
   createDebugPanel() {
-    const panel = this.draw.createElement('div', 'debug-panel');
-    this.draw.setId(panel, 'debugPanel');
-    this.draw.setDisplay(panel, 'none');
+    const panel = this._draw.createElement('div', 'debug-panel');
+    this._draw.setId(panel, 'debugPanel');
+    this._draw.setDisplay(panel, 'none');
 
     // 헤더
     const header = this.createDebugHeader();
@@ -475,14 +514,14 @@ class UIManager extends ManagerCore {
     const tabs = this.createDebugTabs();
 
     // 컨텐츠 영역
-    const content = this.draw.createElement('div', 'debug-content');
-    this.draw.setId(content, 'debugContent');
+    const content = this._draw.createElement('div', 'debug-content');
+    this._draw.setId(content, 'debugContent');
 
-    this.draw.appendChild(panel, header);
-    this.draw.appendChild(panel, tabs);
-    this.draw.appendChild(panel, content);
+    this._draw.appendChild(panel, header);
+    this._draw.appendChild(panel, tabs);
+    this._draw.appendChild(panel, content);
 
-    this.draw.appendChild(document.body, panel);
+    this._draw.appendChild(document.body, panel);
 
     // 드래그 기능 추가
     this.enableDragPanel(panel, header); // 이 줄 추가
@@ -493,32 +532,32 @@ class UIManager extends ManagerCore {
    * @returns {HTMLElement}
    */
   createDebugHeader() {
-    const header = this.draw.createElement('div', 'debug-header');
+    const header = this._draw.createElement('div', 'debug-header');
 
-    const title = this.draw.createElement('div', 'debug-title');
-    this.draw.setText(title, '🔧 Debug Panel');
+    const title = this._draw.createElement('div', 'debug-title');
+    this._draw.setText(title, '🔧 Debug Panel');
 
-    const controls = this.draw.createElement('div', 'debug-controls');
+    const controls = this._draw.createElement('div', 'debug-controls');
 
     // 접기/펼치기 버튼
-    const collapseBtn = this.draw.createElement('button', 'debug-btn');
-    this.draw.setId(collapseBtn, 'debugCollapseBtn');
-    this.draw.setText(collapseBtn, '−');
+    const collapseBtn = this._draw.createElement('button', 'debug-btn');
+    this._draw.setId(collapseBtn, 'debugCollapseBtn');
+    this._draw.setText(collapseBtn, '−');
     this.trackDomListener(collapseBtn, EVENTS.DOM.CLICK, () => {
       this.eventBus.emit(EVENTS.ACTION.DEBUG.COLLAPSE_TOGGLE, {});
     });
 
     // 닫기 버튼
-    const closeBtn = this.draw.createElement('button', 'debug-btn');
-    this.draw.setText(closeBtn, 'x');
+    const closeBtn = this._draw.createElement('button', 'debug-btn');
+    this._draw.setText(closeBtn, 'x');
     this.trackDomListener(closeBtn, EVENTS.DOM.CLICK, () => {
       this.eventBus.emit(EVENTS.ACTION.DEBUG.TOGGLE, {});
     });
 
-    this.draw.appendChild(controls, collapseBtn);
-    this.draw.appendChild(controls, closeBtn);
-    this.draw.appendChild(header, title);
-    this.draw.appendChild(header, controls);
+    this._draw.appendChild(controls, collapseBtn);
+    this._draw.appendChild(controls, closeBtn);
+    this._draw.appendChild(header, title);
+    this._draw.appendChild(header, controls);
 
     return header;
   }
@@ -528,29 +567,30 @@ class UIManager extends ManagerCore {
    * @returns {HTMLElement}
    */
   createDebugTabs() {
-    const tabsContainer = this.draw.createElement('div', 'debug-tabs');
-    this.draw.setId(tabsContainer, 'debugTabs');
+    const tabsContainer = this._draw.createElement('div', 'debug-tabs');
+    this._draw.setId(tabsContainer, 'debugTabs');
 
     const tabs = [
       { id: 'events', label: 'Events' },
       { id: 'state', label: 'GameState' },
       { id: 'loop', label: 'GameLoop' },
+      { id: 'errors', label: 'Errors' },
     ];
 
     tabs.forEach((tab) => {
-      const tabBtn = this.draw.createElement('button', 'debug-tab');
-      this.draw.setText(tabBtn, tab.label);
-      this.draw.addDataset(tabBtn, 'tab', tab.id);
+      const tabBtn = this._draw.createElement('button', 'debug-tab');
+      this._draw.setText(tabBtn, tab.label);
+      this._draw.addDataset(tabBtn, 'tab', tab.id);
 
       if (tab.id === 'events') {
-        this.draw.addClass(tabBtn, 'active');
+        this._draw.addClass(tabBtn, 'active');
       }
 
       this.trackDomListener(tabBtn, EVENTS.DOM.CLICK, () => {
         this.eventBus.emit(EVENTS.ACTION.DEBUG.CHANGE_TAB, { tabId: tab.id });
       });
 
-      this.draw.appendChild(tabsContainer, tabBtn);
+      this._draw.appendChild(tabsContainer, tabBtn);
     });
 
     return tabsContainer;
@@ -565,9 +605,9 @@ class UIManager extends ManagerCore {
   onDebugToggled(data) {
     const { isActive, currentTab } = data;
 
-    const panel = this.draw.getElementById('debugPanel');
+    const panel = this._draw.getElementById('debugPanel');
     if (panel) {
-      this.draw.setDisplay(panel, isActive ? 'flex' : 'none');
+      this._draw.setDisplay(panel, isActive ? 'flex' : 'none');
 
       if (isActive) {
         // 패널이 열리면 RenderManager에 렌더링 요청
@@ -588,10 +628,10 @@ class UIManager extends ManagerCore {
     // 탭 버튼 활성화 상태 변경
     const tabButtons = document.querySelectorAll('.debug-tab');
     tabButtons.forEach((btn) => {
-      if (btn.dataset.tab === currentTab) {
-        this.draw.addClass(btn, 'active');
+      if (this._draw.getDataset(btn, 'tab') === currentTab) {
+        this._draw.addClass(btn, 'active');
       } else {
-        this.draw.removeClass(btn, 'active');
+        this._draw.removeClass(btn, 'active');
       }
     });
 
@@ -608,26 +648,26 @@ class UIManager extends ManagerCore {
    */
   onDebugCollapsed(data) {
     const { isCollapsed } = data;
-    const panel = this.draw.getElement('#debugPanel');
-    const tabs = this.draw.getElementById('debugTabs');
-    const content = this.draw.getElementById('debugContent');
-    const collapseBtn = this.draw.getElementById('debugCollapseBtn');
+    const panel = this._draw.getElement('#debugPanel');
+    const tabs = this._draw.getElementById('debugTabs');
+    const content = this._draw.getElementById('debugContent');
+    const collapseBtn = this._draw.getElementById('debugCollapseBtn');
 
     if (tabs && content && collapseBtn) {
       if (isCollapsed) {
-        this.draw.setDisplay(tabs, 'none');
-        this.draw.setDisplay(content, 'none');
-        this.draw.setText(collapseBtn, '+');
-        this.draw.addStyle(panel, {
+        this._draw.setDisplay(tabs, 'none');
+        this._draw.setDisplay(content, 'none');
+        this._draw.setText(collapseBtn, '+');
+        this._draw.addStyle(panel, {
           height: 'auto',
           minHeight: 'auto',
           resize: 'none',
         });
       } else {
-        this.draw.setDisplay(tabs, 'flex');
-        this.draw.setDisplay(content, 'block');
-        this.draw.setText(collapseBtn, '−');
-        this.draw.addStyle(panel, {
+        this._draw.setDisplay(tabs, 'flex');
+        this._draw.setDisplay(content, 'block');
+        this._draw.setText(collapseBtn, '−');
+        this._draw.addStyle(panel, {
           height: '',
           minHeight: '300px',
           resize: 'both',
@@ -678,7 +718,7 @@ class UIManager extends ManagerCore {
           currentY = e.clientY - initialY;
         }
 
-        this.draw.addStyle(panel, {
+        this._draw.addStyle(panel, {
           left: currentX + 'px',
           top: currentY + 'px',
           right: 'auto',

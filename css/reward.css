@@ -1,0 +1,572 @@
+/**
+ * 파일위치: /css/reward.css
+ * 파일명: reward.css
+ * 용도: 보상 화면 스타일
+ * 기능: 보상 화면의 레이아웃, 보상 카드 디자인, 선택 효과
+ * 책임: 보상 화면 UI 디자인 관리 (반응형)
+ */
+
+/* ========================================
+   Reward Screen Base
+======================================== */
+#rewardScreen {
+  background: radial-gradient(ellipse at center, rgba(184, 134, 11, 0.15) 0%, transparent 50%), var(--color-bg-dark);
+  overflow: hidden;
+}
+
+/* 최소한의 배경 장식 */
+#rewardScreen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 20%, rgba(139, 0, 0, 0.08) 0%, transparent 30%),
+    radial-gradient(circle at 70% 80%, rgba(184, 134, 11, 0.08) 0%, transparent 30%);
+  pointer-events: none;
+}
+
+.reward-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(var(--spacing-sm), 2vh, var(--spacing-lg));
+  position: relative;
+  gap: clamp(var(--spacing-md), 3vh, var(--spacing-xl));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ========================================
+   Reward Header
+======================================== */
+.reward-header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(var(--spacing-sm), 2vh, var(--spacing-md));
+  width: 100%;
+  max-width: 90vw;
+}
+
+.reward-title {
+  font-size: clamp(var(--font-size-xl), 6vw, var(--font-size-display));
+  font-weight: bold;
+  color: var(--color-text-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(184, 134, 11, 0.6), 0 0 40px rgba(184, 134, 11, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.9);
+  animation: glowPulse 2s ease-in-out infinite;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(184, 134, 11, 0.6), 0 0 40px rgba(184, 134, 11, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.9);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(184, 134, 11, 0.8), 0 0 60px rgba(184, 134, 11, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.9);
+  }
+}
+
+.reward-subtitle {
+  font-size: clamp(var(--font-size-base), 3vw, var(--font-size-large));
+  color: var(--color-text-secondary);
+  letter-spacing: 0.1em;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Victory Message */
+.victory-message {
+  padding: clamp(var(--spacing-sm), 2vh, var(--spacing-lg)) clamp(var(--spacing-md), 4vw, var(--spacing-xxl));
+  background: rgba(184, 134, 11, 0.15);
+  border: 2px solid var(--color-secondary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-large), var(--shadow-glow-gold);
+  text-align: center;
+  max-width: 90vw;
+}
+
+.victory-text {
+  font-size: clamp(var(--font-size-base), 4vw, var(--font-size-xl));
+  font-weight: bold;
+  color: var(--color-text-gold);
+  text-shadow: var(--shadow-glow-gold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   Reward Options Container
+======================================== */
+.reward-options {
+  flex: 1;
+  display: flex;
+  gap: clamp(var(--spacing-md), 3vw, var(--spacing-xxl));
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: clamp(var(--spacing-sm), 2vh, var(--spacing-lg));
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* ========================================
+   Reward Option Card
+======================================== */
+.reward-option {
+  width: clamp(200px, 40vw, 280px);
+  min-height: clamp(280px, 50vh, 380px);
+  background: rgba(26, 26, 26, 0.95);
+  border: 3px solid var(--color-secondary-dark);
+  border-radius: var(--border-radius-xl);
+  padding: clamp(var(--spacing-md), 3vh, var(--spacing-xl));
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-large);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(var(--spacing-sm), 2vh, var(--spacing-lg));
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* 빛나는 효과 - 최소화 */
+.reward-option::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.08) 50%, transparent 55%);
+  transform: rotate(45deg);
+  animation: shine 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.reward-option:hover {
+  transform: translateY(-10px) scale(1.03);
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-large), var(--shadow-glow-gold), 0 0 40px rgba(184, 134, 11, 0.3);
+}
+
+.reward-option:active {
+  transform: translateY(-8px) scale(1.01);
+}
+
+/* Selected State */
+.reward-option.selected {
+  border-color: var(--color-secondary);
+  animation: rewardPulse 0.5s ease-out;
+}
+
+@keyframes rewardPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   Reward Types
+======================================== */
+
+/* Coin Reward */
+.reward-option.coin {
+  background: radial-gradient(ellipse at center, rgba(184, 134, 11, 0.15) 0%, transparent 60%), rgba(26, 26, 26, 0.95);
+}
+
+.reward-icon.coin {
+  width: clamp(80px, 20vw, 120px);
+  height: clamp(80px, 20vw, 120px);
+  background: var(--gradient-gold);
+  border-radius: 50%;
+  border: 4px solid var(--color-secondary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(40px, 10vw, 60px);
+  box-shadow: var(--shadow-large), var(--shadow-glow-gold), inset 0 -5px 10px rgba(0, 0, 0, 0.3);
+  animation: coinSpin 3s linear infinite;
+}
+
+.reward-icon.coin::before {
+  content: '💰';
+}
+
+@keyframes coinSpin {
+  0%,
+  100% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Card Reward */
+.reward-option.card {
+  background: radial-gradient(ellipse at center, rgba(30, 58, 95, 0.15) 0%, transparent 60%), rgba(26, 26, 26, 0.95);
+}
+
+.reward-icon.card {
+  width: clamp(80px, 20vw, 120px);
+  height: clamp(112px, 28vw, 168px);
+  background: var(--gradient-blue);
+  border-radius: var(--border-radius-lg);
+  border: 3px solid var(--color-accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(40px, 10vw, 60px);
+  box-shadow: var(--shadow-large);
+  position: relative;
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+.reward-icon.card::before {
+  content: '🃏';
+}
+
+@keyframes cardFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+/* Relic Reward */
+.reward-option.relic {
+  background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.15) 0%, transparent 60%), rgba(26, 26, 26, 0.95);
+  border-color: var(--color-primary);
+}
+
+.reward-icon.relic {
+  width: clamp(80px, 20vw, 120px);
+  height: clamp(80px, 20vw, 120px);
+  background: var(--gradient-primary);
+  border-radius: var(--border-radius-lg);
+  border: 3px solid var(--color-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(40px, 10vw, 60px);
+  box-shadow: var(--shadow-large), var(--shadow-glow-red);
+  animation: relicGlow 2s ease-in-out infinite;
+}
+
+.reward-icon.relic::before {
+  content: '⚱️';
+}
+
+@keyframes relicGlow {
+  0%,
+  100% {
+    box-shadow: var(--shadow-large), var(--shadow-glow-red);
+  }
+  50% {
+    box-shadow: var(--shadow-large), 0 0 40px rgba(139, 0, 0, 0.8);
+  }
+}
+
+/* ========================================
+   Reward Details
+======================================== */
+.reward-label {
+  font-size: clamp(var(--font-size-base), 4vw, var(--font-size-xl));
+  font-weight: bold;
+  color: var(--color-text-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.reward-value {
+  font-size: clamp(var(--font-size-xxl), 8vw, var(--font-size-display));
+  font-weight: bold;
+  color: var(--color-text-primary);
+  text-shadow: var(--shadow-glow-gold);
+}
+
+.reward-description {
+  font-size: clamp(var(--font-size-xs), 2.5vw, var(--font-size-base));
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.6;
+  padding: 0 clamp(var(--spacing-xs), 2vw, var(--spacing-md));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Card Name/Rarity */
+.card-name {
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-large));
+  font-weight: bold;
+  color: var(--color-accent-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.card-rarity {
+  font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-small));
+  color: var(--color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.relic-name {
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-large));
+  font-weight: bold;
+  color: var(--color-primary-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* ========================================
+   Skip Button
+======================================== */
+.skip-button-container {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.skip-button {
+  padding: clamp(var(--spacing-sm), 2vh, var(--spacing-md)) clamp(var(--spacing-lg), 4vw, var(--spacing-xxl));
+  font-size: clamp(var(--font-size-small), 3vw, var(--font-size-large));
+  font-weight: bold;
+  color: var(--color-text-secondary);
+  background: rgba(42, 42, 42, 0.9);
+  border: 2px solid var(--color-bg-light);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  min-width: clamp(150px, 40vw, 200px);
+  min-height: var(--touch-target-min);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skip-button:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-text-secondary);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-large);
+}
+
+.skip-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-small);
+}
+
+/* ========================================
+   Reward Collection Animation
+======================================== */
+.reward-collected {
+  animation: collectReward 1s ease-out forwards;
+}
+
+@keyframes collectReward {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   Rarity Borders
+======================================== */
+.reward-option.common {
+  border-color: #666;
+}
+
+.reward-option.uncommon {
+  border-color: #4caf50;
+  box-shadow: var(--shadow-large), 0 0 20px rgba(76, 175, 80, 0.3);
+}
+
+.reward-option.rare {
+  border-color: #2196f3;
+  box-shadow: var(--shadow-large), 0 0 25px rgba(33, 150, 243, 0.4);
+}
+
+.reward-option.epic {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-large), 0 0 30px rgba(139, 0, 0, 0.5);
+}
+
+.reward-option.legendary {
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-large), 0 0 35px rgba(184, 134, 11, 0.6);
+  animation: legendaryGlow 2s ease-in-out infinite;
+}
+
+@keyframes legendaryGlow {
+  0%,
+  100% {
+    box-shadow: var(--shadow-large), 0 0 30px rgba(184, 134, 11, 0.6);
+  }
+  50% {
+    box-shadow: var(--shadow-large), 0 0 50px rgba(184, 134, 11, 0.9);
+  }
+}
+
+/* ========================================
+   Responsive - Tablet (< 768px)
+======================================== */
+@media (max-width: 767px) {
+  .reward-options {
+    gap: var(--spacing-lg);
+  }
+
+  .reward-option {
+    width: clamp(180px, 45vw, 240px);
+    min-height: clamp(250px, 45vh, 340px);
+  }
+
+  .reward-icon.coin,
+  .reward-icon.relic {
+    width: clamp(70px, 18vw, 100px);
+    height: clamp(70px, 18vw, 100px);
+    font-size: clamp(35px, 9vw, 50px);
+  }
+
+  .reward-icon.card {
+    width: clamp(70px, 18vw, 100px);
+    height: clamp(98px, 25.2vw, 140px);
+    font-size: clamp(35px, 9vw, 50px);
+  }
+}
+
+/* ========================================
+   Responsive - Mobile (< 480px)
+======================================== */
+@media (max-width: 479px) {
+  .reward-container {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-md);
+  }
+
+  .reward-title {
+    font-size: var(--font-size-large);
+    letter-spacing: 0.1em;
+  }
+
+  .reward-options {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+  }
+
+  .reward-option {
+    width: 90%;
+    max-width: 300px;
+    min-height: 280px;
+  }
+
+  .reward-option:hover {
+    transform: translateY(-5px) scale(1.02);
+  }
+
+  .skip-button {
+    width: 90%;
+    max-width: 300px;
+  }
+}
+
+/* ========================================
+   Landscape Mode Adjustments
+======================================== */
+@media (max-height: 600px) and (orientation: landscape) {
+  .reward-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .reward-header {
+    width: 100%;
+    order: 1;
+  }
+
+  .reward-options {
+    order: 2;
+    flex: 1;
+  }
+
+  .skip-button-container {
+    width: 100%;
+    order: 3;
+  }
+
+  .reward-option {
+    width: clamp(150px, 30vw, 200px);
+    min-height: clamp(200px, 35vh, 280px);
+  }
+}
+
+/* ========================================
+   Prevent Overflow
+======================================== */
+.reward-container * {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

@@ -4,8 +4,10 @@ const CHARACTERS = {
     name: '전사',
     description: '',
     hp: 100,
+    maxHp: 100,
     gold: 100,
     deck: 'warrior_deck',
+    items: [],
     relics: [],
   },
   mage: {
@@ -13,8 +15,10 @@ const CHARACTERS = {
     name: '마법사',
     description: '',
     hp: 80,
+    maxHp: 80,
     gold: 80,
     deck: '',
+    items: [],
     relics: [],
   },
   rogue: {
@@ -22,8 +26,10 @@ const CHARACTERS = {
     name: '도적',
     description: '',
     hp: 90,
+    maxHp: 90,
     gold: 150,
     deck: '',
+    items: [],
     relics: [],
   },
   priest: {
@@ -31,8 +37,10 @@ const CHARACTERS = {
     name: '사제',
     description: '',
     hp: 85,
+    maxHp: 85,
     gold: 120,
     deck: '',
+    items: [],
     relics: [],
   },
 };

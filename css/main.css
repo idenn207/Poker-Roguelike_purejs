@@ -7,63 +7,70 @@
  */
 
 /* ========================================
-   CSS Variables - Casino Theme
+   CSS Variables - Dark Luxury Casino Theme
 ======================================== */
 :root {
-  /* 카지노 컬러 팔레트 */
-  --color-primary: #c41e3a; /* 진한 레드 */
-  --color-primary-dark: #8b0000;
-  --color-primary-light: #dc143c;
+  /* 어두운 카지노 컬러 팔레트 */
+  --color-primary: #8b0000; /* 다크 레드 */
+  --color-primary-dark: #5c0000;
+  --color-primary-light: #a00000;
 
-  --color-secondary: #ffd700; /* 골드 */
-  --color-secondary-dark: #daa520;
-  --color-secondary-light: #ffed4e;
+  --color-secondary: #b8860b; /* 다크 골드 */
+  --color-secondary-dark: #8b6914;
+  --color-secondary-light: #daa520;
 
-  --color-accent: #0f4c81; /* 블루 (카드 뒷면) */
-  --color-accent-dark: #083358;
-  --color-accent-light: #1e5a8e;
+  --color-accent: #1e3a5f; /* 다크 블루 */
+  --color-accent-dark: #0f1d2f;
+  --color-accent-light: #2c5282;
 
-  /* 배경 */
-  --color-bg-dark: #0a0e1a;
-  --color-bg-medium: #1a1f35;
-  --color-bg-light: #252b45;
+  /* 배경 (매우 어두움) */
+  --color-bg-dark: #0a0a0a;
+  --color-bg-medium: #1a1a1a;
+  --color-bg-light: #2a2a2a;
+  --color-bg-card: #151515;
 
   /* 텍스트 */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #b8c5d6;
-  --color-text-disabled: #5a6b80;
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #a8a8a8;
+  --color-text-disabled: #585858;
+  --color-text-gold: #daa520;
+  --color-text-red: #ff4757;
 
   /* 그라디언트 */
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   --gradient-gold: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark) 100%);
   --gradient-blue: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent-dark) 100%);
+  --gradient-dark: linear-gradient(180deg, var(--color-bg-medium) 0%, var(--color-bg-dark) 100%);
 
   /* 그림자 */
-  --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
-  --shadow-glow-red: 0 0 20px rgba(196, 30, 58, 0.4);
+  --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.7);
+  --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.8);
+  --shadow-glow-gold: 0 0 20px rgba(184, 134, 11, 0.5);
+  --shadow-glow-red: 0 0 20px rgba(139, 0, 0, 0.5);
+  --shadow-glow-blue: 0 0 20px rgba(30, 58, 95, 0.5);
 
   /* 타이포그래피 */
-  --font-family-primary: 'Arial', 'Helvetica', sans-serif;
-  --font-size-small: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-large: 1.25rem;
-  --font-size-xl: 1.5rem;
-  --font-size-xxl: 2rem;
-  --font-size-title: 3rem;
+  --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-small: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-large: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-xxl: 1.5rem; /* 24px */
+  --font-size-title: 2rem; /* 32px */
+  --font-size-display: 2.5rem; /* 40px */
 
   /* 간격 */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-xxl: 3rem;
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+  --spacing-xl: 2rem; /* 32px */
+  --spacing-xxl: 3rem; /* 48px */
 
   /* 애니메이션 */
-  --transition-fast: 0.2s ease;
+  --transition-fast: 0.15s ease;
   --transition-base: 0.3s ease;
   --transition-slow: 0.5s ease;
 
@@ -72,6 +79,14 @@
   --border-radius-md: 8px;
   --border-radius-lg: 12px;
   --border-radius-xl: 16px;
+
+  /* 반응형 브레이크포인트 */
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+
+  /* 터치 타겟 최소 크기 */
+  --touch-target-min: 44px;
 }
 
 /* ========================================
@@ -83,17 +98,22 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 html,
 body {
   width: 100%;
   height: 100%;
   overflow: hidden;
   font-family: var(--font-family-primary);
-  font-size: 16px;
+  background: var(--color-bg-dark);
   color: var(--color-text-primary);
-  background-color: var(--color-bg-dark);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
 body {
@@ -101,14 +121,134 @@ body {
 }
 
 /* ========================================
+   Typography
+======================================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Text Overflow Prevention */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-wrap {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* ========================================
+   Buttons
+======================================== */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Touch Target */
+button,
+a,
+.clickable {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   Links
+======================================== */
+a {
+  color: var(--color-secondary-light);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-secondary);
+}
+
+a:active {
+  color: var(--color-secondary-dark);
+}
+
+/* ========================================
+   Scrollbar Styling
+======================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-bg-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary-dark);
+}
+
+/* ========================================
+   Selection
+======================================== */
+::selection {
+  background: var(--color-secondary-dark);
+  color: var(--color-text-primary);
+}
+
+::-moz-selection {
+  background: var(--color-secondary-dark);
+  color: var(--color-text-primary);
+}
+
+/* ========================================
    Utility Classes
 ======================================== */
+
+/* Display */
 .hidden {
   display: none !important;
 }
 
-.invisible {
-  visibility: hidden !important;
+.visible {
+  display: block !important;
+}
+
+/* Flexbox */
+.flex {
+  display: flex;
 }
 
 .flex-center {
@@ -117,37 +257,206 @@ body {
   justify-content: center;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+/* Spacing */
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+.gap-md {
+  gap: var(--spacing-md);
+}
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+
+.p-sm {
+  padding: var(--spacing-sm);
+}
+.p-md {
+  padding: var(--spacing-md);
+}
+.p-lg {
+  padding: var(--spacing-lg);
+}
+
+.m-sm {
+  margin: var(--spacing-sm);
+}
+.m-md {
+  margin: var(--spacing-md);
+}
+.m-lg {
+  margin: var(--spacing-lg);
+}
+
+/* Text Alignment */
+.text-left {
+  text-align: left;
+}
 .text-center {
   text-align: center;
 }
-
-.text-gold {
-  color: var(--color-secondary);
+.text-right {
+  text-align: right;
 }
 
-.text-glow {
-  text-shadow: var(--shadow-glow-gold);
+/* Colors */
+.text-primary {
+  color: var(--color-text-primary);
+}
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+.text-gold {
+  color: var(--color-text-gold);
+}
+.text-red {
+  color: var(--color-text-red);
 }
 
 /* ========================================
-   Common Elements
+   Responsive Utilities
 ======================================== */
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-  font-family: inherit;
-  background: none;
-  transition: var(--transition-base);
+
+/* Hide on mobile */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+/* Hide on tablet and up */
+@media (min-width: 768px) {
+  .hide-tablet-up {
+    display: none !important;
+  }
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+/* Show only on mobile */
+@media (min-width: 768px) {
+  .show-mobile-only {
+    display: none !important;
+  }
+}
+
+/* ========================================
+   Responsive Typography
+======================================== */
+@media (max-width: 767px) {
+  :root {
+    --font-size-title: 1.5rem; /* 24px */
+    --font-size-display: 2rem; /* 32px */
+  }
+}
+
+@media (max-width: 479px) {
+  :root {
+    --font-size-title: 1.25rem; /* 20px */
+    --font-size-display: 1.5rem; /* 24px */
+    --font-size-xxl: 1.25rem; /* 20px */
+  }
+}
+
+/* ========================================
+   Container Max Width
+======================================== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+/* ========================================
+   Loading State
+======================================== */
+.loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ========================================
+   Animations
+======================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ========================================
+   Focus Visible (Accessibility)
+======================================== */
+:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   Print Styles
+======================================== */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
 }

@@ -2,7 +2,7 @@ class ManagerCore extends EventCleanup {
   constructor() {
     super();
 
-    this.draw = DrawHelper;
+    this._draw = DrawHelper;
   }
 
   destroy() {

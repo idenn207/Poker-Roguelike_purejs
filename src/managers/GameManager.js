@@ -13,6 +13,9 @@ class GameManager extends ManagerCore {
     /** @type {EventBus} */
     this.eventBus = new EventBus();
 
+    /** @type {ErrorHandler} */
+    this.errorHandler = new ErrorHandler(this.eventBus);
+
     this.managers = {
       state: new StateManager(this.eventBus),
       input: new InputManager(this.eventBus),
@@ -35,6 +38,9 @@ class GameManager extends ManagerCore {
    * 게임 초기화
    */
   init() {
+    // 전역 에러 핸들러 활성화
+    this.errorHandler.setupGlobalHandlers();
+
     // 초기 화면 상태 설정
     this.managers.state.init(); // 게임 상태 매니저 초기화
 

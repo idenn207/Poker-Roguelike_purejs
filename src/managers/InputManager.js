@@ -43,7 +43,7 @@ class InputManager extends ManagerCore {
 
     switch (button) {
       case 'new-game':
-        this.handleNewGame();
+        this.handleNewGameFromMenu();
         break;
 
       case 'settings':
@@ -62,6 +62,10 @@ class InputManager extends ManagerCore {
         this.handleBackToMenu();
         break;
 
+      case 'start-game':
+        this.handleStartGame();
+        break;
+
       default:
         console.warn('Unknown button:', button);
         break;
@@ -71,11 +75,11 @@ class InputManager extends ManagerCore {
   /**
    * 새 게임 버튼 핸들러
    */
-  handleNewGame() {
+  handleNewGameFromMenu() {
     console.log('New game button clicked');
 
     // StateManager에 새 게임 시작 액션 요청
-    this.eventBus.emit(EVENTS.ACTION.GAME.START, {});
+    this.eventBus.emit(EVENTS.ACTION.GAME.NEW_GAME_FROM_MENU, {});
   }
 
   /**
@@ -122,6 +126,18 @@ class InputManager extends ManagerCore {
     this.eventBus.emit(EVENTS.ACTION.SCREEN.CHANGE, {
       screenName: SCREEN_STATE_TYPE.MENU,
     });
+  }
+
+  /**
+   * 게임 시작 버튼 핸들러 (캐릭터 선택 화면)
+   */
+  handleStartGame() {
+    console.log('Start game button clicked');
+    // 1단계: 현재 캐릭터 확정
+    this.eventBus.emit(EVENTS.ACTION.CHARACTER.CONFIRM, {});
+
+    // 2단계: 게임 플레이 시작 (상점으로 이동)
+    this.eventBus.emit(EVENTS.ACTION.GAME.BEGIN_GAMEPLAY, {});
   }
 
   update() {

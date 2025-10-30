@@ -75,11 +75,14 @@ class GameState {
     /** @type {PlayerDataType} 플레이어 데이터 */
     this.player = {
       character: null,
+      id: 'unselected',
+      name: 'unselected',
+      description: '',
       hp: 100,
       maxHp: 100,
       golds: 250,
-      items: [],
       deck: null,
+      items: [],
       relics: [],
     };
 

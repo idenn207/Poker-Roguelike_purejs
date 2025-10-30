@@ -526,9 +526,4 @@ function main() {
 
   // 2. 게임 시작
   gameLoop.start();
-
-  // 3. 전역 에러 핸들링 (선택적)
-  window.addEventListener('error', (event) => {
-    console.error('Global error:', event.error);
-  });
 }

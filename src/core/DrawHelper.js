@@ -167,6 +167,16 @@ class DrawHelper {
   }
 
   /**
+   * 요소를 제거합니다.
+   * @param {HTMLElement} element 요소
+   */
+  static remove(element) {
+    if (element instanceof HTMLElement) {
+      element.remove();
+    }
+  }
+
+  /**
    * 자식 요소를 제거합니다.
    * @param {HTMLElement} parent 부모요소
    * @param {HTMLElement} child 자식 요소

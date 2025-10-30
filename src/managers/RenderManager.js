@@ -35,6 +35,9 @@ class RenderManager extends ManagerCore {
     // Debug 이벤트 추가 구독
     this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.EVENT_ADDED, this.updateDebugEventDisplay.bind(this));
 
+    // Debug 에러 추가 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.STATE.DEBUG.ERROR_ADDED, this.updateDebugErrorDisplay.bind(this));
+
     console.debug('RenderManager events registered');
   }
 
@@ -45,11 +48,11 @@ class RenderManager extends ManagerCore {
    */
   renderDebugPanel(data) {
     const { tab } = data;
-    const content = this.draw.getElementById('debugContent');
+    const content = this._draw.getElementById('debugContent');
 
     if (!content) return;
 
-    this.draw.removeAllChild(content);
+    this._draw.removeAllChild(content);
 
     switch (tab) {
       case 'events':
@@ -61,6 +64,9 @@ class RenderManager extends ManagerCore {
       case 'loop':
         this.renderLoopTab(content);
         break;
+      case 'errors':
+        this.renderErrorsTab(content);
+        break;
     }
   }
 
@@ -70,18 +76,18 @@ class RenderManager extends ManagerCore {
    */
   renderEventsTab(container) {
     // 컨트롤 바
-    const controls = this.draw.createElement('div', 'debug-section-controls');
+    const controls = this._draw.createElement('div', 'debug-section-controls');
 
-    const clearBtn = this.draw.createElement('button', 'debug-btn small');
-    this.draw.setText(clearBtn, 'Clear Log');
+    const clearBtn = this._draw.createElement('button', 'debug-btn small');
+    this._draw.setText(clearBtn, 'Clear Log');
     this.trackDomListener(clearBtn, EVENTS.DOM.CLICK, () => {
       this.eventBus.clearEventLog();
-      this.draw.removeAllChild(container);
+      this._draw.removeAllChild(container);
       this.renderEventsTab(container);
     });
 
-    const registeredBtn = this.draw.createElement('button', 'debug-btn small');
-    this.draw.setText(registeredBtn, 'Show Registered');
+    const registeredBtn = this._draw.createElement('button', 'debug-btn small');
+    this._draw.setText(registeredBtn, 'Show Registered');
     this.trackDomListener(registeredBtn, EVENTS.DOM.CLICK, () => {
       const events = this.eventBus.getRegisteredEvents();
       console.group('📋 Registered Events');
@@ -91,18 +97,18 @@ class RenderManager extends ManagerCore {
       console.groupEnd();
     });
 
-    this.draw.appendChild(controls, clearBtn);
-    this.draw.appendChild(controls, registeredBtn);
+    this._draw.appendChild(controls, clearBtn);
+    this._draw.appendChild(controls, registeredBtn);
 
     // 이벤트 로그 테이블
-    const logContainer = this.draw.createElement('div', 'debug-log-container');
-    this.draw.setId(logContainer, 'eventLogContainer');
+    const logContainer = this._draw.createElement('div', 'debug-log-container');
+    this._draw.setId(logContainer, 'eventLogContainer');
 
     const table = this.createEventLogTable();
-    this.draw.appendChild(logContainer, table);
+    this._draw.appendChild(logContainer, table);
 
-    this.draw.appendChild(container, controls);
-    this.draw.appendChild(container, logContainer);
+    this._draw.appendChild(container, controls);
+    this._draw.appendChild(container, logContainer);
   }
 
   /**
@@ -110,27 +116,30 @@ class RenderManager extends ManagerCore {
    * @returns {HTMLElement}
    */
   createEventLogTable() {
-    const table = this.draw.createElement('table', 'debug-table');
+    const table = this._draw.createElement('table', 'debug-table');
 
     // 헤더
-    const thead = this.draw.createElement('thead');
-    thead.innerHTML = `
+    const thead = this._draw.createElement('thead');
+    this._draw.setHTML(
+      thead,
+      `
       <tr>
         <th>Time</th>
         <th>Event</th>
         <th>Listeners</th>
         <th>Data</th>
       </tr>
-    `;
+    `
+    );
 
     // 바디
-    const tbody = this.draw.createElement('tbody');
-    this.draw.setId(tbody, 'eventLogBody');
+    const tbody = this._draw.createElement('tbody');
+    this._draw.setId(tbody, 'eventLogBody');
 
     const logs = this.eventBus.getEventLog();
     logs.forEach((log) => {
-      const row = this.draw.createElement('tr');
-      this.draw.setHTML(
+      const row = this._draw.createElement('tr');
+      this._draw.setHTML(
         row,
         `
         <td class="time">${log.time}</td>
@@ -139,11 +148,11 @@ class RenderManager extends ManagerCore {
         <td class="data"><pre>${json2stringCompact(log.data)}</pre></td>
       `
       );
-      this.draw.appendChild(tbody, row);
+      this._draw.appendChild(tbody, row);
     });
 
-    this.draw.appendChild(table, thead);
-    this.draw.appendChild(table, tbody);
+    this._draw.appendChild(table, thead);
+    this._draw.appendChild(table, tbody);
 
     return table;
   }
@@ -165,7 +174,7 @@ class RenderManager extends ManagerCore {
     };
 
     // 로딩 표시
-    this.draw.setHTML(container, '<div class="debug-info">Loading state...</div>');
+    this._draw.setHTML(container, '<div class="debug-info">Loading state...</div>');
 
     this.trackEventBusListener(this.eventBus, EVENTS.RESPONSE.GAME.STATE, responseHandler);
     this.eventBus.emit(EVENTS.QUERY.GAME.STATE, { requestId });
@@ -177,9 +186,9 @@ class RenderManager extends ManagerCore {
    * @param {GameState} state
    */
   displayGameState(container, state) {
-    this.draw.removeAllChild(container);
+    this._draw.removeAllChild(container);
 
-    const stateContainer = this.draw.createElement('div', 'debug-state-container');
+    const stateContainer = this._draw.createElement('div', 'debug-state-container');
 
     const sections = [
       { title: 'Screen', data: { current: state.currentScreen, previous: state.previousScreen } },
@@ -189,20 +198,20 @@ class RenderManager extends ManagerCore {
     ];
 
     sections.forEach((section) => {
-      const sectionEl = this.draw.createElement('div', 'debug-state-section');
+      const sectionEl = this._draw.createElement('div', 'debug-state-section');
 
-      const title = this.draw.createElement('div', 'debug-state-title');
-      this.draw.setText(title, section.title);
+      const title = this._draw.createElement('div', 'debug-state-title');
+      this._draw.setText(title, section.title);
 
-      const content = this.draw.createElement('pre', 'debug-state-content');
-      this.draw.setText(content, json2stringCompact(section.data));
+      const content = this._draw.createElement('pre', 'debug-state-content');
+      this._draw.setText(content, json2stringCompact(section.data));
 
-      this.draw.appendChild(sectionEl, title);
-      this.draw.appendChild(sectionEl, content);
-      this.draw.appendChild(stateContainer, sectionEl);
+      this._draw.appendChild(sectionEl, title);
+      this._draw.appendChild(sectionEl, content);
+      this._draw.appendChild(stateContainer, sectionEl);
     });
 
-    this.draw.appendChild(container, stateContainer);
+    this._draw.appendChild(container, stateContainer);
   }
 
   /**
@@ -225,9 +234,9 @@ class RenderManager extends ManagerCore {
     this.eventBus.emit(EVENTS.QUERY.DEBUG.STATE, { requestId });
 
     // 로딩 표시
-    const debugInfo = this.draw.createElement('div', 'debug-info');
-    this.draw.setText(debugInfo, 'Loading loop info...');
-    this.draw.appendChild(container, debugInfo);
+    const debugInfo = this._draw.createElement('div', 'debug-info');
+    this._draw.setText(debugInfo, 'Loading loop info...');
+    this._draw.appendChild(container, debugInfo);
   }
 
   /**
@@ -236,13 +245,13 @@ class RenderManager extends ManagerCore {
    * @param {Object} debugState
    */
   displayLoopInfo(container, debugState) {
-    this.draw.removeAllChild(container);
+    this._draw.removeAllChild(container);
 
-    const loopContainer = this.draw.createElement('div', 'debug-loop-container');
+    const loopContainer = this._draw.createElement('div', 'debug-loop-container');
 
     // FPS 정보
-    const fpsSection = this.draw.createElement('div', 'debug-loop-section');
-    this.draw.setHTML(
+    const fpsSection = this._draw.createElement('div', 'debug-loop-section');
+    this._draw.setHTML(
       fpsSection,
       `
       <div class="debug-loop-title">Performance</div>
@@ -268,22 +277,153 @@ class RenderManager extends ManagerCore {
     );
 
     // FPS 차트
-    const chartSection = this.draw.createElement('div', 'debug-loop-section');
-    const chartTitle = this.draw.createElement('div', 'debug-loop-title');
-    this.draw.setText(chartTitle, 'FPS History');
+    const chartSection = this._draw.createElement('div', 'debug-loop-section');
+    const chartTitle = this._draw.createElement('div', 'debug-loop-title');
+    this._draw.setText(chartTitle, 'FPS History');
 
-    const chart = this.draw.createElement('div', 'debug-fps-chart');
-    this.draw.setId(chart, 'debugFpsChart');
+    const chart = this._draw.createElement('div', 'debug-fps-chart');
+    this._draw.setId(chart, 'debugFpsChart');
 
-    this.draw.appendChild(chartSection, chartTitle);
-    this.draw.appendChild(chartSection, chart);
+    this._draw.appendChild(chartSection, chartTitle);
+    this._draw.appendChild(chartSection, chart);
 
-    this.draw.appendChild(loopContainer, fpsSection);
-    this.draw.appendChild(loopContainer, chartSection);
-    this.draw.appendChild(container, loopContainer);
+    this._draw.appendChild(loopContainer, fpsSection);
+    this._draw.appendChild(loopContainer, chartSection);
+    this._draw.appendChild(container, loopContainer);
 
     // FPS 차트 렌더링
     this.renderFpsChart(debugState.fpsHistory);
+  }
+
+  /**
+   * Errors 탭 렌더링
+   * @param {HTMLElement} container
+   */
+  renderErrorsTab(container) {
+    // 컨트롤 바
+    const controls = this._draw.createElement('div', 'debug-section-controls');
+
+    const clearBtn = this._draw.createElement('button', 'debug-btn small');
+    this._draw.setText(clearBtn, 'Clear Errors');
+    this.trackDomListener(clearBtn, EVENTS.DOM.CLICK, () => {
+      // StateManager를 통해 에러 클리어
+      const requestId = `clear_errors_${Date.now()}`;
+      this.eventBus.emit(EVENTS.ACTION.DEBUG.CLEAR_ERRORS, { requestId });
+
+      // 화면 새로고침
+      this._draw.removeAllChild(container);
+      this.renderErrorsTab(container);
+    });
+
+    this._draw.appendChild(controls, clearBtn);
+    this._draw.appendChild(container, controls);
+
+    // StateManager 에 Debug 상태 요청
+    const requestId = `debug_errors_${Date.now()}`;
+
+    const responseHandler = (data) => {
+      if (data.requestId === requestId) {
+        this.displayErrors(container, data.errors);
+        this.cleanupListenersByType(EVENTS.RESPONSE.DEBUG.STATE);
+      }
+    };
+
+    this.trackEventBusListener(this.eventBus, EVENTS.RESPONSE.DEBUG.STATE, responseHandler);
+    this.eventBus.emit(EVENTS.QUERY.DEBUG.STATE, { requestId });
+  }
+
+  /**
+   * 에러 목록 표시
+   * @param {HTMLElement} container
+   * @param {Array<Object>} errors
+   */
+  displayErrors(container, errors) {
+    if (!errors || errors.length === 0) {
+      const emptyMsg = this._draw.createElement('div', 'debug-info');
+      this._draw.setText(emptyMsg, '✅ No errors found');
+      this._draw.appendChild(container, emptyMsg);
+      return;
+    }
+
+    const errorList = this._draw.createElement('ul', 'debug-error-list');
+
+    errors.forEach((error, index) => {
+      const errorItem = this._draw.createElement('div', 'debug-error-item');
+
+      // 에러 헤더
+      const errorHeader = this._draw.createElement('div', 'debug-error-header');
+
+      const errorIndex = this._draw.createElement('span', 'debug-error-index');
+      this._draw.setText(errorIndex, `#${index + 1}`);
+
+      const errorTime = this._draw.createElement('span', 'debug-error-time');
+      this._draw.setText(errorTime, error.time || new Date(error.timestamp).toLocaleTimeString());
+
+      const errorType = this._draw.createElement('span', 'debug-error-type');
+      this._draw.setText(errorType, error.type || 'ERROR');
+      this._draw.addClass(errorType, this.getErrorTypeClass(error.type));
+
+      this._draw.appendChild(errorHeader, errorIndex);
+      this._draw.appendChild(errorHeader, errorTime);
+      this._draw.appendChild(errorHeader, errorType);
+
+      // 에러 메시지
+      const errorMessage = this._draw.createElement('div', 'debug-error-message');
+      this._draw.setText(errorMessage, error.message || 'Unknown error');
+      this._draw.appendChild(errorItem, errorMessage);
+
+      // 에러 상세 정보 (Collapse 기능 추가)
+      const errorDetails = this._draw.createElement('details', 'debug-error-details');
+      const errorSummary = this._draw.createElement('summary', '');
+      this._draw.setText(errorSummary, '▶ Details');
+
+      const errorStack = this._draw.createElement('pre', 'debug-error-stack');
+
+      let detailsText = '';
+      if (error.error && error.error.stack) {
+        detailsText += `Stack:\n${error.error.stack}\n\n`;
+      }
+      if (error.filename) {
+        detailsText += `File: ${error.filename}:${error.lineno}:${error.colno}\n\n`;
+      }
+      if (error.recentEvents && error.recentEvents.length > 0) {
+        detailsText += `Recent Events (Last ${error.recentEvents.length}):\n`;
+        error.recentEvents.forEach((evt, idx) => {
+          detailsText += `  ${idx + 1}. [${evt.time}] ${evt.event}\n`;
+        });
+      }
+
+      this._draw.setText(errorStack, detailsText || 'NO additional details');
+
+      this._draw.appendChild(errorDetails, errorSummary);
+      this._draw.appendChild(errorDetails, errorStack);
+
+      this._draw.appendChild(errorItem, errorHeader);
+      this._draw.appendChild(errorItem, errorMessage);
+      this._draw.appendChild(errorItem, errorDetails);
+
+      this._draw.appendChild(errorList, errorItem);
+    });
+
+    this._draw.appendChild(container, errorList);
+  }
+
+  /**
+   * 에러 타입에 따른 CSS 클래스 반환
+   * @param {string} errorType
+   * @returns {string}
+   */
+  getErrorTypeClass(errorType) {
+    switch (errorType) {
+      case 'ERROR':
+        return 'error-type-error';
+      case 'UNHANDLED_REJECTION':
+        return 'error-type-rejection';
+      case 'MANUAL_ERROR':
+        return 'error-type-manual';
+      default:
+        return 'error-type-default';
+    }
   }
 
   /**
@@ -291,18 +431,18 @@ class RenderManager extends ManagerCore {
    * @param {Array<number>} fpsHistory
    */
   renderFpsChart(fpsHistory) {
-    const chart = this.draw.getElementById('debugFpsChart');
+    const chart = this._draw.getElementById('debugFpsChart');
     if (!chart) return;
 
-    this.draw.removeAllChild(chart);
+    this._draw.removeAllChild(chart);
 
     const maxFps = 60;
     const barWidth = 100 / 60; // 최대 60개
 
     fpsHistory.forEach((fps, index) => {
-      const bar = this.draw.createElement('div', 'fps-bar');
+      const bar = this._draw.createElement('div', 'fps-bar');
       const height = (fps / maxFps) * 100;
-      this.draw.addStyle(bar, {
+      this._draw.addStyle(bar, {
         width: `${barWidth}%`,
         height: `${Math.min(height, 100)}%`,
       });
@@ -312,9 +452,9 @@ class RenderManager extends ManagerCore {
       if (fps >= 55) background = '#4ade80';
       else if (fps >= 30) background = '#fbbf24';
       else background = '#ef4444';
-      this.draw.addStyle(bar, { background });
+      this._draw.addStyle(bar, { background });
 
-      this.draw.appendChild(chart, bar);
+      this._draw.appendChild(chart, bar);
     });
   }
 
@@ -327,15 +467,15 @@ class RenderManager extends ManagerCore {
     const { loopInfo = {} } = data;
     const { fps = 0, avgFps = 0, deltaTime = 0, totalTime = 0 } = loopInfo;
 
-    const fpsEl = this.draw.getElementById('debugFps');
-    const avgFpsEl = this.draw.getElementById('debugAvgFps');
-    const deltaEl = this.draw.getElementById('debugDelta');
-    const totalTimeEl = this.draw.getElementById('debugTotalTime');
+    const fpsEl = this._draw.getElementById('debugFps');
+    const avgFpsEl = this._draw.getElementById('debugAvgFps');
+    const deltaEl = this._draw.getElementById('debugDelta');
+    const totalTimeEl = this._draw.getElementById('debugTotalTime');
 
-    if (fpsEl) this.draw.setText(fpsEl, fps.toString());
-    if (avgFpsEl) this.draw.setText(avgFpsEl, avgFps.toFixed(1));
-    if (deltaEl) this.draw.setText(deltaEl, deltaTime.toFixed(2) + 'ms');
-    if (totalTimeEl) this.draw.setText(totalTimeEl, (totalTime / 1000).toFixed(1) + 's');
+    if (fpsEl) this._draw.setText(fpsEl, fps.toString());
+    if (avgFpsEl) this._draw.setText(avgFpsEl, avgFps.toFixed(1));
+    if (deltaEl) this._draw.setText(deltaEl, deltaTime.toFixed(2) + 'ms');
+    if (totalTimeEl) this._draw.setText(totalTimeEl, (totalTime / 1000).toFixed(1) + 's');
 
     this.renderFpsChart(data.fpsHistory);
   }
@@ -348,12 +488,12 @@ class RenderManager extends ManagerCore {
    */
   updateDebugEventDisplay(data) {
     const { event, recentEvents } = data;
-    const tbody = this.draw.getElementById('eventLogBody');
+    const tbody = this._draw.getElementById('eventLogBody');
     if (!tbody) return;
 
     const log = data.event;
-    const row = this.draw.createElement('tr');
-    this.draw.setHTML(
+    const row = this._draw.createElement('tr');
+    this._draw.setHTML(
       row,
       `
       <td class="time">${log.time}</td>
@@ -366,7 +506,41 @@ class RenderManager extends ManagerCore {
 
     // 최대 표시 개수 유지
     while (tbody.children.length > 50) {
-      this.draw.removeChild(tbody, tbody.lastChild);
+      this._draw.removeChild(tbody, tbody.lastChild);
+    }
+  }
+
+  /**
+   * Debug 에러 표시 업데이트
+   * @param {Object} data
+   * @param {number} data.errorCount 에러 수
+   */
+  updateDebugErrorDisplay(data) {
+    const { errorCount } = data;
+
+    // Errors 탭이 활성화되어 있으면 자동 갱신
+    const activeTab = this._draw.getElement('.debug-tab.active');
+    if (activeTab && this._draw.getDataset(activeTab, 'tab') === 'errors') {
+      const content = this._draw.getElementById('debugContent');
+      if (content) {
+        this._draw.removeAllChild(content);
+        this.renderErrorsTab(content);
+      }
+    }
+
+    // Errors 탭 버튼에 배지 표시
+    const errorsTabBtn = this._draw.getElement('.debug-tab[data-tab="errors"]');
+    if (errorsTabBtn && errorCount > 0) {
+      // 기존 배지 제거
+      const existingBadge = this._draw.getElement('.error-badge');
+      if (existingBadge) {
+        this._draw.remove(existingBadge);
+      }
+
+      // 새 배지 추가
+      const badge = this._draw.createElement('span', 'error-badge');
+      this._draw.setText(badge, errorCount.toString());
+      this._draw.appendChild(errorsTabBtn, badge);
     }
   }
 

@@ -7,11 +7,22 @@
 const uiScripts = [
   // 로드 경로 : /src/ui/*.js
   //'/src/ui/components/.js',
+
+  // hud
   '/src/ui/hud/HealthBar.js',
   '/src/ui/hud/Stage.js',
+
+  // menus
   '/src/ui/menus/MainMenu.js',
   '/src/ui/menus/PauseMenu.js',
   '/src/ui/menus/GameOverMenu.js',
+
+  // screen
+  '/src/ui/screen/ShopScreen.js',
+  '/src/ui/screen/BattleScreen.js',
+  '/src/ui/screen/RewardScreen.js',
+
+  // panels
   '/src/ui/panels/DebugPanel.js',
 ];
 

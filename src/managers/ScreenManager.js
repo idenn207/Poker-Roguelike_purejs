@@ -53,16 +53,18 @@ class ScreenManager extends ManagerCore {
   init() {
     // 화면 요소 초기화 (UIManager 가 생성한 요소 연결)
     this.screens = {
-      logo: this.draw.getElement('#logoScreen'),
-      loading: this.draw.getElement('#loadingScreen'),
-      menu: this.draw.getElement('#menuScreen'),
-      characterSelect: this.draw.getElement('#characterSelectScreen'),
-      pause: this.draw.getElement('#pauseScreen'),
-      setting: this.draw.getElement('#settingScreen'),
-      stage: this.draw.getElement('#stageScreen'),
-      battle: this.draw.getElement('#battleScreen'),
-      reward: this.draw.getElement('#rewardScreen'),
-      gameover: this.draw.getElement('#gameoverScreen'),
+      logo: this._draw.getElementById('logoScreen'),
+      loading: this._draw.getElementById('loadingScreen'),
+      menu: this._draw.getElementById('menuScreen'),
+      characterSelect: this._draw.getElementById('characterSelectScreen'),
+      shop: this._draw.getElementById('shopScreen'),
+      battle: this._draw.getElementById('battleScreen'),
+      reward: this._draw.getElementById('rewardScreen'),
+
+      pause: this._draw.getElementById('pauseScreen'),
+      setting: this._draw.getElementById('settingScreen'),
+      stage: this._draw.getElementById('stageScreen'),
+      gameover: this._draw.getElementById('gameoverScreen'),
     };
 
     // 초기 화면 표시 (logo)
@@ -143,7 +145,7 @@ class ScreenManager extends ManagerCore {
   showScreen(screen) {
     return new Promise((resolve, reject) => {
       // show 클래스 추가
-      this.draw.addClass(screen, 'show');
+      this._draw.addClass(screen, 'show');
 
       // transitionend 이벤트 대기
       const onTransitionEnd = () => {
@@ -167,7 +169,7 @@ class ScreenManager extends ManagerCore {
   showLogoScreen() {
     const logoScreen = this.screens.logo;
     if (logoScreen) {
-      this.draw.addClass(logoScreen, 'show');
+      this._draw.addClass(logoScreen, 'show');
       this.currentScreen = logoScreen;
 
       // 자동 전환 시작
@@ -178,7 +180,7 @@ class ScreenManager extends ManagerCore {
   hideScreen(screen) {
     return new Promise((resolve, reject) => {
       // hide 클래스 추가
-      this.draw.removeClass(screen, 'show');
+      this._draw.removeClass(screen, 'show');
 
       // transitionend 이벤트 대기
       const onTransitionEnd = () => {

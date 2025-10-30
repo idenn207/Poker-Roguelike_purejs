@@ -17,6 +17,12 @@ const EVENTS = {
     SCREEN: 'screen',
   },
 
+  /** ERROR - 에러 관련 */
+  ERROR: {
+    /** 에러 발생 */
+    OCCURRED: 'error:occurred',
+  },
+
   /** DOM - 문서 객체 모델 관련 */
   DOM: {
     /** 클릭 */
@@ -550,6 +556,9 @@ const EVENTS = {
     /** 아이템 판매완료 */
     ITEM_SOLD_OUT: 'shop:item:sold_out',
 
+    /** 상품 구매 요청 */
+    PURCHASE_REQUESTED: 'shop:purchase_requested',
+
     /** 구매 실패 */
     PURCHASE_FAILED: 'shop:purchase_failed',
 
@@ -643,6 +652,17 @@ const EVENTS = {
       /** 캐릭터 상태 조회 */
       STATE: 'query:character:state',
     },
+    /** 플레이어 */
+    PLAYER: {
+      /** 플레이어 정보 조회 */
+      INFO: 'query:player:info',
+    },
+
+    /** 맵 */
+    MAP: {
+      /** 현재 맵 상태 조회 */
+      STATE: 'query:map:state',
+    },
 
     /** 디버그 */
     DEBUG: {
@@ -662,6 +682,11 @@ const EVENTS = {
     CHARACTER: {
       /** 캐릭터 상태 조회 */
       STATE: 'response:character:state',
+    },
+    /** 맵 */
+    MAP: {
+      /** 맵 상태 응답 */
+      STATE: 'response:map:state',
     },
 
     /** 디버그 */
@@ -685,12 +710,38 @@ const EVENTS = {
 
       /** 캐릭터 선택 완료 */
       SELECTED: 'state:character:selected',
+
+      /** 캐릭터 최종 확정 완료 */
+      CONFIRMED: 'state:character:confirmed',
     },
 
     /** 게임 상태 */
     GAME: {
-      /** 게임 시작 */
-      STARTED: 'state:game:started',
+      /** 게임 플레이 시작 완료 */
+      GAMEPLAY_BEGAN: 'state:game:gameplay_began',
+    },
+    /** 맵 상태 */
+    MAP: {
+      /** 노드 생성 완료 */
+      NODES_GENERATED: 'state:map:nodes_generated',
+
+      /** 노드 진입 완료 */
+      NODE_ENTERED: 'state:map:node_entered',
+
+      /** 맵 진행 상태 업데이트 완료 */
+      PROGRESS_UPDATED: 'state:map:progress_updated',
+
+      /** 서브스테이지 완료 */
+      SUBSTAGE_COMPLETED: 'state:map:substage_completed',
+
+      /** 메인스테이지 완료 */
+      MAINSTAGE_COMPLETED: 'state:map:mainstage_completed',
+    },
+
+    /** 상점 상태 */
+    SHOP: {
+      /** 플레이어 정보 업데이트 */
+      PLAYER_INFO_UPDATED: 'state:shop:player_info_updated',
     },
 
     /** 디버그 상태 */
@@ -709,6 +760,12 @@ const EVENTS = {
 
       /** 이벤트 추가 */
       EVENT_ADDED: 'state:debug:event_added',
+
+      /** 에러 추가 */
+      ERROR_ADDED: 'state:debug:error_added',
+
+      /** 에러 클리어 완료 */
+      ERRORS_CLEARED: 'state:debug:errors_cleared',
 
       /** 디버그 패널 축소/확장 */
       COLLAPSED: 'state:debug:collapsed',
@@ -732,11 +789,38 @@ const EVENTS = {
 
       /** 캐릭터 선택 */
       SELECT: 'action:character:select',
+
+      /** 캐릭터 최종 확정 (게임 시작 버튼 클릭 시) */
+      CONFIRM: 'action:character:confirm',
     },
+
+    /** 상점 */
+    SHOP: {
+      /** 상품 구매 */
+      PURCHASE: 'action:shop:purchase',
+
+      /** 상점 닫기 */
+      CLOSE: 'action:shop:close',
+    },
+
     /** 게임 */
     GAME: {
-      /** 게임 시작 */
-      START: 'action:game:start',
+      /** 메뉴에서 새 게임 시작 (캐릭터 선택 화면으로) */
+      NEW_GAME_FROM_MENU: 'action:game:new_game_from_menu',
+
+      /** 게임 플레이 시작 (캐릭터 확정 후 첫 맵으로) */
+      BEGIN_GAMEPLAY: 'action:game:begin_gameplay',
+    },
+    /** 맵 */
+    MAP: {
+      /** 노드 선택 */
+      NODE_SELECT: 'action:map:node_select',
+
+      /** 다음 노드 생성 요청 */
+      GENERATE_NEXT: 'action:map:generate_next',
+
+      /** 맵 진행 상태 업데이트 요청 */
+      UPDATE_PROGRESS: 'action:map:update_progress',
     },
 
     /** 디버그 */
@@ -749,6 +833,9 @@ const EVENTS = {
 
       /** 디버그 패널 축소/확장 */
       COLLAPSE_TOGGLE: 'action:debug:collapse_toggle',
+
+      /** 에러 목록 클리어 */
+      CLEAR_ERRORS: 'action:debug:clear_errors',
     },
 
     /** 루프 정보 업데이트 */
@@ -948,6 +1035,12 @@ const SCREEN_STATE_TYPE = {
   /** 스테이지 선택 화면 */
   STAGE: 'stage',
 
+  /** 상점 화면 */
+  SHOP: 'shop',
+
+  /** 휴식 화면 */
+  REST: 'rest',
+
   /** 전투 화면 */
   BATTLE: 'battle',
 
@@ -956,4 +1049,47 @@ const SCREEN_STATE_TYPE = {
 
   /** 게임 오버 화면 */
   GAMEOVER: 'gameover',
+};
+
+/**
+ * 노드 타입 상수
+ */
+const MAP_NODE_TYPE = {
+  /** 상점 */
+  SHOP: 'shop',
+
+  /** 휴식 */
+  REST: 'rest',
+
+  /** 일반 몬스터 */
+  MONSTER: 'monster',
+
+  /** 엘리트 몬스터 */
+  ELITE: 'elite',
+
+  /** 보스 */
+  BOSS: 'boss',
+
+  /** 보물 */
+  TREASURE: 'treasure',
+
+  /** 이벤트 */
+  EVENT: 'event',
+};
+
+/**
+ * 노드 상태 상수
+ */
+const MAP_NODE_STATE = {
+  /** 잠김 (아직 도달 불가) */
+  LOCKED: 'locked',
+
+  /** 사용 가능 */
+  AVAILABLE: 'available',
+
+  /** 완료됨 */
+  COMPLETED: 'completed',
+
+  /** 현재 위치 */
+  CURRENT: 'current',
 };

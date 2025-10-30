@@ -50,6 +50,12 @@ class DebugState {
     /** @type {boolean} Debug 패널 축소 여부 */
     this.isCollapsed = false;
 
+    /** @type {Array<Object>} 에러 히스토리 */
+    this.errors = [];
+
+    /** @type {number} 최대 에러 개수 */
+    this.maxErrors = 100;
+
     console.debug('DebugState Initialized');
   }
 
@@ -91,5 +97,21 @@ class DebugState {
    */
   getRecentEvents() {
     return [...this.recentEvents];
+  }
+
+  /**
+   * 에러 목록 조회
+   * @returns {Array<Object>}
+   */
+  getErrors() {
+    return [...this.errors];
+  }
+
+  /**
+   * 에러 개수 조회
+   * @returns {number}
+   */
+  getErrorCount() {
+    return this.errors.length;
   }
 }
