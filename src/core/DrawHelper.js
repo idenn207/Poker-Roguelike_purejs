@@ -16,8 +16,8 @@ class DrawHelper {
    * @returns {HTMLElement|null} 조회된 요소 또는 null
    */
   static getElement(selector, parent = document) {
-    if (typeof selector !== 'string') {
-      console.error('Selector must be a string');
+    if (typeof selector !== "string") {
+      console.error("Selector must be a string");
       return null;
     }
     return parent.querySelector(selector);
@@ -30,8 +30,8 @@ class DrawHelper {
    * @returns {NodeList} 조회된 요소 목록
    */
   static getElements(selector, parent = document) {
-    if (typeof selector !== 'string') {
-      console.error('Selector must be a string');
+    if (typeof selector !== "string") {
+      console.error("Selector must be a string");
       return [];
     }
     return parent.querySelectorAll(selector);
@@ -91,9 +91,9 @@ class DrawHelper {
    * @param {string} direction flex 방향
    * @param {string} wrap flex 래핑
    */
-  static setFlex(element, align = 'center', justify = 'center', direction = 'row', wrap = 'nowrap') {
+  static setFlex(element, align = "center", justify = "center", direction = "row", wrap = "nowrap") {
     if (element instanceof HTMLElement) {
-      element.style.display = 'flex';
+      element.style.display = "flex";
       element.style.alignItems = align;
       element.style.justifyContent = justify;
       element.style.flexDirection = direction;
@@ -110,7 +110,7 @@ class DrawHelper {
    */
   static setPosition(element, x, y) {
     if (element instanceof HTMLElement) {
-      element.style.position = 'absolute';
+      element.style.position = "absolute";
       element.style.left = `${x}px`;
       element.style.top = `${y}px`;
     }
@@ -243,7 +243,7 @@ class DrawHelper {
   static removeStyle(element, style = {}) {
     if (element instanceof HTMLElement) {
       Object.entries(style).forEach(([key]) => {
-        element.style[key] = '';
+        element.style[key] = "";
       });
     }
   }
@@ -255,7 +255,7 @@ class DrawHelper {
    * @param {string} className 클래스명
    */
   static addClass(element, className) {
-    if (element instanceof HTMLElement && typeof className === 'string') {
+    if (element instanceof HTMLElement && typeof className === "string") {
       element.classList.add(className);
     }
   }
@@ -266,7 +266,7 @@ class DrawHelper {
    * @param {string} className 클래스명
    */
   static removeClass(element, className) {
-    if (element instanceof HTMLElement && typeof className === 'string') {
+    if (element instanceof HTMLElement && typeof className === "string") {
       element.classList.remove(className);
     }
   }
@@ -277,7 +277,7 @@ class DrawHelper {
    * @param {string} className 클래스명
    */
   static toggleClass(element, className) {
-    if (element instanceof HTMLElement && typeof className === 'string') {
+    if (element instanceof HTMLElement && typeof className === "string") {
       element.classList.toggle(className);
     }
   }
@@ -289,7 +289,7 @@ class DrawHelper {
    * @returns {boolean} 클래스 존재 여부
    */
   static hasClass(element, className) {
-    if (element instanceof HTMLElement && typeof className === 'string') {
+    if (element instanceof HTMLElement && typeof className === "string") {
       return element.classList.contains(className);
     }
     return false;
@@ -302,9 +302,21 @@ class DrawHelper {
    * @param {string} id id 값
    */
   static setId(element, id) {
-    if (element instanceof HTMLElement && typeof id === 'string') {
+    if (element instanceof HTMLElement && typeof id === "string") {
       element.id = id;
     }
+  }
+
+  /**
+   * 요소의 id 조회
+   * @param {HTMLElement} element 요소
+   * @returns {string|null} id
+   */
+  static getId(element) {
+    if (element instanceof HTMLElement) {
+      return element.id;
+    }
+    return null;
   }
 
   // ----- text 조작 ----- //
@@ -314,9 +326,21 @@ class DrawHelper {
    * @param {string} text 텍스트
    */
   static setText(element, text) {
-    if (element instanceof HTMLElement && typeof text === 'string') {
+    if (element instanceof HTMLElement && typeof text === "string") {
       element.textContent = text;
     }
+  }
+
+  /**
+   * 요소의 text 조회
+   * @param {HTMLElement} element 요소
+   * @returns {string|null} 텍스트
+   */
+  static getText(element) {
+    if (element instanceof HTMLElement) {
+      return element.textContent;
+    }
+    return null;
   }
 
   /**
@@ -325,7 +349,7 @@ class DrawHelper {
    * @param {string} html HTML 문자열
    */
   static setHTML(element, html) {
-    if (element instanceof HTMLElement && typeof html === 'string') {
+    if (element instanceof HTMLElement && typeof html === "string") {
       element.innerHTML = html;
     }
   }
@@ -339,7 +363,7 @@ class DrawHelper {
    * @param {any} value 데이터 셋 값
    */
   static addDataset(element, key, value) {
-    if (element instanceof HTMLElement && typeof key === 'string') {
+    if (element instanceof HTMLElement && typeof key === "string") {
       element.dataset[key] = value;
     }
   }
@@ -351,7 +375,7 @@ class DrawHelper {
    * @returns {any} 데이터 셋 값
    */
   static getDataset(element, key) {
-    if (element instanceof HTMLElement && typeof key === 'string') {
+    if (element instanceof HTMLElement && typeof key === "string") {
       return element.dataset[key];
     }
     return null;
@@ -363,7 +387,7 @@ class DrawHelper {
    * @param {string} key 데이터 셋 키
    */
   static removeDataset(element, key) {
-    if (element instanceof HTMLElement && typeof key === 'string') {
+    if (element instanceof HTMLElement && typeof key === "string") {
       delete element.dataset[key];
     }
   }
@@ -374,7 +398,7 @@ class DrawHelper {
    * @param {boolean} disabled disabled 상태
    */
   static setDisabled(element, disabled) {
-    if (element instanceof HTMLElement && typeof disabled === 'boolean') {
+    if (element instanceof HTMLElement && typeof disabled === "boolean") {
       element.disabled = disabled;
     }
   }
@@ -386,7 +410,7 @@ class DrawHelper {
    * @param {string} value 속성값
    */
   static setAttribute(element, name, value) {
-    if (element instanceof HTMLElement && typeof name === 'string') {
+    if (element instanceof HTMLElement && typeof name === "string") {
       element.setAttribute(name, value);
     }
   }
@@ -398,7 +422,7 @@ class DrawHelper {
    * @returns {string|null} 속성값
    */
   static getAttribute(element, name) {
-    if (element instanceof HTMLElement && typeof name === 'string') {
+    if (element instanceof HTMLElement && typeof name === "string") {
       return element.getAttribute(name);
     }
     return null;
@@ -410,8 +434,23 @@ class DrawHelper {
    * @param {string} name 속성명
    */
   static removeAttribute(element, name) {
-    if (element instanceof HTMLElement && typeof name === 'string') {
+    if (element instanceof HTMLElement && typeof name === "string") {
       element.removeAttribute(name);
     }
+  }
+
+  // ----- 개별 이벤트 등록 ----- //
+  /**
+   * 내장함수 실행
+   * @param {HTMLElement} element 이벤트명
+   * @param {string} funcName 내장함수명
+   * @param  {...any} args 파라미터
+   * @return {any|null}
+   */
+  static applyFunc(element, funcName, ...args) {
+    if (element instanceof HTMLElement && typeof element[funcName] === "function") {
+      return element[funcName](...args);
+    }
+    return null;
   }
 }

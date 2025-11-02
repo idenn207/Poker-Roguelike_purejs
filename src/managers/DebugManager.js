@@ -13,31 +13,31 @@ class DebugManager extends ManagerCore {
     /** @type {EventBus} */
     this.eventBus = eventBus;
 
-    console.debug('DebugManager Initialized');
+    console.debug("DebugManager Initialized");
   }
 
   init() {
     // F1 키 리스너 등록
-    this.trackDomListener(window, EVENTS.DOM.KEY.DOWN, (e) => {
-      if (e.key === 'F1') {
+    this.trackDomListener(window, EVENTS.DOM.KEYDOWN, (e) => {
+      if (e.key === "F1") {
         e.preventDefault();
         this.toggleDebugPanel();
       }
     });
 
-    console.debug('DebugManager init complete');
+    console.debug("DebugManager init complete");
   }
 
   /** Debug 이벤트 등록 */
   registerEvents() {
-    console.debug('DebugManager events registered');
+    console.debug("DebugManager events registered");
   }
 
   /**
    * Debug 패널 토글
    */
   toggleDebugPanel() {
-    console.debug('F1 pressed - Toggle debug panel');
+    console.debug("F1 pressed - Toggle debug panel");
 
     // StateManager에 Debug 토글 액션 요청
     this.eventBus.emit(EVENTS.ACTION.DEBUG.TOGGLE, {});
@@ -48,26 +48,26 @@ class DebugManager extends ManagerCore {
    * @param {string} command
    */
   executeCommand(command) {
-    console.debug('Debug command:', command);
+    console.debug("Debug command:", command);
 
     switch (command) {
-      case 'clear-events':
+      case "clear-events":
         this.cleanupEventListeners();
-        console.log('✅ Event log cleared');
+        console.log("✅ Event log cleared");
         break;
 
-      case 'show-registered':
+      case "show-registered":
         this.showRegisteredEvents();
         break;
 
-      case 'toggle-logging':
+      case "toggle-logging":
         const currentState = this.eventBus.loggingEnabled;
         this.eventBus.setLogging(!currentState);
-        console.log(`✅ Event logging ${!currentState ? 'enabled' : 'disabled'}`);
+        console.log(`✅ Event logging ${!currentState ? "enabled" : "disabled"}`);
         break;
 
       default:
-        console.warn('Unknown debug command:', command);
+        console.warn("Unknown debug command:", command);
         break;
     }
   }
@@ -77,7 +77,7 @@ class DebugManager extends ManagerCore {
    */
   showRegisteredEvents() {
     const events = this.eventBus.getRegisteredEvents();
-    console.group('📋 Registered Events');
+    console.group("📋 Registered Events");
     events.forEach((event) => {
       console.log(`${event.eventName} (${event.listenerCount} listeners)`);
     });

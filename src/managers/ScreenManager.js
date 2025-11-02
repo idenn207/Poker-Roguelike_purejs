@@ -44,7 +44,7 @@ class ScreenManager extends ManagerCore {
      */
     this.transitionDuration = 500;
 
-    console.debug('ScreenManager Initialized');
+    console.debug("ScreenManager Initialized");
   }
 
   /**
@@ -53,24 +53,24 @@ class ScreenManager extends ManagerCore {
   init() {
     // 화면 요소 초기화 (UIManager 가 생성한 요소 연결)
     this.screens = {
-      logo: this._draw.getElementById('logoScreen'),
-      loading: this._draw.getElementById('loadingScreen'),
-      menu: this._draw.getElementById('menuScreen'),
-      characterSelect: this._draw.getElementById('characterSelectScreen'),
-      shop: this._draw.getElementById('shopScreen'),
-      battle: this._draw.getElementById('battleScreen'),
-      reward: this._draw.getElementById('rewardScreen'),
+      logo: this._draw.getElementById("logoScreen"),
+      loading: this._draw.getElementById("loadingScreen"),
+      menu: this._draw.getElementById("menuScreen"),
+      characterSelect: this._draw.getElementById("characterSelectScreen"),
+      shop: this._draw.getElementById("shopScreen"),
+      battle: this._draw.getElementById("battleScreen"),
+      reward: this._draw.getElementById("rewardScreen"),
 
-      pause: this._draw.getElementById('pauseScreen'),
-      setting: this._draw.getElementById('settingScreen'),
-      stage: this._draw.getElementById('stageScreen'),
-      gameover: this._draw.getElementById('gameoverScreen'),
+      pause: this._draw.getElementById("pauseScreen"),
+      setting: this._draw.getElementById("settingScreen"),
+      stage: this._draw.getElementById("stageScreen"),
+      gameover: this._draw.getElementById("gameoverScreen"),
     };
 
     // 초기 화면 표시 (logo)
     this.showLogoScreen();
 
-    console.debug('ScreenManager init complete');
+    console.debug("ScreenManager init complete");
   }
 
   /** 이벤트 등록 */
@@ -78,7 +78,7 @@ class ScreenManager extends ManagerCore {
     // 상태 변경 이벤트 구독
     this.trackEventBusListener(this.eventBus, EVENTS.STATE.SCREEN.CHANGED, this.onStateChanged.bind(this));
 
-    console.debug('ScreenManager events registered');
+    console.debug("ScreenManager events registered");
   }
 
   /**
@@ -99,11 +99,11 @@ class ScreenManager extends ManagerCore {
    */
   async show(screenName) {
     if (this.isTransitioning) {
-      console.warn('Screen transition already in progress');
+      console.warn("Screen transition already in progress");
       return;
     }
 
-    console.debug('this.screens: ', this.screens);
+    console.debug("this.screens: ", this.screens);
     const newScreen = this.screens[screenName];
     if (!newScreen) {
       console.error(`Screen not found: ${screenName}`);
@@ -145,19 +145,19 @@ class ScreenManager extends ManagerCore {
   showScreen(screen) {
     return new Promise((resolve, reject) => {
       // show 클래스 추가
-      this._draw.addClass(screen, 'show');
+      this._draw.addClass(screen, "show");
 
       // transitionend 이벤트 대기
       const onTransitionEnd = () => {
-        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITIONEND);
         resolve();
       };
 
-      this.trackDomListener(screen, EVENTS.DOM.TRANSITION_END, onTransitionEnd);
+      this.trackDomListener(screen, EVENTS.DOM.TRANSITIONEND, onTransitionEnd);
 
       // 안전장치: transition이 없을 경우 타임아웃
       setTimeout(() => {
-        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITIONEND);
         resolve();
       }, this.transitionDuration + 100);
     });
@@ -169,7 +169,7 @@ class ScreenManager extends ManagerCore {
   showLogoScreen() {
     const logoScreen = this.screens.logo;
     if (logoScreen) {
-      this._draw.addClass(logoScreen, 'show');
+      this._draw.addClass(logoScreen, "show");
       this.currentScreen = logoScreen;
 
       // 자동 전환 시작
@@ -180,19 +180,19 @@ class ScreenManager extends ManagerCore {
   hideScreen(screen) {
     return new Promise((resolve, reject) => {
       // hide 클래스 추가
-      this._draw.removeClass(screen, 'show');
+      this._draw.removeClass(screen, "show");
 
       // transitionend 이벤트 대기
       const onTransitionEnd = () => {
-        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITIONEND);
         resolve();
       };
 
-      this.trackDomListener(screen, EVENTS.DOM.TRANSITION_END, onTransitionEnd);
+      this.trackDomListener(screen, EVENTS.DOM.TRANSITIONEND, onTransitionEnd);
 
       // 안전장치: transition이 없을 경우 타임아웃
       setTimeout(() => {
-        this.cleanupListenersByType(EVENTS.DOM.TRANSITION_END);
+        this.cleanupListenersByType(EVENTS.DOM.TRANSITIONEND);
         resolve();
       }, this.transitionDuration + 100);
     });

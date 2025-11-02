@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 // @ts-check
 
 /**
@@ -17,52 +17,53 @@
 
 const mainScripts = [
   // 1. 개발용 유틸
-  'src/global.js',
+  "src/constants.js",
+  "src/global.js",
 
   // 2. 설정값
-  'src/config/index.js',
+  "src/config/index.js",
 
   // 3. 유틸리티
-  'src/utils/index.js',
+  "src/utils/index.js",
 
   // 4. 상태관리 (최하위 의존성)
-  'src/state/index.js',
+  "src/state/index.js",
 
   // 5. 데이터 모델 (최하위 의존성)
-  'src/data/index.js',
+  "src/data/index.js",
 
   // 6. 핵심 엔진
-  'src/core/index.js',
+  "src/core/index.js",
 
   // 7. 컴포넌트 (factory가 사용)
-  'src/components/index.js',
+  "src/components/index.js",
 
   // 8. 로직 (순수 계산 함수들)
-  'src/logic/index.js',
+  "src/logic/index.js",
 
   // 9. 엔티티 (factory가 생성, data에 의존)
-  'src/entities/index.js',
+  "src/entities/index.js",
 
   // 10. 팩토리 (components + entities + data 사용)
-  'src/factories/index.js',
+  "src/factories/index.js",
 
   // 11. UI (manager 이전 구현 필요)
-  'src/ui/index.js',
+  "src/ui/index.js",
 
   // 12. 렌더링
-  'src/render/index.js',
+  "src/render/index.js",
 
   // 13. 매니저 (state + logic + factories 사용) (GameManager.js :  managers 조율)
-  'src/managers/index.js',
+  "src/managers/index.js",
 
   // 14. 에셋 (비동기 로드 가능)
-  'src/assets/index.js',
+  "src/assets/index.js",
 
   // 15. 게임 루프
-  'src/GameLoop.js',
+  "src/GameLoop.js",
 
   // 16. 게임 초기화 (마지막)
-  'src/main.js',
+  "src/main.js",
 ];
 
 // 전역 스크립트 로딩 상태
@@ -100,7 +101,7 @@ function loadNextMainScript() {
   }
 
   const src = mainScripts[currentMainScriptIndex++];
-  const script = document.createElement('script');
+  const script = document.createElement("script");
   script.src = src;
 
   script.onload = () => {
@@ -113,7 +114,7 @@ function loadNextMainScript() {
   };
 
   script.onerror = () => {
-    console.error('Failed to load script:', src);
+    console.error("Failed to load script:", src);
     loadNextMainScript();
   };
 
@@ -136,7 +137,7 @@ function processSubScriptQueue() {
 
   isLoadingSubScripts = true;
   const src = scriptQueue.shift();
-  const script = document.createElement('script');
+  const script = document.createElement("script");
   script.src = src;
 
   script.onload = () => {
@@ -145,7 +146,7 @@ function processSubScriptQueue() {
   };
 
   script.onerror = () => {
-    console.error('Failed to load script:', src);
+    console.error("Failed to load script:", src);
     pendingSubScriptsCount--;
     processSubScriptQueue();
   };
@@ -157,8 +158,8 @@ function processSubScriptQueue() {
  * 모든 스크립트 로드 완료 후 초기화
  */
 function onAllScriptsLoaded() {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', main);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", main);
   } else {
     main();
   }

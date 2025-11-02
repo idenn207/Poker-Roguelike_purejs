@@ -6,7 +6,8 @@
 
 const renderScripts = [
   // 로드 경로 : /src/render/*.js
-  '/src/render/DebugRenderer.js',
+  "/src/render/TooltipRenderer.js",
+  "/src/render/DebugRenderer.js",
 ];
 
 loadScripts(renderScripts);

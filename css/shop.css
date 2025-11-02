@@ -17,7 +17,7 @@
 
 /* 배경 딤 처리 */
 #shopScreen::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -206,7 +206,7 @@
 }
 
 .shop-tab::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -269,19 +269,19 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
-.shop-product-card[data-rarity='uncommon'] {
+.shop-product-card[data-rarity="uncommon"] {
   background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
   border-color: #4a90e2;
 }
 
-.shop-product-card[data-rarity='rare'] {
+.shop-product-card[data-rarity="rare"] {
   background: #dc143c;
   border-color: #8b0000;
   color: #fff;
 }
 
-.shop-product-card[data-rarity='rare'] .product-rank,
-.shop-product-card[data-rarity='rare'] .product-suit {
+.shop-product-card[data-rarity="rare"] .product-rank,
+.shop-product-card[data-rarity="rare"] .product-suit {
   color: #fff;
 }
 
@@ -355,14 +355,14 @@
 }
 
 /* rare 카드의 suit 색상 */
-.shop-product-card[data-rarity='rare'] .suit-heart,
-.shop-product-card[data-rarity='rare'] .suit-diamond {
+.shop-product-card[data-rarity="rare"] .suit-heart,
+.shop-product-card[data-rarity="rare"] .suit-diamond {
   color: #ffd700;
   filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
 }
 
-.shop-product-card[data-rarity='rare'] .suit-spade,
-.shop-product-card[data-rarity='rare'] .suit-club {
+.shop-product-card[data-rarity="rare"] .suit-spade,
+.shop-product-card[data-rarity="rare"] .suit-club {
   color: #fff;
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
 }
@@ -387,60 +387,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.2);
   white-space: nowrap;
   z-index: 5;
-}
-
-/* ========================================
-   Tooltip (hover 시 제목 + 설명)
-   ======================================== */
-
-.product-tooltip {
-  position: absolute;
-  bottom: calc(100% + 15px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.95);
-  border: 2px solid #dc143c;
-  border-radius: 8px;
-  min-width: 200px;
-  max-width: 300px;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  z-index: 100;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-}
-
-.product-tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 8px solid transparent;
-  border-top-color: #dc143c;
-}
-
-.shop-product-card:hover .product-tooltip {
-  opacity: 1;
-  visibility: visible;
-  bottom: calc(100% + 20px);
-}
-
-.tooltip-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.tooltip-description {
-  font-size: 12px;
-  color: #ccc;
-  line-height: 1.5;
 }
 
 /* ========================================

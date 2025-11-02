@@ -2,285 +2,234 @@
 
 // ---------- 이벤트 목록 정의 ---------- //
 const EVENTS = {
+  /** DOM - 문서 객체 모델 관련 */
+  DOM: { ...DOM_EVENT_MAP },
   /** TYPE - 변경 상태 대상 목록 (관련 매니저) */
   TYPE: {
-    STATE: 'state',
-    INPUT: 'input',
-    CARD: 'card',
-    DECK: 'deck',
-    STAGE: 'stage',
-    COMBAT: 'combat',
-    SHOP: 'shop',
-    REWARD: 'reward',
-    RENDER: 'render',
-    UI: 'ui',
-    SCREEN: 'screen',
+    STATE: "state",
+    INPUT: "input",
+    CARD: "card",
+    DECK: "deck",
+    STAGE: "stage",
+    COMBAT: "combat",
+    SHOP: "shop",
+    REWARD: "reward",
+    RENDER: "render",
+    UI: "ui",
+    SCREEN: "screen",
   },
 
   /** ERROR - 에러 관련 */
   ERROR: {
     /** 에러 발생 */
-    OCCURRED: 'error:occurred',
-  },
-
-  /** DOM - 문서 객체 모델 관련 */
-  DOM: {
-    /** 클릭 */
-    CLICK: 'click',
-
-    KEY: {
-      /** 키 누름 */
-      DOWN: 'keydown',
-
-      /** 키 뗌 */
-      UP: 'keyup',
-
-      /** 키 입력 */
-      PRESS: 'keypress',
-    },
-
-    /** 모바일 터치 */
-    TOUCH: {
-      /** 터치 시작 */
-      START: 'touchstart',
-
-      /** 터치 종료 */
-      END: 'touchend',
-
-      /** 터치 이동 */
-      MOVE: 'touchmove',
-    },
-
-    /** 마우스 */
-    MOUSE: {
-      /** 마우스 버튼 누름 */
-      DOWN: 'mousedown',
-
-      /** 마우스 버튼 뗌 */
-      UP: 'mouseup',
-
-      /** 마우스 이동 */
-      MOVE: 'mousemove',
-    },
-
-    /** 강조 */
-    FOCUS: 'focus',
-
-    /** 입력 */
-    INPUT: 'input',
-
-    /** 변경 */
-    CHANGE: 'change',
-
-    /** 전환 종료 */
-    TRANSITION_END: 'transitionend',
+    OCCURRED: "error:occurred",
   },
 
   /** GAME - 게임 전체 생명주기 관리 */
   GAME: {
     /** 게임 초기화 완료 */
-    INITIALIZED: 'game:initialized',
+    INITIALIZED: "game:initialized",
 
     /** 게임 시작 */
-    STARTED: 'game:started',
+    STARTED: "game:started",
 
     /** 게임 저장 불러오기 */
-    LOAD: 'game:load',
+    LOAD: "game:load",
 
     /** 게임 종료 */
-    ENDED: 'game:ended',
+    ENDED: "game:ended",
 
     /** 게임 일시 정지 */
-    PAUSED: 'game:paused',
+    PAUSED: "game:paused",
 
     /** 게임 재개 */
-    RESUMED: 'game:resumed',
+    RESUMED: "game:resumed",
 
     /** 게임 오버 */
-    OVER: 'game:over',
+    OVER: "game:over",
 
     /** 게임 승리 */
-    VICTORY: 'game:victory',
+    VICTORY: "game:victory",
 
     /** 게임 저장 요청 */
-    SAVE_REQUESTED: 'game:save_requested',
+    SAVE_REQUESTED: "game:save_requested",
 
     /** 게임 로드 완료 */
-    LOAD_COMPLETED: 'game:load_completed',
+    LOAD_COMPLETED: "game:load_completed",
   },
 
   /** CHARACTER - 캐릭터 관련 */
   CHARACTER: {
     /** 캐릭터 선택 */
-    SELECTED: 'character:selected',
+    SELECTED: "character:selected",
 
     /** 캐릭터 해제 */
-    CHANGED: 'character:changed',
+    CHANGED: "character:changed",
   },
 
   /** COMBAT - 전투 시스템 */
   COMBAT: {
     /** 전투 시작 */
-    STARTED: 'combat:started',
+    STARTED: "combat:started",
 
     /** 전투 종료 */
-    ENDED: 'combat:ended',
+    ENDED: "combat:ended",
 
     /** 턴 시작 */
-    TURN_STARTED: 'combat:turn:started',
+    TURN_STARTED: "combat:turn:started",
 
     /** 턴 종료 */
-    TURN_ENDED: 'combat:turn:ended',
+    TURN_ENDED: "combat:turn:ended",
 
     /** 핸드 플레이 완료 */
-    HAND_PLAYED: 'combat:hand:played',
+    HAND_PLAYED: "combat:hand:played",
 
     /** 핸드 평가 완료 */
-    HAND_EVALUATED: 'combat:hand_evaluated',
+    HAND_EVALUATED: "combat:hand_evaluated",
 
     /** 피해량 계산 완료 */
-    DAMAGE_CALCULATED: 'combat:damage_calculated',
+    DAMAGE_CALCULATED: "combat:damage_calculated",
   },
 
   /** PLAYER - 플레이어 상태 */
   PLAYER: {
     /** 플레이어 생성 */
-    SPAWNED: 'player:spawned',
+    SPAWNED: "player:spawned",
 
     /** 데미지 받음 */
-    DAMAGED: 'player:damaged',
+    DAMAGED: "player:damaged",
 
     /** 회복 */
-    HEALED: 'player:healed',
+    HEALED: "player:healed",
 
     /** 보호막 획득 */
-    SHIELD_GAINED: 'player:shield_gained',
+    SHIELD_GAINED: "player:shield_gained",
 
     /** 보호막 잃음 */
-    SHIELD_LOST: 'player:shield_lost',
+    SHIELD_LOST: "player:shield_lost",
 
     /** 골드 변화 */
-    GOLD_CHANGED: 'player:gold_changed',
+    GOLD_CHANGED: "player:gold_changed",
 
     /** 버프 획득 */
-    BUFF_GAINED: 'player:buff_gained',
+    BUFF_GAINED: "player:buff_gained",
 
     /** 버프 잃음 */
-    BUFF_LOST: 'player:buff_lost',
+    BUFF_LOST: "player:buff_lost",
 
     /** 플레이어 사망 */
-    DIED: 'player:died',
+    DIED: "player:died",
   },
 
   /** ENEMY - 적 상태 */
   ENEMY: {
     /** 적 생성 */
-    SPAWNED: 'enemy:spawned',
+    SPAWNED: "enemy:spawned",
 
     /** 데미지 맏음 */
-    DAMAGED: 'enemy:damaged',
+    DAMAGED: "enemy:damaged",
 
     /** 회복 */
-    HEALED: 'enemy:healed',
+    HEALED: "enemy:healed",
 
     /** 보호막 획득 */
-    SHIELD_GAINED: 'enemy:shield_gained',
+    SHIELD_GAINED: "enemy:shield_gained",
 
     /** 보호막 잃음 */
-    SHIELD_LOST: 'enemy:shield_lost',
+    SHIELD_LOST: "enemy:shield_lost",
 
     /** 버프 획득 */
-    BUFF_GAINED: 'enemy:buff_gained',
+    BUFF_GAINED: "enemy:buff_gained",
 
     /** 버프 잃음 */
-    BUFF_LOST: 'enemy:buff_lost',
+    BUFF_LOST: "enemy:buff_lost",
 
     /** 적 사망 */
-    DIED: 'enemy:died',
+    DIED: "enemy:died",
   },
 
   /** CARD - 카드 개별 동작 */
   CARD: {
     /** 카드 생성 */
-    CREATED: 'card:created',
+    CREATED: "card:created",
 
     /** 카드 뽑음 */
-    DRAWN: 'card:drawn',
+    DRAWN: "card:drawn",
 
     /** 카드 사용 */
-    PLAYED: 'card:played',
+    PLAYED: "card:played",
 
     /** 카드 버림 */
-    DISCARDED: 'card:discarded',
+    DISCARDED: "card:discarded",
 
     /** 카드 소멸 */
-    EXHAUSTED: 'card:exhausted',
+    EXHAUSTED: "card:exhausted",
 
     /** 카드 업그레이드 */
-    UPGRADED: 'card:upgraded',
+    UPGRADED: "card:upgraded",
 
     /** 카드 제거 */
-    REMOVED: 'card:removed',
+    REMOVED: "card:removed",
 
     /** 카드 선택 */
-    SELECTED: 'card:selected',
+    SELECTED: "card:selected",
 
     /** 카드 선택 해제 */
-    DESELECTED: 'card:deselected',
+    DESELECTED: "card:deselected",
 
     /** 카드 호버 */
-    HOVERED: 'card:hovered',
+    HOVERED: "card:hovered",
 
     /** 카드 호버 해제 */
-    HOVER_EXIT: 'card:hover_exit',
+    HOVER_EXIT: "card:hover_exit",
 
     /** 카드 능력 발동 */
-    ABILITY_TRIGGERED: 'card:ability_triggered',
+    ABILITY_TRIGGERED: "card:ability_triggered",
 
     /** 카드 조건 발동 */
-    CONDITION_TRIGGERED: 'card:condition_triggered',
+    CONDITION_TRIGGERED: "card:condition_triggered",
   },
 
   /** DECK - 덱 관리 */
   DECK: {
     /** 덱 초기화 */
-    INITIALIZED: 'deck:initialized',
+    INITIALIZED: "deck:initialized",
 
     /** 덱 셔플 */
-    SHUFFLED: 'deck:shuffled',
+    SHUFFLED: "deck:shuffled",
 
     /** 덱 비움 */
-    EMPTY: 'deck:empty',
+    EMPTY: "deck:empty",
 
     /** 덱 다시 섞기 (버림 타드 포함) */
-    RESHUFFLED: 'deck:reshuffled',
+    RESHUFFLED: "deck:reshuffled",
 
     /** 덱 확인 */
-    VIEWED: 'deck:viewed',
+    VIEWED: "deck:viewed",
 
     /** 카드 추가 */
-    CARD_ADDED: 'deck:card_added',
+    CARD_ADDED: "deck:card_added",
 
     /** 카드 제거 */
-    CARD_REMOVED: 'deck:card_removed',
+    CARD_REMOVED: "deck:card_removed",
   },
 
   /** HAND - 핸드 관리 */
   HAND: {
     /** 핸드 초기화 */
-    INITIALIZED: 'hand:initialized',
+    INITIALIZED: "hand:initialized",
 
     /** 핸드 가득 참 */
-    FULL: 'hand:full',
+    FULL: "hand:full",
 
     /** 핸드 비어 있음 */
-    EMPTY: 'hand:empty',
+    EMPTY: "hand:empty",
 
     /** 핸드 정렬 완료 */
-    SORTED: 'hand:sorted',
+    SORTED: "hand:sorted",
 
     /** 핸드 크기 변경 */
-    SIZE_CHANGED: 'hand:size_changed',
+    SIZE_CHANGED: "hand:size_changed",
   },
 
   /** INPUT - 사용자 입력 */
@@ -288,206 +237,206 @@ const EVENTS = {
     /** 카드 */
     CARD: {
       /** 카드 클릭 */
-      CLICKED: 'input:card:clicked',
+      CLICKED: "input:card:clicked",
 
       /** 카드 드래그 시작 */
-      DRAG_STARTED: 'input:card:drag_started',
+      DRAG_STARTED: "input:card:drag_started",
 
       /** 카드 드래그 종료 */
-      DRAG_ENDED: 'input:card:drag_ended',
+      DRAG_ENDED: "input:card:drag_ended",
 
       /** 카드 놓기 */
-      DROPPED: 'input:card:dropped',
+      DROPPED: "input:card:dropped",
     },
 
     /** 버튼 */
     BUTTON: {
       /** 버튼 클릭 */
-      CLICKED: 'input:button:clicked',
+      CLICKED: "input:button:clicked",
     },
 
     /** 턴 종료 */
     END_TURN: {
       /** 턴 종료 클릭 */
-      CLICKED: 'input:end_turn_clicked',
+      CLICKED: "input:end_turn_clicked",
     },
 
     /** 메뉴 */
     MENU: {
       /** 메뉴 열기 */
-      OPENED: 'input:menu:opened',
+      OPENED: "input:menu:opened",
 
       /** 메뉴 닫기 */
-      CLOSED: 'input:menu:closed',
+      CLOSED: "input:menu:closed",
     },
 
     /** 확인 */
-    CONFIRM: 'input:confirm',
+    CONFIRM: "input:confirm",
 
     /** 취소 */
-    CANCEL: 'input:cancel',
+    CANCEL: "input:cancel",
 
     /** 카드 호버 시작 */
-    HOVER_STARTED: 'input:hover_started',
+    HOVER_STARTED: "input:hover_started",
 
     /** 카드 호버 종료 */
-    HOVER_ENDED: 'input:hover_ended',
+    HOVER_ENDED: "input:hover_ended",
 
     /** 키 입력 */
-    KEY_PRESSED: 'input:key_pressed',
+    KEY_PRESSED: "input:key_pressed",
   },
 
   /** SCREEN - 화면 전황 */
   SCREEN: {
     /** 화면 변환 */
-    CHANGED: 'screen:changed',
+    CHANGED: "screen:changed",
 
     /** 메뉴 화면 */
-    MENU: 'screen:menu',
+    MENU: "screen:menu",
 
     /** 전투 화면 */
-    COMBAT: 'screen:combat',
+    COMBAT: "screen:combat",
 
     /** 스테이지 선택 화면 */
-    STAGE: 'screen:stage',
+    STAGE: "screen:stage",
 
     /** 상점 화면 */
-    SHOP: 'screen:shop',
+    SHOP: "screen:shop",
 
     /** 보상 화면 */
-    REWARD: 'screen:reward',
+    REWARD: "screen:reward",
 
     /** 설정 화면 */
-    SETTINGS: 'screen:settings',
+    SETTINGS: "screen:settings",
 
     /** 카드 도감 화명 */
-    CARD_LIBRARY: 'screen:card_library',
+    CARD_LIBRARY: "screen:card_library",
 
     /** 로딩 화면 */
-    LOADING: 'screen:loading',
+    LOADING: "screen:loading",
 
     /** 전체 덱 화면 */
-    DECK: 'screen:deck',
+    DECK: "screen:deck",
 
     /** 뽑을 카드 더미 화면 */
-    DRAW_PILE: 'screen:draw_pile',
+    DRAW_PILE: "screen:draw_pile",
 
     /** 버린 카드 더미 화면 */
-    DISCARDED_PILE: 'screen:discarded_pile',
+    DISCARDED_PILE: "screen:discarded_pile",
 
     /** 전환 */
     TRANSITION: {
       /** 전환 시작 */
-      START: 'screen:transition:start',
+      START: "screen:transition:start",
 
       /** 전환 종료 */
-      END: 'screen:transition:end',
+      END: "screen:transition:end",
     },
   },
 
   /** BUFF - 버프/디버프 시스템 */
   BUFF: {
     /** 버프 적용 */
-    APPLIED: 'buff:applied',
+    APPLIED: "buff:applied",
 
     /** 버프 제거 */
-    REMOVED: 'buff:removed',
+    REMOVED: "buff:removed",
 
     /** 버프 만료 */
-    EXPIRED: 'buff:expired',
+    EXPIRED: "buff:expired",
 
     /** 버프 중첩 */
-    STACKED: 'buff:stacked',
+    STACKED: "buff:stacked",
 
     /** 버프 효과 발동 */
-    TRIGGERED: 'buff:triggered',
+    TRIGGERED: "buff:triggered",
 
     /** 버프 지속시간 변경 */
-    DURATION_CHANGED: 'buff:duration_changed',
+    DURATION_CHANGED: "buff:duration_changed",
 
     // 특정 버프 타입
     /** 무효화 */
-    NULLIFY: 'buff:nullify',
+    NULLIFY: "buff:nullify",
 
     /** 면역 */
-    IMMUNITY: 'buff:immunity',
+    IMMUNITY: "buff:immunity",
 
     /** 흡수(받은 피해 비례 방어 획득) */
-    ABSORB: 'buff:absorb',
+    ABSORB: "buff:absorb",
 
     /** 피해 감소 */
-    DAMAGE_REDUCTION: 'buff:damage_reduction',
+    DAMAGE_REDUCTION: "buff:damage_reduction",
 
     /** 과다 치유 (최대 체력 증가) (임시) */
-    OVERHEAL: 'buff:overheal',
+    OVERHEAL: "buff:overheal",
 
     /** 임시 회복 (대출) */
-    HEAL_LOAN: 'buff:heal_loan',
+    HEAL_LOAN: "buff:heal_loan",
 
     /** 회복 불가 */
-    HEAL_BLOCK: 'buff:heal_block',
+    HEAL_BLOCK: "buff:heal_block",
 
     /** 공격 위력 증가 */
-    POWER_BUFF: 'buff:power_buff',
+    POWER_BUFF: "buff:power_buff",
 
     /** 방어 위력 증가 */
-    BLOCK_BUFF: 'buff:block_buff',
+    BLOCK_BUFF: "buff:block_buff",
 
     /** 지속 방어 */
-    REGEN_BLOCK: 'buff:regen_block',
+    REGEN_BLOCK: "buff:regen_block",
 
     /** 지속 회복 */
-    REGEN: 'buff:regen',
+    REGEN: "buff:regen",
 
     /** 반격 */
-    COUNTER: 'buff:counter',
+    COUNTER: "buff:counter",
 
     /** 드로우 증가 */
-    DRAW_BUFF: 'buff:draw_buff',
+    DRAW_BUFF: "buff:draw_buff",
 
     /** 취약 */
-    VULNERABLE: 'buff:vulnerable',
+    VULNERABLE: "buff:vulnerable",
 
     /** 약화 */
-    WEAKEN: 'buff:weaken',
+    WEAKEN: "buff:weaken",
   },
 
   /** UI - UI 업데이트 */
   UI: {
     /** 체력 바 업데이트 */
-    HEALTH_BAR_UPDATE: 'ui:health_bar_update',
+    HEALTH_BAR_UPDATE: "ui:health_bar_update",
 
     /** 골드 표시 업데이트 */
-    GOLD_DISPLAY_UPDATE: 'ui:gold_display_update',
+    GOLD_DISPLAY_UPDATE: "ui:gold_display_update",
 
     /** 툴팁 */
     TOOLTIP: {
       /** 툴팁 표시 */
-      SHOW: 'ui:tooltip:show',
+      SHOW: "ui:tooltip:show",
 
       /** 툴팁 숨기기 */
-      HIDE: 'ui:tooltip:hide',
+      HIDE: "ui:tooltip:hide",
     },
 
     /** 알림 */
     NOTIFICATION: {
       /** 알림 표시 */
-      SHOW: 'ui:notification:show',
+      SHOW: "ui:notification:show",
 
       /** 알림 숨기기 */
-      HIDE: 'ui:notification:hide',
+      HIDE: "ui:notification:hide",
     },
 
     /** 버튼 상태 변경 */
-    BUTTON_STATE_CHANGED: 'ui:button_state_changed',
+    BUTTON_STATE_CHANGED: "ui:button_state_changed",
 
     /** 애니메이션 */
     ANIMATION: {
       /** 애니메이션 시작 */
-      STARTED: 'ui:animation:started',
+      STARTED: "ui:animation:started",
 
       /** 애니메이션 완료 */
-      COMPLETED: 'ui:animation:completed',
+      COMPLETED: "ui:animation:completed",
     },
   },
 
@@ -496,83 +445,83 @@ const EVENTS = {
     /** 프레임 */
     FRAME: {
       /** 프레임 시작 */
-      START: 'render:frame:start',
+      START: "render:frame:start",
 
       /** 프레임 종료 */
-      END: 'render:frame:end',
+      END: "render:frame:end",
     },
 
     /** 이펙트 추가 */
-    EFFECT_ADDED: 'render:effect_added',
+    EFFECT_ADDED: "render:effect_added",
 
     /** 이펙트 제거 */
-    EFFECT_REMOVED: 'render:effect_removed',
+    EFFECT_REMOVED: "render:effect_removed",
 
     /** 파티클 생성 */
-    PARTICLE_SPAWN: 'render:particle_spawn',
+    PARTICLE_SPAWN: "render:particle_spawn",
 
     /** 화면 흔들림 */
     SHAKE: {
       /** 화면 흔들림 시작 */
-      START: 'render:shake:start',
+      START: "render:shake:start",
 
       /** 화면 흔들림 종료 */
-      END: 'render:shake:end',
+      END: "render:shake:end",
     },
 
     /** 플래시 효과 */
-    FLASH_EFFECT: 'render:flash_effect',
+    FLASH_EFFECT: "render:flash_effect",
 
     /** 페이드 인 */
-    FADE_IN: 'render:fade_in',
+    FADE_IN: "render:fade_in",
 
     /** 페이드 아웃 */
-    FADE_OUT: 'render:fade_out',
+    FADE_OUT: "render:fade_out",
 
     /** 카드 강조 */
-    HIGHLIGHT_CARD: 'render:highlight_card',
+    HIGHLIGHT_CARD: "render:highlight_card",
 
     /** 발광 효과 */
-    GLOW_EFFECT: 'render:glow_effect',
+    GLOW_EFFECT: "render:glow_effect",
 
     /** 디버그 */
-    DEBUG_PANEL: 'render:debug_panel',
+    DEBUG_PANEL: "render:debug_panel",
   },
 
   /** SHOP - 상점 시스템 */
   SHOP: {
     /** 상점 열림 */
-    OPENED: 'shop:opened',
+    OPENED: "shop:opened",
 
     /** 상점 닫힘 */
-    CLOSED: 'shop:closed',
+    CLOSED: "shop:closed",
 
     /** 아이템 선택 */
-    ITEM_SELECTED: 'shop:item:selected',
+    ITEM_SELECTED: "shop:item:selected",
 
     /** 아이템 구매 */
-    ITEM_PURCHASED: 'shop:item:purchased',
+    ITEM_PURCHASED: "shop:item:purchased",
 
     /** 아이템 판매완료 */
-    ITEM_SOLD_OUT: 'shop:item:sold_out',
+    ITEM_SOLD_OUT: "shop:item:sold_out",
 
     /** 상품 구매 요청 */
-    PURCHASE_REQUESTED: 'shop:purchase_requested',
+    PURCHASE_REQUESTED: "shop:purchase_requested",
 
     /** 구매 실패 */
-    PURCHASE_FAILED: 'shop:purchase_failed',
+    PURCHASE_FAILED: "shop:purchase_failed",
 
     /** 골드 부족 */
-    INSUFFICIENT_GOLD: 'shop:insufficient_gold',
+    INSUFFICIENT_GOLD: "shop:insufficient_gold",
 
     /** 새로 고침 요청 */
-    REFRESH_REQUESTED: 'shop:refresh_requested',
+    REFRESH_REQUESTED: "shop:refresh_requested",
 
     /** 새로 고침 완료 */
-    REFRESHED: 'shop:refreshed',
+    REFRESHED: "shop:refreshed",
 
     /** 덱에서 카드 제거 */
-    CARD_REMOVED_FROM_DECK: 'shop:card:removed_from_deck',
+    CARD_REMOVED_FROM_DECK: "shop:card:removed_from_deck",
   },
 
   /** REWARD - 보상 시스템 */
@@ -580,64 +529,64 @@ const EVENTS = {
     /** 보상 화면 */
     SCREEN: {
       /** 보상 화면 열림 */
-      OPENED: 'reward:screen:opened',
+      OPENED: "reward:screen:opened",
 
       /** 보상 화면 닫힘 */
-      CLOSED: 'reward:screen:closed',
+      CLOSED: "reward:screen:closed",
     },
     /** 카드 획득 */
-    CARD_EARNED: 'reward:card_earned',
+    CARD_EARNED: "reward:card_earned",
 
     /** 골드 획득 */
-    GOLD_EARNED: 'reward:gold_earned',
+    GOLD_EARNED: "reward:gold_earned",
 
     /** 유물 획득 */
-    RELIC_EARNED: 'reward:relic_earned',
+    RELIC_EARNED: "reward:relic_earned",
 
     /** 포션 획득 */
-    POTION_EARNED: 'reward:potion_earned',
+    POTION_EARNED: "reward:potion_earned",
 
     /** 보상 스킵 */
-    SKIP_CONFIRMED: 'reward:skip_confirmed',
+    SKIP_CONFIRMED: "reward:skip_confirmed",
   },
 
   /** STAGE - 스테이지 관련 */
   STAGE: {
     /** 스테이지 시작 */
-    STARTED: 'stage:started',
+    STARTED: "stage:started",
 
     /** 스테이지 완료 */
-    COMPLETED: 'stage:completed',
+    COMPLETED: "stage:completed",
 
     /** 스테이지 실패 */
-    FAILED: 'stage:failed',
+    FAILED: "stage:failed",
 
     /** 스테이지 진입 */
-    ENTERED: 'stage:entered',
+    ENTERED: "stage:entered",
 
     /** 스테이지 퇴장 */
-    EXITED: 'stage:exited',
+    EXITED: "stage:exited",
 
     /** 보스 스테이지 */
-    BOSS_STAGE: 'stage:boss_stage',
+    BOSS_STAGE: "stage:boss_stage",
 
     /** 엘리트 스테이지 */
-    ELITE_STAGE: 'stage:elite_stage',
+    ELITE_STAGE: "stage:elite_stage",
 
     /** 휴식처 */
-    REST_SITE: 'stage:rest_site',
+    REST_SITE: "stage:rest_site",
 
     /** 보물방 */
-    TREASURE_ROOM: 'stage:treasure_room',
+    TREASURE_ROOM: "stage:treasure_room",
 
     /** 이벤트 발생 */
-    EVENT_TRIGGERED: 'stage:event_triggered',
+    EVENT_TRIGGERED: "stage:event_triggered",
 
     /** 경로 선택 */
-    PATH_SELECTED: 'stage:path_selected',
+    PATH_SELECTED: "stage:path_selected",
 
     /** 층 변경 */
-    FLOOR_CHANGED: 'stage:floor_changed',
+    FLOOR_CHANGED: "stage:floor_changed",
   },
 
   /** QUERY - 조회 요청 */
@@ -645,29 +594,38 @@ const EVENTS = {
     /** 게임 */
     GAME: {
       /** 게임 상태 조회 */
-      STATE: 'query:game:state',
+      STATE: "query:game:state",
     },
     /** 캐릭터 */
     CHARACTER: {
       /** 캐릭터 상태 조회 */
-      STATE: 'query:character:state',
+      STATE: "query:character:state",
     },
     /** 플레이어 */
     PLAYER: {
       /** 플레이어 정보 조회 */
-      INFO: 'query:player:info',
+      INFO: "query:player:info",
     },
 
     /** 맵 */
     MAP: {
       /** 현재 맵 상태 조회 */
-      STATE: 'query:map:state',
+      STATE: "query:map:state",
+    },
+
+    /** 렌더링 */
+    RENDER: {
+      /** 툴팁 */
+      TOOLTIP: {
+        /** 툴팁 위치 조회 */
+        POSITION: "query:render:tooltip:position",
+      },
     },
 
     /** 디버그 */
     DEBUG: {
       /** 디버그 상태 조회 */
-      STATE: 'query:debug:state',
+      STATE: "query:debug:state",
     },
   },
 
@@ -676,23 +634,32 @@ const EVENTS = {
     /** 게임 */
     GAME: {
       /** 게임 상태 조회 */
-      STATE: 'response:game:state',
+      STATE: "response:game:state",
     },
     /** 캐릭터 */
     CHARACTER: {
       /** 캐릭터 상태 조회 */
-      STATE: 'response:character:state',
+      STATE: "response:character:state",
     },
     /** 맵 */
     MAP: {
       /** 맵 상태 응답 */
-      STATE: 'response:map:state',
+      STATE: "response:map:state",
+    },
+
+    /** 렌더링 */
+    RENDER: {
+      /** 툴팁 */
+      TOOLTIP: {
+        /** 툴팁 위치 응답 */
+        POSITION: "response:render:tooltip:position",
+      },
     },
 
     /** 디버그 */
     DEBUG: {
-      /** 디버그 상태 조회 */
-      STATE: 'response:debug:state',
+      /** 디버그 상태 응답 */
+      STATE: "response:debug:state",
     },
   },
 
@@ -701,74 +668,80 @@ const EVENTS = {
     /** 화면 상태 */
     SCREEN: {
       /** 화면 전환 완료 */
-      CHANGED: 'state:screen:changed',
+      CHANGED: "state:screen:changed",
     },
     /** 캐릭터 상태 */
     CHARACTER: {
       /** 캐릭터 변경 완료 */
-      CHANGED: 'state:character:changed',
+      CHANGED: "state:character:changed",
 
       /** 캐릭터 선택 완료 */
-      SELECTED: 'state:character:selected',
+      SELECTED: "state:character:selected",
 
       /** 캐릭터 최종 확정 완료 */
-      CONFIRMED: 'state:character:confirmed',
+      CONFIRMED: "state:character:confirmed",
     },
 
     /** 게임 상태 */
     GAME: {
       /** 게임 플레이 시작 완료 */
-      GAMEPLAY_BEGAN: 'state:game:gameplay_began',
+      GAMEPLAY_BEGAN: "state:game:gameplay_began",
     },
     /** 맵 상태 */
     MAP: {
       /** 노드 생성 완료 */
-      NODES_GENERATED: 'state:map:nodes_generated',
+      NODES_GENERATED: "state:map:nodes_generated",
 
       /** 노드 진입 완료 */
-      NODE_ENTERED: 'state:map:node_entered',
+      NODE_ENTERED: "state:map:node_entered",
 
       /** 맵 진행 상태 업데이트 완료 */
-      PROGRESS_UPDATED: 'state:map:progress_updated',
+      PROGRESS_UPDATED: "state:map:progress_updated",
 
       /** 서브스테이지 완료 */
-      SUBSTAGE_COMPLETED: 'state:map:substage_completed',
+      SUBSTAGE_COMPLETED: "state:map:substage_completed",
 
       /** 메인스테이지 완료 */
-      MAINSTAGE_COMPLETED: 'state:map:mainstage_completed',
+      MAINSTAGE_COMPLETED: "state:map:mainstage_completed",
     },
 
     /** 상점 상태 */
     SHOP: {
       /** 플레이어 정보 업데이트 */
-      PLAYER_INFO_UPDATED: 'state:shop:player_info_updated',
+      PLAYER_INFO_UPDATED: "state:shop:player_info_updated",
+    },
+
+    /** 렌더링 */
+    RENDER: {
+      /** 툴팁 상태 업데이트 */
+      TOOLTIP_UPDATED: "state:render:tooltip:updated",
     },
 
     /** 디버그 상태 */
     DEBUG: {
       /** 디버그 패널 토글 */
-      TOGGLED: 'state:debug:toggled',
+      TOGGLED: "state:debug:toggled",
 
       /** 디버그 패널 탭 */
       TAB: {
         /** 디버그 패널 탭 변경 */
-        CHANGED: 'state:debug:tab:changed',
+        CHANGED: "state:debug:tab:changed",
       },
 
       /** 루프 정보 업데이트 */
-      LOOP_UPDATED: 'state:debug:loop_updated',
+      LOOP_UPDATED: "state:debug:loop_updated",
 
       /** 이벤트 추가 */
-      EVENT_ADDED: 'state:debug:event_added',
+      EVENT_ADDED: "state:debug:event_added",
 
       /** 에러 추가 */
-      ERROR_ADDED: 'state:debug:error_added',
+      ERROR_ADDED: "state:debug:error_added",
 
       /** 에러 클리어 완료 */
-      ERRORS_CLEARED: 'state:debug:errors_cleared',
+      ERRORS_CLEARED: "state:debug:errors_cleared",
 
       /** 디버그 패널 축소/확장 */
-      COLLAPSED: 'state:debug:collapsed',
+      COLLAPSED: "state:debug:collapsed",
     },
   },
 
@@ -777,102 +750,110 @@ const EVENTS = {
     /** 화면 */
     SCREEN: {
       /** 화면 전환 */
-      CHANGE: 'action:screen:change',
+      CHANGE: "action:screen:change",
 
       /** 화면 선택 */
-      SELECT: 'action:screen:select',
+      SELECT: "action:screen:select",
     },
     /** 캐릭터 */
     CHARACTER: {
       /** 캐릭터 전환 */
-      CHANGE: 'action:character:change',
+      CHANGE: "action:character:change",
 
       /** 캐릭터 선택 */
-      SELECT: 'action:character:select',
+      SELECT: "action:character:select",
 
       /** 캐릭터 최종 확정 (게임 시작 버튼 클릭 시) */
-      CONFIRM: 'action:character:confirm',
+      CONFIRM: "action:character:confirm",
     },
 
     /** 상점 */
     SHOP: {
       /** 상품 구매 */
-      PURCHASE: 'action:shop:purchase',
+      PURCHASE: "action:shop:purchase",
 
       /** 상점 닫기 */
-      CLOSE: 'action:shop:close',
+      CLOSE: "action:shop:close",
     },
 
     /** 게임 */
     GAME: {
       /** 메뉴에서 새 게임 시작 (캐릭터 선택 화면으로) */
-      NEW_GAME_FROM_MENU: 'action:game:new_game_from_menu',
+      NEW_GAME_FROM_MENU: "action:game:new_game_from_menu",
 
       /** 게임 플레이 시작 (캐릭터 확정 후 첫 맵으로) */
-      BEGIN_GAMEPLAY: 'action:game:begin_gameplay',
+      BEGIN_GAMEPLAY: "action:game:begin_gameplay",
     },
     /** 맵 */
     MAP: {
       /** 노드 선택 */
-      NODE_SELECT: 'action:map:node_select',
+      NODE_SELECT: "action:map:node_select",
 
       /** 다음 노드 생성 요청 */
-      GENERATE_NEXT: 'action:map:generate_next',
+      GENERATE_NEXT: "action:map:generate_next",
 
       /** 맵 진행 상태 업데이트 요청 */
-      UPDATE_PROGRESS: 'action:map:update_progress',
+      UPDATE_PROGRESS: "action:map:update_progress",
+    },
+
+    /** 렌더링 */
+    RENDER: {
+      TOOLTIP: {
+        SHOW: "action:render:tooltip:show",
+        HIDE: "action:render:tooltip:hide",
+      },
     },
 
     /** 디버그 */
     DEBUG: {
       /** 디버그 패널 토글 */
-      TOGGLE: 'action:debug:toggle',
+      TOGGLE: "action:debug:toggle",
 
       /** 디버그 탭 변경 */
-      CHANGE_TAB: 'action:debug:change_tab',
+      CHANGE_TAB: "action:debug:change_tab",
 
       /** 디버그 패널 축소/확장 */
-      COLLAPSE_TOGGLE: 'action:debug:collapse_toggle',
+      COLLAPSE_TOGGLE: "action:debug:collapse_toggle",
 
       /** 에러 목록 클리어 */
-      CLEAR_ERRORS: 'action:debug:clear_errors',
+      CLEAR_ERRORS: "action:debug:clear_errors",
     },
 
     /** 루프 정보 업데이트 */
-    UPDATE_LOOP_INFO: 'action:debug:update_loop_info',
+    UPDATE_LOOP_INFO: "action:debug:update_loop_info",
   },
 
   /** 디버그 */
   DEBUG: {
     /** 디버그 이벤트 기록 */
-    EVENT_LOGGED: 'action:debug:event_logged',
+    EVENT_LOGGED: "action:debug:event_logged",
   },
 };
 
 // ---------- 카드 상수 정의 ---------- //
 /** 모양 */
 const SUITS = {
-  SPADE: { symbol: '♠', color: 'black', name: 'spade' },
-  DIAMOND: { symbol: '♦', color: 'red', name: 'diamond' },
-  HEART: { symbol: '♥', color: 'red', name: 'heart' },
-  CLUB: { symbol: '♣', color: 'black', name: 'club' },
+  SPADE: { symbol: "♠", color: "black", name: "spade" },
+  DIAMOND: { symbol: "♦", color: "red", name: "diamond" },
+  HEART: { symbol: "♥", color: "red", name: "heart" },
+  CLUB: { symbol: "♣", color: "black", name: "club" },
 };
 
 /** 등급 */
 const RANKS = {
-  ACE: { value: 1, rank: 'A', order: 14 },
-  TWO: { value: 2, rank: '2', order: 2 },
-  THREE: { value: 3, rank: '3', order: 3 },
-  FOUR: { value: 4, rank: '4', order: 4 },
-  FIVE: { value: 5, rank: '5', order: 5 },
-  SIX: { value: 6, rank: '6', order: 6 },
-  SEVEN: { value: 7, rank: '7', order: 7 },
-  EIGHT: { value: 8, rank: '8', order: 8 },
-  NINE: { value: 9, rank: '9', order: 9 },
-  TEN: { value: 10, rank: '10', order: 10 },
-  JACK: { value: 11, rank: 'J', order: 11 },
-  QUEEN: { value: 12, rank: 'Q', order: 12 },
-  KING: { value: 13, rank: 'K', order: 13 },
+  ACE: { value: 1, rank: "A", order: 14 },
+  TWO: { value: 2, rank: "2", order: 2 },
+  THREE: { value: 3, rank: "3", order: 3 },
+  FOUR: { value: 4, rank: "4", order: 4 },
+  FIVE: { value: 5, rank: "5", order: 5 },
+  SIX: { value: 6, rank: "6", order: 6 },
+  SEVEN: { value: 7, rank: "7", order: 7 },
+  EIGHT: { value: 8, rank: "8", order: 8 },
+  NINE: { value: 9, rank: "9", order: 9 },
+  TEN: { value: 10, rank: "10", order: 10 },
+  JACK: { value: 11, rank: "J", order: 11 },
+  QUEEN: { value: 12, rank: "Q", order: 12 },
+  KING: { value: 13, rank: "K", order: 13 },
 };
 
 // ---------- 능력 타입 정의 ---------- //
@@ -880,175 +861,175 @@ const RANKS = {
 const ABILITY_TYPE = {
   // 공격
   /** 피해 증가 */
-  DAMAGE_BONUS: 'damage_bonus',
+  DAMAGE_BONUS: "damage_bonus",
 
   /** 방어 무시 */
-  PIERCE: 'pierce',
+  PIERCE: "pierce",
 
   /** 범위 공격 */
-  AREA_ATTACK: 'area_attack',
+  AREA_ATTACK: "area_attack",
 
   /** 화상 공격 */
-  BURN: 'burn',
+  BURN: "burn",
 
   /** 생명력 흡수 */
-  LIFESTEAL: 'lifesteal',
+  LIFESTEAL: "lifesteal",
 
   /** 치명타 */
-  CRITICAL: 'critical',
+  CRITICAL: "critical",
 
   /** 공격 위력 배율 적용 */
-  POWER_MULTIPLY: 'power_multiply',
+  POWER_MULTIPLY: "power_multiply",
 
   /** 지연 피해 */
-  DELAYED_DAMAGE: 'delayed_damage',
+  DELAYED_DAMAGE: "delayed_damage",
 
   /** 다회 공격 */
-  MULTI_STRIKE: 'multi_strike',
+  MULTI_STRIKE: "multi_strike",
 
   // 방어
   /** 획득 방어 증가 */
-  SHIELD_BONUS: 'shield_bonus',
+  SHIELD_BONUS: "shield_bonus",
 
   /** 무효화 */
-  NULLIFY: 'nullify',
+  NULLIFY: "nullify",
 
   /** 면역 */
-  IMMUNITY: 'immunity',
+  IMMUNITY: "immunity",
 
   /** 흡수(받은 피해 비례 방어 획득) */
-  ABSORB: 'absorb',
+  ABSORB: "absorb",
 
   /** 피해 감소 */
-  DAMAGE_REDUCTION: 'damage_reduction',
+  DAMAGE_REDUCTION: "damage_reduction",
 
   // 회복
   /** 회복 */
-  HEAL: 'heal',
+  HEAL: "heal",
 
   /** 과다 치유 (최대 체력 증가) (임시) */
-  OVERHEAL: 'overheal',
+  OVERHEAL: "overheal",
 
   /** 임시 회복 (대출) */
-  HEAL_LOAN: 'heal_loan',
+  HEAL_LOAN: "heal_loan",
 
   /** 상태 이상 제거 */
-  CLEANSE: 'cleanse',
+  CLEANSE: "cleanse",
 
   // 유틸
   /** 회복 불가 */
-  HEAL_BLOCK: 'heal_block',
+  HEAL_BLOCK: "heal_block",
 
   /** 카드 생성 */
-  GENERATE_CARD: 'generate_card',
+  GENERATE_CARD: "generate_card",
 
   /** 카드 교환 */
-  EXCHANGE: 'exchange',
+  EXCHANGE: "exchange",
 
   /** 카드 뽑기 */
-  DRAW: 'draw',
+  DRAW: "draw",
 
   /** 버리기 추가 */
-  DISCARD: 'discard',
+  DISCARD: "discard",
 
   /** 상대 카드 파괴 */
-  DESTROY_CARD: 'destroy_card',
+  DESTROY_CARD: "destroy_card",
 
   // 버프
   /** 공격 위력 증가 */
-  POWER_BUFF: 'power_buff',
+  POWER_BUFF: "power_buff",
 
   /** 방어 위력 증가 */
-  BLOCK_BUFF: 'block_buff',
+  BLOCK_BUFF: "block_buff",
 
   /** 지속 방어 */
-  REGEN_BLOCK: 'regen_block',
+  REGEN_BLOCK: "regen_block",
 
   /** 지속 회복 */
-  REGEN: 'regen',
+  REGEN: "regen",
 
   /** 반격 */
-  COUNTER: 'counter',
+  COUNTER: "counter",
 
   /** 드로우 증가 */
-  DRAW_BUFF: 'draw_buff',
+  DRAW_BUFF: "draw_buff",
 
   /** 취약 */
-  VULNERABLE: 'vulnerable',
+  VULNERABLE: "vulnerable",
 
   /** 약화 */
-  WEAKEN: 'weaken',
+  WEAKEN: "weaken",
 };
 
 // ---------- 조건 타입 정의 ---------- //
 /** 조건 */
 const CONDITION_TYPE = {
   /** 없음 */
-  NONE: 'none',
+  NONE: "none",
 
   /** 특정 족보 이상 */
-  HAND_TYPE: 'hand_type',
+  HAND_TYPE: "hand_type",
 
   /** 같은 모양 n개 이상 플레이 */
-  SAME_SUIT_COUNT: 'same_suit_count',
+  SAME_SUIT_COUNT: "same_suit_count",
 
   /** 버렸을 때 */
-  ON_DISCARD: 'on_discard',
+  ON_DISCARD: "on_discard",
 
   /** 이전에 플레이한 카드 중 */
-  PREVIOUS_CARD: 'previous_card',
+  PREVIOUS_CARD: "previous_card",
 
   /** 버린 카드 중 */
-  DISCARDED_CARD: 'discarded_card',
+  DISCARDED_CARD: "discarded_card",
 
   /** 버프 보유 */
-  HAS_BUFF: 'has_buff',
+  HAS_BUFF: "has_buff",
 
   /** 일정체력 이하 */
-  HEALTH_BELOW: 'health_below',
+  HEALTH_BELOW: "health_below",
 
   /** 체력 소모 */
-  HEALTH_COST: 'health_cost',
+  HEALTH_COST: "health_cost",
 };
 
 // ---------- 상태 정의 ---------- //
 /** 화면 상태 */
 const SCREEN_STATE_TYPE = {
   /** 로고 화면 */
-  LOGO: 'logo',
+  LOGO: "logo",
 
   /** 로딩 화면 */
-  LOADING: 'loading',
+  LOADING: "loading",
 
   /** 메뉴 화면 */
-  MENU: 'menu',
+  MENU: "menu",
 
   /** 캐릭터 선택 화면 */
-  CHARACTER_SELECT: 'characterSelect',
+  CHARACTER_SELECT: "characterSelect",
 
   /** 일시 정지 화면 */
-  PAUSE: 'pause',
+  PAUSE: "pause",
 
   /** 설정 화면 */
-  SETTING: 'setting',
+  SETTING: "setting",
 
   /** 스테이지 선택 화면 */
-  STAGE: 'stage',
+  STAGE: "stage",
 
   /** 상점 화면 */
-  SHOP: 'shop',
+  SHOP: "shop",
 
   /** 휴식 화면 */
-  REST: 'rest',
+  REST: "rest",
 
   /** 전투 화면 */
-  BATTLE: 'battle',
+  BATTLE: "battle",
 
   /** 보상 화면 */
-  REWARD: 'reward',
+  REWARD: "reward",
 
   /** 게임 오버 화면 */
-  GAMEOVER: 'gameover',
+  GAMEOVER: "gameover",
 };
 
 /**
@@ -1056,25 +1037,25 @@ const SCREEN_STATE_TYPE = {
  */
 const MAP_NODE_TYPE = {
   /** 상점 */
-  SHOP: 'shop',
+  SHOP: "shop",
 
   /** 휴식 */
-  REST: 'rest',
+  REST: "rest",
 
   /** 일반 몬스터 */
-  MONSTER: 'monster',
+  MONSTER: "monster",
 
   /** 엘리트 몬스터 */
-  ELITE: 'elite',
+  ELITE: "elite",
 
   /** 보스 */
-  BOSS: 'boss',
+  BOSS: "boss",
 
   /** 보물 */
-  TREASURE: 'treasure',
+  TREASURE: "treasure",
 
   /** 이벤트 */
-  EVENT: 'event',
+  EVENT: "event",
 };
 
 /**
@@ -1082,14 +1063,14 @@ const MAP_NODE_TYPE = {
  */
 const MAP_NODE_STATE = {
   /** 잠김 (아직 도달 불가) */
-  LOCKED: 'locked',
+  LOCKED: "locked",
 
   /** 사용 가능 */
-  AVAILABLE: 'available',
+  AVAILABLE: "available",
 
   /** 완료됨 */
-  COMPLETED: 'completed',
+  COMPLETED: "completed",
 
   /** 현재 위치 */
-  CURRENT: 'current',
+  CURRENT: "current",
 };

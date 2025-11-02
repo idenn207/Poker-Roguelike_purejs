@@ -19,10 +19,16 @@ class StateManager extends ManagerCore {
     /** @type {DebugState} 전역 맵 상태 */
     this.mapState = new DebugState();
 
+    /** @type {UIState} */
+    this.uiState = new UIState();
+
+    /** @type {RenderState} */
+    this.renderState = new RenderState();
+
     /** @type {DebugState} 전역 디버그 상태 */
     this.debugState = new DebugState();
 
-    console.debug('StateManager initialized');
+    console.debug("StateManager initialized");
   }
 
   // ========================================
@@ -35,7 +41,7 @@ class StateManager extends ManagerCore {
     this.gameState.currentScreen = SCREEN_STATE_TYPE.LOGO;
     this.gameState.previousScreen = null;
 
-    console.debug('StateManager init complete - Initial screen: logo');
+    console.debug("StateManager init complete - Initial screen: logo");
   }
 
   /** 게임 상태 이벤트 등록 */
@@ -66,7 +72,14 @@ class StateManager extends ManagerCore {
     this.trackEventBusListener(this.eventBus, EVENTS.QUERY.DEBUG.STATE, this.handleQueryDebugState.bind(this));
     this.trackEventBusListener(this.eventBus, EVENTS.QUERY.PLAYER.INFO, this.handleQueryPlayerInfo.bind(this));
 
-    console.log('StateManager events registered');
+    // 상태 조회 응답 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.RESPONSE.RENDER.TOOLTIP.POSITION, this.handleTooltipPositionResponse.bind(this));
+
+    // 툴팁 액션 이벤트 구독
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.RENDER.TOOLTIP.SHOW, this.handleShowTooltip.bind(this));
+    this.trackEventBusListener(this.eventBus, EVENTS.ACTION.RENDER.TOOLTIP.HIDE, this.handleHideTooltip.bind(this));
+
+    console.log("StateManager events registered");
   }
 
   // ========================================
@@ -114,14 +127,14 @@ class StateManager extends ManagerCore {
 
     let index = this.gameState.currentCharacterIndex;
 
-    if (direction === 'prev') {
+    if (direction === "prev") {
       index = (index - 1 + totalChars) % totalChars;
-    } else if (direction === 'next') {
+    } else if (direction === "next") {
       index = (index + 1) % totalChars;
     }
     this.gameState.currentCharacterIndex = index;
 
-    console.debug('Character changed:', this.gameState.currentCharacterIndex);
+    console.debug("Character changed:", this.gameState.currentCharacterIndex);
 
     // 캐릭터 변경 이벤트 발행
     this.#emitCharacterState();
@@ -142,7 +155,7 @@ class StateManager extends ManagerCore {
     this.gameState.player.items = []; // TODO: ItemFactory 개발 필요
     this.gameState.player.relics = []; // TODO: RelicFactory 개발 필요
 
-    console.debug('Character selected:', currentCharacter.name);
+    console.debug("Character selected:", currentCharacter.name);
 
     // 캐릭터 선택 완료 이벤트 발행
     this.eventBus.emit(EVENTS.STATE.CHARACTER.SELECTED, {
@@ -159,7 +172,7 @@ class StateManager extends ManagerCore {
     const currentCharacter = this.gameState.getCurrentCharacter();
 
     if (!currentCharacter) {
-      console.error('No character selected');
+      console.error("No character selected");
       return;
     }
 
@@ -172,7 +185,7 @@ class StateManager extends ManagerCore {
     this.gameState.player.items = []; // TODO: ItemFactory 개발 필요
     this.gameState.player.relics = []; // TODO: RelicFactory 개발 필요
 
-    console.debug('Character confirmed:', currentCharacter.name);
+    console.debug("Character confirmed:", currentCharacter.name);
 
     // 캐릭터 선택 완료 이벤트 발행
     this.eventBus.emit(EVENTS.STATE.CHARACTER.CONFIRMED, {
@@ -190,7 +203,7 @@ class StateManager extends ManagerCore {
     this.gameState.isGameActive = true;
     this.gameState.isNewGame = false;
 
-    console.log('Gameplay started');
+    console.log("Gameplay started");
 
     // 게임 플레이 시작 완료 이벤트 발행
     this.eventBus.emit(EVENTS.STATE.GAME.GAMEPLAY_BEGAN, {
@@ -216,8 +229,8 @@ class StateManager extends ManagerCore {
 
     // 골드 체크
     if (this.gameState.player.gold < price) {
-      console.warn('Not enough gold');
-      this.eventBus.emit(EVENTS.SHOP.PURCHASE_FAILED, { reason: 'insufficient_gold' });
+      console.warn("Not enough gold");
+      this.eventBus.emit(EVENTS.SHOP.PURCHASE_FAILED, { reason: "insufficient_gold" });
       return;
     }
 
@@ -226,15 +239,15 @@ class StateManager extends ManagerCore {
 
     // 상품 지급
     switch (type) {
-      case 'card':
+      case "card":
         // TODO: 카드 추가 로직
         console.log(`Card purchased: ${itemData.title}`);
         break;
-      case 'item':
+      case "item":
         // TODO: 아이템 추가 로직
         console.log(`Item purchased: ${itemData.title}`);
         break;
-      case 'upgrade':
+      case "upgrade":
         // TODO: 업그레이드 적용 로직
         console.log(`Upgrade purchased: ${itemData.title}`);
         break;
@@ -266,7 +279,7 @@ class StateManager extends ManagerCore {
     this.gameState.currentCharacterIndex = 0;
     this.gameState.selectedCharacter = null;
 
-    console.log('New game started');
+    console.log("New game started");
 
     // 캐릭터 선택 화면으로 전환
     this.eventBus.emit(EVENTS.ACTION.SCREEN.CHANGE, {
@@ -356,7 +369,7 @@ class StateManager extends ManagerCore {
   handleToggleDebug(data) {
     this.debugState.isActive = !this.debugState.isActive;
 
-    console.debug('Debug panel toggled:', this.debugState.isActive);
+    console.debug("Debug panel toggled:", this.debugState.isActive);
 
     // Debug 상태 변경 이벤트 발행
     this.eventBus.emit(EVENTS.STATE.DEBUG.TOGGLED, {
@@ -374,7 +387,7 @@ class StateManager extends ManagerCore {
     const { tabId } = data;
     this.debugState.currentTab = tabId;
 
-    console.debug('Debug tab changed:', this.debugState.currentTab);
+    console.debug("Debug tab changed:", this.debugState.currentTab);
 
     // Debug 탭 변경 이벤트 발행
     this.eventBus.emit(EVENTS.STATE.DEBUG.TAB.CHANGED, {
@@ -430,7 +443,7 @@ class StateManager extends ManagerCore {
   handleToggleDebugCollapse(data) {
     this.debugState.isCollapsed = !this.debugState.isCollapsed;
 
-    console.debug('Debug panel collapsed:', this.debugState.isCollapsed);
+    console.debug("Debug panel collapsed:", this.debugState.isCollapsed);
 
     // Debug 접기 상태 변경 이벤트 발행
     this.eventBus.emit(EVENTS.STATE.DEBUG.COLLAPSED, {
@@ -476,7 +489,7 @@ class StateManager extends ManagerCore {
       this.debugState.errors.pop();
     }
 
-    console.debug('Error logged to DebugState:', errorData.message);
+    console.debug("Error logged to DebugState:", errorData.message);
 
     // 에러 추가 이벤트 발행 (UI 업데이트용)
     this.eventBus.emit(EVENTS.STATE.DEBUG.ERROR_ADDED, {
@@ -491,11 +504,72 @@ class StateManager extends ManagerCore {
    */
   handleClearErrors(data) {
     this.debugState.errors = [];
-    console.debug('All errors cleared');
+    console.debug("All errors cleared");
 
     // 에러 클리어 완료 이벤트 발행
     this.eventBus.emit(EVENTS.STATE.DEBUG.ERRORS_CLEARED, {
       timestamp: Date.now(),
+    });
+  }
+
+  // ========================================
+  // 툴팁
+  // ========================================
+
+  /**
+   * 툴팁 표시 처리
+   * @param {Object} data
+   * @param {HTMLElement} data.target
+   * @param {string} data.title
+   * @param {string} data.description
+   */
+  handleShowTooltip(data) {
+    const { target, title, description } = data;
+
+    // 1. UIState 업데이트
+    this.uiState.tooltip.isVisible = true;
+    this.uiState.tooltip.targetElement = target;
+    this.uiState.tooltip.title = title;
+    this.uiState.tooltip.description = description;
+
+    // 2. RenderManager에게 위치 계산 요청
+    this.eventBus.emit(EVENTS.QUERY.RENDER.TOOLTIP.POSITION, {
+      target: target,
+      requestId: "tooltip-show",
+    });
+  }
+
+  /**
+   * 툴팁 위치 계산 응답 처리
+   * @param {Object} data
+   * @param {number} data.top
+   * @param {number} data.left
+   * @param {string} data.position
+   */
+  handleTooltipPositionResponse(data) {
+    const { top, left, position } = data;
+
+    // UIState 위치 업데이트
+    this.uiState.tooltip.position = { top, left };
+
+    // RenderManager에게 렌더링 요청
+    this.eventBus.emit(EVENTS.STATE.RENDER.TOOLTIP_UPDATED, {
+      tooltipState: this.uiState.tooltip,
+      position: position,
+    });
+  }
+
+  /**
+   * 툴팁 숨김 처리
+   */
+  handleHideTooltip() {
+    // UIState 업데이트
+    this.uiState.tooltip.isVisible = false;
+    this.uiState.tooltip.targetElement = null;
+
+    // RenderManager에게 렌더링 요청
+    this.eventBus.emit(EVENTS.STATE.RENDER.TOOLTIP_UPDATED, {
+      tooltipState: this.uiState.tooltip,
     });
   }
 

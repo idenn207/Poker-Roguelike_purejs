@@ -9,21 +9,22 @@ const uiScripts = [
   //'/src/ui/components/.js',
 
   // hud
-  '/src/ui/hud/HealthBar.js',
-  '/src/ui/hud/Stage.js',
+  "/src/ui/hud/HealthBar.js",
+  "/src/ui/hud/Stage.js",
+  "/src/ui/hud/Tooltip.js",
 
   // menus
-  '/src/ui/menus/MainMenu.js',
-  '/src/ui/menus/PauseMenu.js',
-  '/src/ui/menus/GameOverMenu.js',
+  "/src/ui/menus/MainMenu.js",
+  "/src/ui/menus/PauseMenu.js",
+  "/src/ui/menus/GameOverMenu.js",
 
   // screen
-  '/src/ui/screen/ShopScreen.js',
-  '/src/ui/screen/BattleScreen.js',
-  '/src/ui/screen/RewardScreen.js',
+  "/src/ui/screen/ShopScreen.js",
+  "/src/ui/screen/BattleScreen.js",
+  "/src/ui/screen/RewardScreen.js",
 
   // panels
-  '/src/ui/panels/DebugPanel.js',
+  "/src/ui/panels/DebugPanel.js",
 ];
 
 loadScripts(uiScripts);

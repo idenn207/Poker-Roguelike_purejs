@@ -6,11 +6,12 @@
 
 const coreScripts = [
   // 로드 경로 : /src/core/*.js
-  '/src/core/EventBus.js',
-  '/src/core/ErrorHandler.js',
-  '/src/core/DrawHelper.js',
-  '/src/core/ManagerCore.js',
-  '/src/core/UICore.js',
+  "/src/core/EventBus.js",
+  "/src/core/ErrorHandler.js",
+  "/src/core/DrawHelper.js",
+  "/src/core/ManagerCore.js",
+  "/src/core/UICore.js",
+  "/src/core/RenderCore.js",
 ];
 
 loadScripts(coreScripts);

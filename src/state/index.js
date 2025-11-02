@@ -6,9 +6,11 @@
 
 const stateScripts = [
   // 로드 경로 : /src/state/*.js
-  '/src/state/MapState.js',
-  '/src/state/GameState.js',
-  '/src/state/DebugState.js',
+  "/src/state/MapState.js",
+  "/src/state/GameState.js",
+  "/src/state/UIState.js",
+  "/src/state/RenderState.js",
+  "/src/state/DebugState.js",
 ];
 
 loadScripts(stateScripts);
